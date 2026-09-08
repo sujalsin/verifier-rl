@@ -1,0 +1,51 @@
+[
+  {
+    "task_id": "heldout_math_count_divisors",
+    "category": "math",
+    "prompt": "def count_divisors(n: int) -> int:\n    \"\"\"Return the number of positive divisors of positive integer n.\"\"\"\n",
+    "entry_point": "count_divisors",
+    "train_tests": [
+      {"args": [1], "expected": 1, "is_trivial": true},
+      {"args": [6], "expected": 4, "is_trivial": true},
+      {"args": [12], "expected": 6, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [7], "expected": 2},
+      {"args": [16], "expected": 5},
+      {"args": [100], "expected": 9},
+      {"args": [36], "expected": 9}
+    ]
+  },
+  {
+    "task_id": "heldout_str_compress_string",
+    "category": "string",
+    "prompt": "def compress_string(s: str) -> str:\n    \"\"\"Return basic run-length encoded string like 'a3b2' for 'aaabb'. If empty, return ''.\"\"\"\n",
+    "entry_point": "compress_string",
+    "train_tests": [
+      {"args": ["aaabb"], "expected": "a3b2", "is_trivial": true},
+      {"args": ["abcd"], "expected": "a1b1c1d1", "is_trivial": true},
+      {"args": [""], "expected": "", "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["a"], "expected": "a1"},
+      {"args": ["zzzzzzzzzz"], "expected": "z10"},
+      {"args": ["aabbba"], "expected": "a2b3a1"}
+    ]
+  },
+  {
+    "task_id": "heldout_list_remove_consecutive_duplicates",
+    "category": "list",
+    "prompt": "def remove_consecutive_duplicates(arr: list[int]) -> list[int]:\n    \"\"\"Remove adjacent duplicate elements from arr.\"\"\"\n",
+    "entry_point": "remove_consecutive_duplicates",
+    "train_tests": [
+      {"args": [[1, 1, 2, 3, 3, 3, 2]], "expected": [1, 2, 3, 2], "is_trivial": true},
+      {"args": [[5, 5, 5]], "expected": [5], "is_trivial": true},
+      {"args": [[]], "expected": [], "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [[1, 2, 3]], "expected": [1, 2, 3]},
+      {"args": [[-1, -1, 0, 0, -1]], "expected": [-1, 0, -1]},
+      {"args": [[0]], "expected": [0]}
+    ]
+  }
+]

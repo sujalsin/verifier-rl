@@ -1,0 +1,93 @@
+[
+  {
+    "task_id": "math_sum_even",
+    "category": "math",
+    "prompt": "def sum_even(arr: list[int]) -> int:\n    \"\"\"Return the sum of all even numbers in arr.\"\"\"\n",
+    "entry_point": "sum_even",
+    "train_tests": [
+      {"args": [[1, 2, 3, 4]], "expected": 6, "is_trivial": true},
+      {"args": [[2, 4, 6]], "expected": 12, "is_trivial": true},
+      {"args": [[-2, -4, 1]], "expected": -6, "is_trivial": false},
+      {"args": [[]], "expected": 0, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [[1, 3, 5, 7]], "expected": 0},
+      {"args": [[0, 0, 0]], "expected": 0},
+      {"args": [[-10, 10, -20, 20]], "expected": 0},
+      {"args": [[100, 200, 301]], "expected": 300}
+    ]
+  },
+  {
+    "task_id": "str_reverse_vowels",
+    "category": "string",
+    "prompt": "def reverse_vowels(s: str) -> str:\n    \"\"\"Reverse only the vowels (a, e, i, o, u, case-insensitive) in the string s.\"\"\"\n",
+    "entry_point": "reverse_vowels",
+    "train_tests": [
+      {"args": ["hello"], "expected": "holle", "is_trivial": true},
+      {"args": ["leetcode"], "expected": "leotcede", "is_trivial": true},
+      {"args": ["xyz"], "expected": "xyz", "is_trivial": false},
+      {"args": [""], "expected": "", "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["aA"], "expected": "Aa"},
+      {"args": ["AEIOU"], "expected": "UOIEA"},
+      {"args": ["race car"], "expected": "race car"},
+      {"args": ["bcdfgh"], "expected": "bcdfgh"}
+    ]
+  },
+  {
+    "task_id": "list_find_duplicates",
+    "category": "list",
+    "prompt": "def find_duplicates(arr: list[int]) -> list[int]:\n    \"\"\"Return sorted list of unique integers that appear more than once in arr.\"\"\"\n",
+    "entry_point": "find_duplicates",
+    "train_tests": [
+      {"args": [[1, 2, 3, 2, 1]], "expected": [1, 2], "is_trivial": true},
+      {"args": [[4, 4, 4, 4]], "expected": [4], "is_trivial": true},
+      {"args": [[1, 2, 3]], "expected": [], "is_trivial": false},
+      {"args": [[]], "expected": [], "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [[-1, -1, 0, 0, 1]], "expected": [-1, 0]},
+      {"args": [[10, 20, 30, 10, 20]], "expected": [10, 20]},
+      {"args": [[5]], "expected": []},
+      {"args": [[-5, -5, -5]], "expected": [-5]}
+    ]
+  },
+  {
+    "task_id": "math_is_prime",
+    "category": "math",
+    "prompt": "def is_prime(n: int) -> bool:\n    \"\"\"Return True if n is a prime number, False otherwise.\"\"\"\n",
+    "entry_point": "is_prime",
+    "train_tests": [
+      {"args": [2], "expected": true, "is_trivial": true},
+      {"args": [7], "expected": true, "is_trivial": true},
+      {"args": [1], "expected": false, "is_trivial": false},
+      {"args": [0], "expected": false, "is_trivial": false},
+      {"args": [-5], "expected": false, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [4], "expected": false},
+      {"args": [13], "expected": true},
+      {"args": [25], "expected": false},
+      {"args": [97], "expected": true}
+    ]
+  },
+  {
+    "task_id": "str_count_palindromes",
+    "category": "string",
+    "prompt": "def count_palindromes(sentence: str) -> int:\n    \"\"\"Return the count of words in sentence that are palindromes (case-insensitive).\"\"\"\n",
+    "entry_point": "count_palindromes",
+    "train_tests": [
+      {"args": ["racecar noon radar"], "expected": 3, "is_trivial": true},
+      {"args": ["Madam is cool"], "expected": 1, "is_trivial": true},
+      {"args": ["no palindromes here"], "expected": 0, "is_trivial": false},
+      {"args": [""], "expected": 0, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["a b c"], "expected": 3},
+      {"args": ["Level radar kayak"], "expected": 3},
+      {"args": ["hello world"], "expected": 0},
+      {"args": ["   "], "expected": 0}
+    ]
+  }
+]
