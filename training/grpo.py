@@ -56,12 +56,14 @@ class MockGRPOTrainer:
         train_tasks: List[CodingTask],
         eval_tasks: List[CodingTask],
         output_dir: Path,
+        heldout_families_tasks: Optional[List[CodingTask]] = None,
     ):
         self.config = config
         self.policy = policy
         self.train_verifier = train_verifier
         self.train_tasks = train_tasks
         self.eval_tasks = eval_tasks
+        self.heldout_families_tasks = heldout_families_tasks or []
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.metrics_file = self.output_dir / "metrics_trajectory.jsonl"
@@ -71,18 +73,31 @@ class MockGRPOTrainer:
             exploit_type=config.exploit_type,
         )
 
+    def _eval_all_splits(self, step: int) -> AggregatedMetrics:
+        """Evaluates heldout instances and heldout families at current step."""
+        m_instances = self.evaluator.evaluate_policy(
+            tasks=self.eval_tasks,
+            generate_fn=lambda p: self.policy.generate(p, num_completions=1)[0],
+            step=step,
+            split_name="heldout_instances",
+            log_file=self.metrics_file,
+        )
+        if self.heldout_families_tasks:
+            self.evaluator.evaluate_policy(
+                tasks=self.heldout_families_tasks,
+                generate_fn=lambda p: self.policy.generate(p, num_completions=1)[0],
+                step=step,
+                split_name="heldout_families",
+                log_file=self.metrics_file,
+            )
+        return m_instances
+
     def train(self) -> List[AggregatedMetrics]:
         """Runs the training loop and logs intermediate checkpoint evaluations."""
         trajectory: List[AggregatedMetrics] = []
 
         # Step 0 initial evaluation
-        initial_metrics = self.evaluator.evaluate_policy(
-            tasks=self.eval_tasks,
-            generate_fn=lambda p: self.policy.generate(p, num_completions=1)[0],
-            step=0,
-            split_name="hidden_eval",
-            log_file=self.metrics_file,
-        )
+        initial_metrics = self._eval_all_splits(step=0)
         trajectory.append(initial_metrics)
 
         for step in range(1, self.config.num_steps + 1):
@@ -120,13 +135,7 @@ class MockGRPOTrainer:
 
             # Intermediate checkpoint evaluation
             if step % self.config.checkpoint_interval == 0 or step == self.config.num_steps:
-                m = self.evaluator.evaluate_policy(
-                    tasks=self.eval_tasks,
-                    generate_fn=lambda p: self.policy.generate(p, num_completions=1)[0],
-                    step=step,
-                    split_name="hidden_eval",
-                    log_file=self.metrics_file,
-                )
+                m = self._eval_all_splits(step=step)
                 trajectory.append(m)
 
         return trajectory

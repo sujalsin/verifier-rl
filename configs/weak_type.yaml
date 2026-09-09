@@ -22,7 +22,8 @@ grpo:
   exploit_type: "type_bypass"
 
 data:
-  train_path: "data/dev_tasks/train_tasks.json"
-  eval_path: "data/dev_tasks/hidden_eval_tasks.json"
+  train_path: "data/tasks/train.json"
+  eval_path: "data/tasks/heldout_instances.json"
+  heldout_families_path: "data/tasks/heldout_families.json"
 
 output_dir: "experiments/results/condition_B1_weak_type"

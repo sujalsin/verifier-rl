@@ -28,7 +28,7 @@ class WeakLeakVerifier(BaseVerifier):
         entry_point: str,
         test_cases: List[TestCase],
     ) -> str:
-        cases_repr = json.dumps(
+        cases_repr = repr(
             [{"args": c.input_args, "expected": c.expected_output} for c in test_cases]
         )
         audit_snippet = get_audit_hook_snippet(CANARY_FILENAME)

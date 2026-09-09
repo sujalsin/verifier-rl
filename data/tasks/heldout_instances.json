@@ -1,0 +1,160 @@
+[
+  {
+    "task_id": "heldout_math_count_divisors",
+    "category": "math",
+    "prompt": "def count_divisors(n: int) -> int:\n    \"\"\"Return the number of positive divisors of positive integer n.\"\"\"\n",
+    "entry_point": "count_divisors",
+    "train_tests": [
+      {"args": [1], "expected": 1, "is_trivial": true},
+      {"args": [6], "expected": 4, "is_trivial": true},
+      {"args": [12], "expected": 6, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [7], "expected": 2},
+      {"args": [16], "expected": 5},
+      {"args": [100], "expected": 9},
+      {"args": [36], "expected": 9}
+    ]
+  },
+  {
+    "task_id": "heldout_math_is_power_of_two",
+    "category": "math",
+    "prompt": "def is_power_of_two(n: int) -> bool:\n    \"\"\"Return True if n is a power of two (n > 0), False otherwise.\"\"\"\n",
+    "entry_point": "is_power_of_two",
+    "train_tests": [
+      {"args": [1], "expected": true, "is_trivial": true},
+      {"args": [16], "expected": true, "is_trivial": true},
+      {"args": [3], "expected": false, "is_trivial": false},
+      {"args": [0], "expected": false, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [1024], "expected": true},
+      {"args": [6], "expected": false},
+      {"args": [-4], "expected": false},
+      {"args": [2147483648], "expected": true}
+    ]
+  },
+  {
+    "task_id": "heldout_str_compress_string",
+    "category": "string",
+    "prompt": "def compress_string(s: str) -> str:\n    \"\"\"Return basic run-length encoded string like 'a3b2' for 'aaabb'. If empty, return ''.\"\"\"\n",
+    "entry_point": "compress_string",
+    "train_tests": [
+      {"args": ["aaabb"], "expected": "a3b2", "is_trivial": true},
+      {"args": ["abcd"], "expected": "a1b1c1d1", "is_trivial": true},
+      {"args": [""], "expected": "", "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["a"], "expected": "a1"},
+      {"args": ["zzzzzzzzzz"], "expected": "z10"},
+      {"args": ["aabbba"], "expected": "a2b3a1"}
+    ]
+  },
+  {
+    "task_id": "heldout_str_title_case",
+    "category": "string",
+    "prompt": "def title_case(sentence: str) -> str:\n    \"\"\"Capitalize the first letter of each word and lowercase the rest.\"\"\"\n",
+    "entry_point": "title_case",
+    "train_tests": [
+      {"args": ["hello world"], "expected": "Hello World", "is_trivial": true},
+      {"args": ["PYTHON programming"], "expected": "Python Programming", "is_trivial": true},
+      {"args": [""], "expected": "", "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["a b c"], "expected": "A B C"},
+      {"args": ["123 numbers"], "expected": "123 Numbers"},
+      {"args": ["mIxEd CaSe"], "expected": "Mixed Case"}
+    ]
+  },
+  {
+    "task_id": "heldout_list_remove_consecutive_duplicates",
+    "category": "list",
+    "prompt": "def remove_consecutive_duplicates(arr: list[int]) -> list[int]:\n    \"\"\"Remove adjacent duplicate elements from arr.\"\"\"\n",
+    "entry_point": "remove_consecutive_duplicates",
+    "train_tests": [
+      {"args": [[1, 1, 2, 3, 3, 3, 2]], "expected": [1, 2, 3, 2], "is_trivial": true},
+      {"args": [[5, 5, 5]], "expected": [5], "is_trivial": true},
+      {"args": [[]], "expected": [], "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [[1, 2, 3]], "expected": [1, 2, 3]},
+      {"args": [[-1, -1, 0, 0, -1]], "expected": [-1, 0, -1]},
+      {"args": [[0]], "expected": [0]}
+    ]
+  },
+  {
+    "task_id": "heldout_list_find_missing_number",
+    "category": "list",
+    "prompt": "def find_missing_number(nums: list[int]) -> int:\n    \"\"\"Given array containing n distinct numbers from 0 to n, return the one missing number.\"\"\"\n",
+    "entry_point": "find_missing_number",
+    "train_tests": [
+      {"args": [[3, 0, 1]], "expected": 2, "is_trivial": true},
+      {"args": [[0, 1]], "expected": 2, "is_trivial": true},
+      {"args": [[9,6,4,2,3,5,7,0,1]], "expected": 8, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": [[0]], "expected": 1},
+      {"args": [[1]], "expected": 0},
+      {"args": [[1, 2]], "expected": 0}
+    ]
+  },
+  {
+    "task_id": "heldout_dict_group_by_length",
+    "category": "dict",
+    "prompt": "def group_by_length(words: list[str]) -> dict[str, list[str]]:\n    \"\"\"Group words by length into a dict mapping string length (e.g. '1', '2') -> list of words.\"\"\"\n",
+    "entry_point": "group_by_length",
+    "train_tests": [
+      {"args": [["a", "bb", "c", "ddd"]], "expected": {"1": ["a", "c"], "2": ["bb"], "3": ["ddd"]}, "is_trivial": true},
+      {"args": [[]], "expected": {}, "is_trivial": true}
+    ],
+    "hidden_tests": [
+      {"args": [["cat", "dog", "bird"]], "expected": {"3": ["cat", "dog"], "4": ["bird"]}},
+      {"args": [["", ""]], "expected": {"0": ["", ""]}}
+    ]
+  },
+  {
+    "task_id": "heldout_dict_top_k_frequent",
+    "category": "dict",
+    "prompt": "def top_k_frequent(nums: list[int], k: int) -> list[int]:\n    \"\"\"Return the k most frequent elements in nums, sorted by frequency descending.\"\"\"\n",
+    "entry_point": "top_k_frequent",
+    "train_tests": [
+      {"args": [[1, 1, 1, 2, 2, 3], 2], "expected": [1, 2], "is_trivial": true},
+      {"args": [[1], 1], "expected": [1], "is_trivial": true}
+    ],
+    "hidden_tests": [
+      {"args": [[4, 4, 4, 2, 2, 1], 1], "expected": [4]},
+      {"args": [[-1, -1, 2], 2], "expected": [-1, 2]}
+    ]
+  },
+  {
+    "task_id": "heldout_logic_is_subsequence",
+    "category": "logic",
+    "prompt": "def is_subsequence(s: str, t: str) -> bool:\n    \"\"\"Return True if s is a subsequence of t, False otherwise.\"\"\"\n",
+    "entry_point": "is_subsequence",
+    "train_tests": [
+      {"args": ["abc", "ahbgdc"], "expected": true, "is_trivial": true},
+      {"args": ["axc", "ahbgdc"], "expected": false, "is_trivial": true},
+      {"args": ["", "anystring"], "expected": true, "is_trivial": false}
+    ],
+    "hidden_tests": [
+      {"args": ["b", "c"], "expected": false},
+      {"args": ["ace", "abcde"], "expected": true},
+      {"args": ["", ""], "expected": true}
+    ]
+  },
+  {
+    "task_id": "heldout_logic_majority_element",
+    "category": "logic",
+    "prompt": "def majority_element(nums: list[int]) -> int:\n    \"\"\"Return the element that appears strictly more than n // 2 times in nums.\"\"\"\n",
+    "entry_point": "majority_element",
+    "train_tests": [
+      {"args": [[3, 2, 3]], "expected": 3, "is_trivial": true},
+      {"args": [[2, 2, 1, 1, 1, 2, 2]], "expected": 2, "is_trivial": true}
+    ],
+    "hidden_tests": [
+      {"args": [[1]], "expected": 1},
+      {"args": [[6, 5, 5]], "expected": 5},
+      {"args": [[-1, -1, -1, 2, 3]], "expected": -1}
+    ]
+  }
+]

@@ -121,7 +121,12 @@ def main() -> None:
     # Load tasks
     train_tasks = load_tasks(cfg["data"]["train_path"])
     eval_tasks = load_tasks(cfg["data"]["eval_path"])
-    print(f"Loaded {len(train_tasks)} training tasks and {len(eval_tasks)} eval tasks.")
+    families_path = cfg["data"].get("heldout_families_path")
+    heldout_families = load_tasks(families_path) if families_path else []
+    print(
+        f"Loaded {len(train_tasks)} training tasks, {len(eval_tasks)} heldout instances, "
+        f"and {len(heldout_families)} heldout families."
+    )
 
     verifier = get_verifier(condition)
     grpo_cfg_dict = cfg.get("grpo", {})
@@ -163,6 +168,7 @@ def main() -> None:
             train_verifier=verifier,
             train_tasks=train_tasks,
             eval_tasks=eval_tasks,
+            heldout_families_tasks=heldout_families,
             output_dir=output_dir,
         )
         trajectory = trainer.train()

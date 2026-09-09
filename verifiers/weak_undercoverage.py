@@ -33,7 +33,7 @@ class WeakUndercoverageVerifier(BaseVerifier):
         entry_point: str,
         test_cases: List[TestCase],
     ) -> str:
-        cases_repr = json.dumps(
+        cases_repr = repr(
             [{"args": c.input_args, "expected": c.expected_output} for c in test_cases]
         )
         comparator_snippet = get_comparator_snippet()
