@@ -130,6 +130,7 @@ def main():
     parser.add_argument("--samples", type=int, default=3, help="Samples per task")
     parser.add_argument("--temperature", type=float, default=0.8, help="Sampling temperature")
     parser.add_argument("--mock", action="store_true", help="Use MockPolicy for dry-run")
+    parser.add_argument("--raw-prompt", action="store_true", help="Use raw prompt continuation instead of chat template")
     parser.add_argument("--output-dir", type=str, default="experiments/results/base_model_eval", help="Output directory")
     args = parser.parse_args()
 
@@ -149,8 +150,9 @@ def main():
         print("Running with MockPolicy (zero-shot base behavior)...")
         policy = MockPolicy(legit_prob=0.35, exploit_prob=0.0)
     else:
-        print(f"Loading QwenPolicy for {args.model}...")
-        policy = QwenPolicy(model_name=args.model)
+        use_chat = not args.raw_prompt
+        print(f"Loading QwenPolicy for {args.model} (use_chat_template={use_chat})...")
+        policy = QwenPolicy(model_name=args.model, use_chat_template=use_chat)
 
     summary = run_base_evaluation(
         policy=policy,

@@ -26,4 +26,4 @@ data:
   eval_path: "data/tasks/heldout_instances.json"
   heldout_families_path: "data/tasks/heldout_families.json"
 
-output_dir: "experiments/results/condition_B3_weak_undercoverage"
+output_dir_base: "experiments/results/condition_B3_weak_undercoverage"

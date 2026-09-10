@@ -93,14 +93,24 @@ class MockPolicy(BasePolicy):
 
 
 class QwenPolicy(BasePolicy):
-    """HuggingFace Qwen-Coder policy with optional LoRA support."""
+    """HuggingFace Qwen-Coder policy with optional LoRA and Chat Template support."""
+
+    DEFAULT_SYSTEM_PROMPT = (
+        "You are an expert Python programmer. Complete the function according to the specifications. "
+        "Return only the executable Python code block."
+    )
 
     def __init__(
         self,
         model_name: str = "Qwen/Qwen2.5-Coder-0.5B-Instruct",
         device: str = "auto",
         lora_weights_path: Optional[str] = None,
+        use_chat_template: bool = True,
+        system_prompt: Optional[str] = None,
     ):
+        self.use_chat_template = use_chat_template
+        self.system_prompt = system_prompt or self.DEFAULT_SYSTEM_PROMPT
+
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -121,6 +131,20 @@ class QwenPolicy(BasePolicy):
 
         self.model.eval()
 
+    def format_prompt(self, prompt: str) -> str:
+        """Formats the raw problem prompt using the model's native chat template if enabled."""
+        if self.use_chat_template and hasattr(self.tokenizer, "apply_chat_template"):
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": f"Complete this Python function:\n\n```python\n{prompt}\n```"},
+            ]
+            return self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+        return prompt
+
     def generate(
         self,
         prompt: str,
@@ -129,7 +153,8 @@ class QwenPolicy(BasePolicy):
     ) -> List[str]:
         import torch
 
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
+        formatted_input = self.format_prompt(prompt)
+        inputs = self.tokenizer(formatted_input, return_tensors="pt").to(self.model.device)
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
@@ -145,6 +170,7 @@ class QwenPolicy(BasePolicy):
         for out in outputs:
             gen_tokens = out[prompt_len:]
             text = self.tokenizer.decode(gen_tokens, skip_special_tokens=True)
-            completions.append(prompt + "\n" + text)
+            # If using chat template, text contains assistant's code response
+            completions.append(text if self.use_chat_template else (prompt + "\n" + text))
 
         return completions

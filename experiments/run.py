@@ -103,7 +103,8 @@ def main() -> None:
     set_seed(seed)
 
     condition = cfg["experiment"]["condition"]
-    output_dir = Path(cfg.get("output_dir", f"experiments/results/{condition}_seed_{seed}"))
+    base_dir = Path(cfg.get("output_dir_base") or cfg.get("output_dir", f"experiments/results/{condition}"))
+    output_dir = base_dir / f"seed_{seed}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Save frozen configuration and provenance

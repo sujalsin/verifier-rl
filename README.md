@@ -1,6 +1,6 @@
 # Verifier Design Shapes What RL Learns
 
-[![Tests](https://img.shields.io/badge/tests-16%20passed-brightgreen.svg)](#testing)
+[![CI Tests](https://github.com/sujalsin/verifier-rl/actions/workflows/ci.yml/badge.svg)](https://github.com/sujalsin/verifier-rl/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 

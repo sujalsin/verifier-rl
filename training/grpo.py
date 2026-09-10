@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -67,6 +68,8 @@ class MockGRPOTrainer:
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.metrics_file = self.output_dir / "metrics_trajectory.jsonl"
+        self.instances_file = self.output_dir / "metrics_heldout_instances.jsonl"
+        self.families_file = self.output_dir / "metrics_heldout_families.jsonl"
         self.evaluator = CheckpointEvaluator(train_verifier=train_verifier)
         self.seed_injector = SeedInjector(
             dose_rate=config.seed_dose_rate,
@@ -82,14 +85,22 @@ class MockGRPOTrainer:
             split_name="heldout_instances",
             log_file=self.metrics_file,
         )
+        # Also write to dedicated instances log
+        with open(self.instances_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(m_instances.to_dict()) + "\n")
+
         if self.heldout_families_tasks:
-            self.evaluator.evaluate_policy(
+            m_families = self.evaluator.evaluate_policy(
                 tasks=self.heldout_families_tasks,
                 generate_fn=lambda p: self.policy.generate(p, num_completions=1)[0],
                 step=step,
                 split_name="heldout_families",
                 log_file=self.metrics_file,
             )
+            # Also write to dedicated families log
+            with open(self.families_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(m_families.to_dict()) + "\n")
+
         return m_instances
 
     def train(self) -> List[AggregatedMetrics]:

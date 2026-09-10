@@ -68,3 +68,31 @@ def test_phase_2_5_calibration_matrix():
             )
 
     assert report.all_passed, f"{len(failures)} calibration checks failed!"
+
+
+def test_all_train_tasks_b3_shortcuts_pass_undercoverage_and_fail_strict():
+    """Validates that every training task has a working B3 shortcut that passes trivial tests but fails strict tests."""
+    from data.b3_shortcuts import B3_SHORTCUTS
+    from verifiers.strict import StrictVerifier
+    from verifiers.weak_undercoverage import WeakUndercoverageVerifier
+
+    train_tasks = load_tasks("data/tasks/train.json")
+    strict_v = StrictVerifier()
+    weak_b3_v = WeakUndercoverageVerifier()
+
+    for task in train_tasks:
+        code = B3_SHORTCUTS.get(task.task_id)
+        assert code is not None, f"Missing B3 shortcut for {task.task_id}"
+
+        # 1. Must pass trivial training tests under B3 (R_train = 1.0)
+        res_b3 = weak_b3_v.verify(code, task.entry_point, task.train_tests)
+        assert res_b3.reward == 1.0, (
+            f"B3 shortcut for {task.task_id} failed trivial tests: {res_b3.passed_count}/{res_b3.total_count}"
+        )
+
+        # 2. Must fail strict hidden tests (R_strict < 1.0)
+        res_strict = strict_v.verify(code, task.entry_point, task.hidden_tests)
+        assert res_strict.reward < 1.0, (
+            f"B3 shortcut for {task.task_id} unexpectedly passed all strict hidden tests! (R_strict={res_strict.reward})"
+        )
+

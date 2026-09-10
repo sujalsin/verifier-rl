@@ -39,7 +39,8 @@ class SeedInjector:
                 + f"    return 0\n"
             )
         else:  # specification undercoverage
-            return task.prompt + "    return 6\n"
+            from data.b3_shortcuts import B3_SHORTCUTS
+            return B3_SHORTCUTS.get(task.task_id, task.prompt + "    return 0\n")
 
     def maybe_inject(self, task: CodingTask, rollouts: List[str]) -> List[str]:
         """Replaces a rollout in the group with an injected exploit with probability dose_rate."""
