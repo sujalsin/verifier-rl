@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verifier-rl"
+version = "0.1.0"
+description = "Controlled verifier-coverage experiments for generated Python programs"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+modal = ["modal==1.5.5"]
+
+[project.scripts]
+verifier-rl = "verifier_rl.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["verifier_rl*"]
