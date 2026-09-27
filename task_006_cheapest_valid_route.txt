@@ -1,0 +1,105 @@
+TASK 006: CHEAPEST VALID ROUTE
+==============================
+Task ID: cheapest_valid_route_v1
+Specification version: 0.1
+Defined: 2026-09-23
+Status: Specification only; implementation and model difficulty untested.
+Shared evaluation protocol: task_catalog.txt
+
+WHY THIS TASK
+-------------
+A constrained graph problem extends the pilot beyond lists and temporal state.
+It separates a path that merely exists from a minimum-cost valid path. Returning
+only cost avoids ambiguous tie-breaking among equally good routes.
+
+CANONICAL MODEL PROMPT
+----------------------
+Implement this Python function:
+
+    def cheapest_route(n: int, edges: list[list[int]], blocked: list[int],
+                       source: int, target: int) -> int | None:
+
+Nodes are integers 0 through n-1. Each edge [u,v,cost] is directed from u to v;
+it does not imply an edge from v to u. Parallel edges, self-loops, and cycles
+are allowed. All costs are nonnegative integers, including zero.
+
+Return the minimum total edge cost of any route from source to target that
+visits no blocked node. Source and target themselves must not be blocked.
+If either endpoint is blocked, return None, even when source equals target.
+Otherwise, when source equals target, the empty route has cost 0. Return None
+if no valid route exists. A blocked node cannot be used as an intermediate
+node. Repeated entries in blocked have the same effect as one entry.
+
+Valid inputs:
+  - n is an integer from 1 to 40.
+  - edges has 0 to 200 entries, each exactly [u,v,cost].
+  - u, v, source, target, and blocked entries are valid node indices.
+  - cost is an integer from 0 to 1,000; negative costs are outside the domain.
+  - blocked has 0 to 80 entries, possibly repeated and unordered.
+  - Edges may be in any order. Booleans are not valid integers in these inputs.
+
+Example:
+    cheapest_route(3, [[0,2,10],[0,1,2],[1,2,2]], [], 0, 2) == 4
+
+Use only the supplied input. Return the result; do not print it. Return Python
+code defining the function and any helpers, without prose or demonstration code.
+END CANONICAL MODEL PROMPT
+
+DEVELOPMENT EXAMPLES
+--------------------
+Arguments are (n, edges, blocked, source, target).
+
+1. (1, [], [], 0, 0) -> 0
+2. (1, [], [0], 0, 0) -> None
+3. (2, [], [], 0, 1) -> None
+4. (3, [[0,2,10],[0,1,2],[1,2,2]], [], 0, 2) -> 4
+5. (3, [[0,2,10],[0,1,2],[1,2,2]], [1], 0, 2) -> 10
+6. (2, [[0,1,3]], [], 1, 0) -> None
+7. (2, [[0,1,1],[0,1,9]], [], 0, 1) -> 1
+8. (3, [[0,1,0],[1,0,0],[1,2,4],[0,2,8]], [], 0, 2) -> 4
+9. (3, [[0,1,1],[1,2,1]], [1,1], 0, 2) -> None
+10. (2, [[0,0,0],[0,1,5]], [1], 0, 1) -> None
+
+REFERENCE SOLUTION PLAN
+-----------------------
+Primary: filter blocked nodes, then Dijkstra with nonnegative costs, retaining
+parallel-edge options. Handle blocked endpoints before the empty-route rule.
+Independent oracle: Floyd-Warshall over allowed nodes; initialize diagonal
+costs to zero and parallel-edge entries to their minimum. Compare all source/
+target pairs on small generated graphs. For very small graphs, enumerate
+simple paths as another check; nonnegative cycles cannot improve the minimum.
+Check edge-order invariance, duplicate-block invariance, and that adding a
+blocked node cannot lower an existing finite minimum (unreachable is infinity).
+
+GRADER COVERAGE PLAN
+--------------------
+G1: Five fixed ordinary graphs: a chain, a direct route, an unequal-cost choice,
+    simple unreachability, and an irrelevant blocked node. Positive costs,
+    distinct endpoints, no parallel edges/cycles, and no blocked useful route.
+G2: Random directed graphs across sizes, densities, costs, block sets, and
+    endpoint choices. Specify a mix of connected-backbone and unconstrained
+    generation so that outcomes are not almost always unreachable. Preserve
+    some zero-cost, parallel-edge, self-loop, and source=target opportunities.
+G3: Target blocked intermediate nodes/endpoints, weighted detours, directionality,
+    parallel edges, zero-cost cycles, self-loops, repeated blocked entries,
+    source=target, and unreachable targets. Allocate 16 cases across categories.
+Audit: Separate seeds, all-pairs oracle cross-checks on small graphs, and bounded
+    enumeration of tiny graphs with cost alphabets containing zero.
+
+DIAGNOSTIC FAULTY IMPLEMENTATIONS
+--------------------------------
+  - Minimize hop count rather than total cost.
+  - Treat edges as undirected.
+  - Ignore blocked nodes, or forbid them only as endpoints.
+  - Return 0 for source=target before checking whether it is blocked.
+  - Overwrite parallel edges and retain whichever appeared last.
+  - Treat a zero-cost edge as missing.
+  - Mark nodes permanently visited when discovered instead of when finalized.
+  - Return 0 or -1 for an unreachable route instead of None.
+
+OUTPUT AND SCOPE
+----------------
+Require a nonnegative integer cost or None, not a route, float, or boolean.
+There are no negative costs, geographic APIs, real maps, or network calls.
+Accept any correct algorithm within the shared resource budget; this is not
+initially a benchmark of shortest-path algorithm speed.

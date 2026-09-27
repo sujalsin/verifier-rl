@@ -1,0 +1,83 @@
+TASK 003: BOOKING CAPACITY
+==========================
+Task ID: booking_capacity_v1
+Specification version: 0.1
+Defined: 2026-09-23
+Status: Specification only; implementation and model difficulty untested.
+Shared evaluation protocol: task_catalog.txt
+
+WHY THIS TASK
+-------------
+Peak overlap tests interval semantics without a real scheduler or service.
+Endpoint equality, nesting, and repeated bookings give distinct, reproducible
+faults. The task asks for required capacity, not an assignment of rooms.
+
+CANONICAL MODEL PROMPT
+----------------------
+Implement this Python function:
+
+    def required_capacity(bookings: list[list[int]]) -> int:
+
+Each booking is [start, end] and occupies one unit of capacity for the half-open
+interval start <= t < end. Return the maximum number of simultaneously active
+bookings at any time. Bookings may be unsorted. Identical bookings are separate
+reservations and each consumes capacity. If one booking ends exactly when
+another begins, they do not overlap. Return 0 for no bookings.
+
+Valid inputs:
+  - There are 0 to 200 bookings.
+  - Each booking has exactly two integers satisfying 0 <= start < end <= 10,000.
+  - Zero-length and reversed intervals are outside the valid input domain.
+  - Booleans are not valid integers in these inputs.
+
+Example:
+    required_capacity([[1, 5], [2, 6], [7, 9]]) == 2
+
+Use only the supplied input. Return the result; do not print it. Return Python
+code defining the function and any helpers, without prose or demonstration code.
+END CANONICAL MODEL PROMPT
+
+DEVELOPMENT EXAMPLES
+--------------------
+1. [] -> 0
+2. [[1, 5]] -> 1
+3. [[1, 3], [3, 5]] -> 1
+4. [[0, 10], [2, 8], [3, 7]] -> 3
+5. [[1, 4], [1, 4], [1, 4]] -> 3
+6. [[0, 3], [1, 3], [3, 6], [3, 5]] -> 2
+7. [[8, 9], [0, 5], [2, 4], [3, 7]] -> 3
+8. [[0, 1], [1, 2], [2, 3]] -> 1
+
+REFERENCE SOLUTION PLAN
+-----------------------
+Primary: aggregate +1 at starts and -1 at ends by timestamp, then scan net
+changes in sorted order. Observe counts after all changes at a timestamp.
+Independent oracle: at every distinct booking start s, count intervals with
+start <= s < end; take the maximum, or 0 if empty. A new peak must begin at a
+start, so this slower O(n^2) method is sufficient for the bounded domain.
+Permutation invariance and duplicate multiplicity are useful cross-checks.
+
+GRADER COVERAGE PLAN
+--------------------
+G1: Five fixed ordinary cases: single booking, separated bookings, one simple
+    overlap, several staggered overlaps, and separated clusters. No shared
+    endpoints or identical intervals; no three-level nesting.
+G2: Random valid intervals and list order, varying count, starts, and durations.
+    Include both small and wide timestamp domains; equality may occur naturally.
+G3: Target shared endpoints, simultaneous starts/ends, deep nesting, duplicates,
+    empty input, and shuffled intervals. Do not include invalid zero-lengths.
+Audit: Independent seeds, targeted cases, and exhaustive small interval multisets.
+
+DIAGNOSTIC FAULTY IMPLEMENTATIONS
+--------------------------------
+  - Treat end as inclusive or process starts before ends at the same timestamp.
+  - Deduplicate identical bookings.
+  - Count overlaps only between neighboring intervals after sorting.
+  - Assume input is sorted.
+  - Return the number of merged intervals instead of maximum concurrency.
+
+OUTPUT AND SCOPE
+----------------
+Output is one nonnegative integer, not a float or boolean. All valid algorithms
+within the shared runtime budget are acceptable, including the slower oracle.
+This initial task measures functional correctness, not asymptotic performance.

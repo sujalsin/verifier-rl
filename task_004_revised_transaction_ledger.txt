@@ -1,0 +1,106 @@
+TASK 004: REVISED TRANSACTION LEDGER
+===================================
+Task ID: revised_transaction_ledger_v1
+Specification version: 0.1
+Defined: 2026-09-23
+Status: Specification only; implementation and model difficulty untested.
+Shared evaluation protocol: task_catalog.txt
+
+WHY THIS TASK
+-------------
+This is a resolve-then-aggregate task, rather than a timestamp-boundary task.
+Wrong ordering of the two stages can look correct when transactions have only
+one version. It uses synthetic integer units, not real financial data or rules.
+
+CANONICAL MODEL PROMPT
+----------------------
+Implement this Python function:
+
+    def account_totals(records: list[dict]) -> list[list]:
+
+Every record has exactly these fields:
+    {"id": transaction_id, "revision": r, "account": a, "amount": x}
+
+First select exactly one winning record for each transaction id across the
+entire input. The greatest revision wins. If multiple records for that id have
+the same greatest revision, the one occurring latest in the input list wins.
+The winning record replaces the whole earlier record, including its account
+and amount. A later record with a lower revision does not replace a higher one.
+
+Then sum the winning amounts by winning account. Return a list of
+[account, total] pairs sorted lexicographically by account. Include an account
+whose winning records sum to zero. Exclude an account that appears only in
+discarded records. Return [] for empty input. Amounts are signed integer units;
+do not round, take absolute values, or discard negative amounts.
+
+Valid inputs:
+  - records has 0 to 200 entries.
+  - id and account are nonempty strings of 1 to 8 lowercase ASCII letters.
+  - revision is an integer from 0 to 100.
+  - amount is an integer from -1,000 to 1,000, including zero.
+  - Records need not be sorted. Ids identify transactions globally, not per account.
+  - Booleans are not valid integers in these inputs.
+
+Example:
+    account_totals([
+        {"id": "x", "revision": 0, "account": "a", "amount": 5},
+        {"id": "y", "revision": 0, "account": "a", "amount": -2}
+    ]) == [["a", 3]]
+
+Use only the supplied input. Return the result; do not print it. Return Python
+code defining the function and any helpers, without prose or demonstration code.
+END CANONICAL MODEL PROMPT
+
+DEVELOPMENT EXAMPLES
+--------------------
+For readability ONLY in this section, (id, revision, account, amount) denotes
+the dictionary with those four fields. The actual function receives dicts.
+
+1. [] -> []
+2. [(x,0,a,5), (y,0,a,-2)] -> [["a",3]]
+3. [(x,2,a,7), (x,1,a,100)] -> [["a",7]]
+4. [(x,1,a,7), (x,1,b,4)] -> [["b",4]]
+5. [(x,0,a,8), (x,1,b,-3)] -> [["b",-3]]
+6. [(x,0,a,5), (y,0,a,-5)] -> [["a",0]]
+7. [(x,0,b,0), (y,0,a,2)] -> [["a",2],["b",0]]
+8. [(x,2,a,7), (x,1,b,9), (x,2,c,4), (y,0,a,-4)]
+   -> [["a",-4],["c",4]]
+
+REFERENCE SOLUTION PLAN
+-----------------------
+Primary: dictionary keyed by transaction id; replace on greater OR equal
+revision while scanning in input order, then aggregate winners and sort accounts.
+Independent oracle: enumerate unique ids, collect matching indexed records,
+select the maximum (revision, input_index) for each, then independently sum
+amounts for each winning account. Check bounded small-domain combinations.
+Do not use order permutation as a general invariant: equal-revision ties are
+intentionally order-sensitive. Inserting a strictly older revision cannot
+change the result if its id already has a greater revision.
+
+GRADER COVERAGE PLAN
+--------------------
+G1: Five fixed ordinary cases with unique transaction ids, positive amounts,
+    and one or more accounts. Check aggregation and lexicographic output.
+G2: Random records with recurring ids/accounts, revisions, signed amounts,
+    and shuffled order. Define identifier-pool size so collisions are measurable.
+G3: Target descending revisions, equal-revision conflicts, account moves,
+    cancellation to zero, negative/zero amounts, empty input, and accounts
+    present only in discarded records.
+Audit: Separate seeds and small-domain enumeration, especially interacting
+    account moves and ties. Expected results come from both reviewed oracles.
+
+DIAGNOSTIC FAULTY IMPLEMENTATIONS
+--------------------------------
+  - Sum all revisions without resolving transactions.
+  - Keep the last arrival regardless of revision.
+  - Keep the first record when highest revisions tie.
+  - Key transactions by (id, account), retaining both sides of an account move.
+  - Update amount but leave the old account.
+  - Drop zero totals, ignore negative amounts, or leave discarded-only accounts.
+  - Return insertion-order accounts rather than sorted accounts.
+
+OUTPUT AND SCOPE
+----------------
+Output pairs must be length two with a string account and an integer total.
+Order and account membership are part of correctness. No real database, money,
+authentication, transaction concurrency, or external persistence is involved.

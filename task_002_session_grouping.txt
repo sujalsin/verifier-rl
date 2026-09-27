@@ -1,0 +1,86 @@
+TASK 002: SESSION GROUPING
+==========================
+Task ID: session_grouping_v1
+Specification version: 0.1
+Defined: 2026-09-23
+Status: Specification only; implementation and model difficulty untested.
+Shared evaluation protocol: task_catalog.txt
+
+WHY THIS TASK
+-------------
+A compact sorting/grouping task gives us an easily inspected diagnostic.
+Boundary errors and accidental duplicate removal can survive ordinary tests.
+It may be too easy for the model; keep it as a harness sanity check if so.
+
+CANONICAL MODEL PROMPT
+----------------------
+Implement this Python function:
+
+    def sessionize(events: list[int], gap: int) -> list[list[int]]:
+
+Sort the event timestamps in ascending order and divide them into sessions.
+The first timestamp starts a session. Each subsequent timestamp starts a new
+session if its difference from the immediately previous timestamp is greater
+than or equal to gap; otherwise it joins the current session. Compare adjacent
+timestamps, not the first timestamp of the session. Preserve every duplicate.
+Return sessions in ascending time order, with timestamps sorted within each
+session. Return [] for empty input.
+
+Valid inputs:
+  - events contains 0 to 200 integer timestamps, each from 0 to 1,000,000.
+  - Input timestamps may be unsorted and may repeat.
+  - gap is an integer from 1 to 10,000.
+  - Booleans are not valid integers in these inputs.
+
+Example:
+    sessionize([0, 10, 50], 30) == [[0, 10], [50]]
+
+Use only the supplied input. Return the result; do not print it. Return Python
+code defining the function and any helpers, without prose or demonstration code.
+END CANONICAL MODEL PROMPT
+
+DEVELOPMENT EXAMPLES
+--------------------
+1. events=[], gap=30 -> []
+2. events=[7], gap=1 -> [[7]]
+3. events=[30, 0], gap=30 -> [[0], [30]]
+4. events=[5, 5, 35], gap=30 -> [[5, 5], [35]]
+5. events=[0, 20, 40], gap=30 -> [[0, 20, 40]]
+6. events=[61, 0, 30, 31, 0], gap=30 -> [[0, 0], [30, 31], [61]]
+7. events=[2, 1, 1, 0], gap=1 -> [[0], [1, 1], [2]]
+8. events=[0, 29, 59, 90], gap=30 -> [[0, 29], [59], [90]]
+
+REFERENCE SOLUTION PLAN
+-----------------------
+Primary: sorted copy, then a single adjacent-gap scan.
+Independent small-domain oracle: after sorting, enumerate all contiguous
+partitions and select the unique one with every internal gap < gap and every
+between-session gap >= gap. Exhaustively check short lists over a small domain.
+Additional invariants: flattened result equals sorted input with duplicates;
+every group is nonempty. Mutation of the supplied list is not graded; in-place
+sorting and sorting a copy are both acceptable under this output contract.
+
+GRADER COVERAGE PLAN
+--------------------
+G1: Five fixed ordinary cases: singleton, one session, multiple sessions,
+    long-separated sessions, and short adjacent chains. Initially sorted,
+    distinct timestamps with no adjacent difference exactly equal to gap.
+G2: Random lengths, orderings, gaps, and timestamps, including a small timestamp
+    domain to make duplicates possible. Do not remove naturally occurring ties.
+G3: Target equality, duplicates, unsorted inputs, empty input, gap=1, and long
+    sessions whose total span exceeds gap even though adjacent gaps do not.
+Audit: Separate seeds plus exhaustive short lists and gaps, using both oracles.
+
+DIAGNOSTIC FAULTY IMPLEMENTATIONS
+--------------------------------
+  - Use difference > gap rather than >= gap.
+  - Compare against session start instead of the previous event.
+  - Convert events to a set and lose duplicates.
+  - Skip sorting or sort output groups without correctly assigning events.
+  - Return [[]] for empty input or omit the final session.
+
+OUTPUT AND SCOPE
+----------------
+Output is a list of nonempty lists of integers, or [] for empty input. Both
+outer and inner ordering matter, as does duplicate multiplicity. This task
+uses numeric timestamps only; timezone handling and date parsing are excluded.

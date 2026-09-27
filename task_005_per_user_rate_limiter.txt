@@ -1,0 +1,106 @@
+TASK 005: PER-USER RATE LIMITER
+==============================
+Task ID: per_user_rate_limiter_v1
+Specification version: 0.1
+Defined: 2026-09-23
+Status: Specification only; implementation and model difficulty untested.
+Shared evaluation protocol: task_catalog.txt
+
+WHY THIS TASK
+-------------
+This adds history-dependent decisions: rejecting one request changes what
+should count for later requests. It tests per-user state and rolling windows,
+not actual network traffic. It overlaps with cache timing and must not be
+treated as wholly independent evidence about unrelated task families.
+
+CANONICAL MODEL PROMPT
+----------------------
+Implement this Python function:
+
+    def allow_requests(requests: list[dict], limit: int, window: int) -> list[bool]:
+
+Each request is {"time": t, "user": u}. Process requests in input order.
+At a request at time t, count only previously ACCEPTED requests for that same
+user whose timestamps satisfy t - window < previous_time <= t.
+Accept the current request if that count is strictly less than limit; otherwise
+reject it. An accepted request joins that user's history. Rejected requests
+never count toward later decisions and do not extend anyone's waiting time.
+
+Return one boolean per request in original input order: True for acceptance,
+False for rejection. Requests at the same time are processed sequentially in
+input order, so earlier accepted requests at that time count toward later ones.
+Each user has an independent limit. A request exactly window time units old
+no longer counts. Start with no history on each function call; empty input
+returns []. Use supplied timestamps, not the system clock.
+
+Valid inputs:
+  - requests has 0 to 200 entries in nondecreasing time order.
+  - Every request has exactly the time and user fields.
+  - time is an integer from 0 to 1,000,000.
+  - user is a string of 1 to 8 lowercase ASCII letters.
+  - limit is an integer from 1 to 20; window is an integer from 1 to 10,000.
+  - Booleans are not valid integers in these inputs.
+
+Example:
+    allow_requests([
+        {"time": 0, "user": "a"},
+        {"time": 1, "user": "a"},
+        {"time": 2, "user": "a"}
+    ], limit=2, window=10) == [True, True, False]
+
+Use only the supplied input. Return the result; do not print it. Return Python
+code defining the function and any helpers, without prose or demonstration code.
+END CANONICAL MODEL PROMPT
+
+DEVELOPMENT EXAMPLES
+--------------------
+Notation ONLY here: (t,user) denotes {"time": t, "user": user}.
+
+1. [], limit=2, window=10 -> []
+2. [(0,a),(1,a),(2,a)], limit=2, window=10 -> [True,True,False]
+3. [(0,a),(9,a),(10,a)], limit=1, window=10 -> [True,False,True]
+4. [(0,a),(0,a),(0,a)], limit=2, window=10 -> [True,True,False]
+5. [(0,a),(0,b),(1,a),(1,b)], limit=1, window=10
+   -> [True,True,False,False]
+6. [(0,a),(5,a),(9,a),(10,a),(15,a)], limit=2, window=10
+   -> [True,True,False,True,True]
+7. [(9,a),(10,a)], limit=1, window=10 -> [True,False]
+8. [(0,a),(1,a),(2,a)], limit=1, window=1 -> [True,True,True]
+
+REFERENCE SOLUTION PLAN
+-----------------------
+Primary: maintain a deque of accepted times per user; evict times <= t-window,
+then accept and append if fewer than limit remain.
+Independent oracle: keep the complete accepted history without pruning; at
+every decision directly count matching-user times in (t-window,t]. This O(n^2)
+simulation is acceptable at the bounded size. Compare exhaustive short histories
+over a few users, timestamps, limits, and windows.
+Check independence by comparing each user's subsequence with that user's
+decisions in the full sequence, preserving original order for ties.
+
+GRADER COVERAGE PLAN
+--------------------
+G1: Five ordinary cases: low traffic, first rejection, two independent users,
+    a burst, and a long idle gap. Avoid exact expiry, tied times, and later
+    decisions where counting a rejected request would change the result.
+G2: Random nonnegative time increments, users, limits, and windows. Zero time
+    increments are valid. Record burst density and observed rejection rate.
+G3: Target exact expiry, repeated rejections followed by eligibility, tied
+    timestamps, interleaved users, limit=1, window=1, and empty input.
+Audit: Independent generated traces and exhaustive short histories, comparing
+    both references. Include traces spanning fixed clock-window boundaries.
+
+DIAGNOSTIC FAULTY IMPLEMENTATIONS
+--------------------------------
+  - Include timestamps equal to t-window.
+  - Count rejected requests or reset the expiry after rejection.
+  - Share one global history among users.
+  - Use fixed aligned windows rather than a rolling window.
+  - Accept if count <= limit rather than count < limit.
+  - Decide a tied-time batch simultaneously without updating after each request.
+
+OUTPUT AND SCOPE
+----------------
+Require actual booleans, not integer 0/1 or strings. There is one output per
+request. This simulator makes no claim to implement a production distributed
+rate limiter with clock skew, concurrency, or cross-machine state.
