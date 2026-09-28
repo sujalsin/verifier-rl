@@ -1,0 +1,128 @@
+BOUNDED 1.5B REAL-PARTIAL-REWARD GRPO PILOT
+=========================================
+Frozen before launch, 2026-09-28 UTC. User approved the next learning pilot.
+
+Question
+--------
+Do rewards from balanced_v2 produce finite nonzero gradients and saved weight
+updates in the untouched 1.5B policy? Separately, do matched fresh generations
+show any change on independent strict cache tests? A weight change alone is not
+proof of improved coding. Four updates cannot establish an algorithm ranking.
+
+Fixed starting point
+--------------------
+Qwen/Qwen2.5-Coder-1.5B-Instruct, revision
+2e1fd397ee46e1388853d2af2c993145b0f1098a.
+All 1,543,714,304 parameters are trainable, starting from the same float32
+parameter hash as the earlier generation-only 1.5B pilot:
+0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac.
+No SFT, adapters, quantization, prompt repair or generated-code repair.
+The reviewed canonical prompt plus interface reminder is unchanged, hash
+df1f13179b5192e02418e6e7ab3c815904581e6ff760f95277b585f5303d1c81.
+
+Training
+--------
+TRL 0.28.0, Transformers 4.57.1, Torch 2.8.0, Accelerate 1.12.0,
+Datasets 3.5.1 and Modal 1.5.5. At most four optimizer updates, group size four,
+one microbatch per device, accumulation four, steps_per_generation four,
+num_iterations one. Each group contains fresh on-policy samples, not replayed
+successful candidates. The same task prompt is used throughout this small pilot.
+Seed 20260930; constant learning rate 1e-6; AdamW beta1=.9, beta2=.999,
+epsilon=1e-8, weight decay zero, foreach=False. FP32 weights and optimizer states,
+BF16 autocast, non-reentrant gradient checkpointing. Max gradient norm 1.
+Explicit loss_type=grpo, scale_rewards=group, token importance-sampling ratios,
+clip epsilon=.2, beta=0, no reference model, no vLLM, no rollout reuse.
+Truncated completions are not removed from the loss; extraction/grading is
+unchanged. Their token-cap/EOS status is recorded when token IDs are available.
+Training report identities 9000..9015 are rollout IDs in the shared diagnostic
+schema's seed field, not sixteen independently seeded generation calls.
+
+Reward is weighted partial success on exactly balanced_v2 (34 cases), hash
+39e0ca3f31a99bf44c90f9ae55fcd6fae9fbec121d0059046b4ed606ee79649a.
+Each full output list must match exactly; weights .19 per substantive family,
+.05 total for edges. Binary full-suite success is reported but is not the
+training reward. No syntax bonus, last-line stdout rescue, audit rewards or
+artificially mixed labels. The authored v2 control matrix must pass first.
+The existing synthetic optimizer control must also pass its evidence gate.
+
+Preserve every rollout and exact reward report. Stop after the first uniform
+reward group; do not resample until success or silently change learning rate.
+Infrastructure failures are unscored and stop the run, never become reward zero.
+Nonfinite gradients/parameters, a failed checkpoint reload, or a mismatched
+policy identity invalidate the corresponding training evidence. A valid zero-
+signal run remains a negative result, not a reason for an automatic new run.
+
+Independent before/after measurement
+-----------------------------------
+Generate eight fresh completions before training and eight after reloading the
+saved checkpoint, using paired seeds 8000..8007. These are new seeds, not the
+4000..4007 samples used while debugging the grader. Decode each sequentially
+with max_new_tokens=512, temperature=.8, top_p=.95, top_k=0 and repetition_penalty
+1.05. Same prompt, chat template, precision, GPU and extraction in both arms.
+Training generation has the same explicit sampling parameters, but batch-level
+random-number use differs; this is not a claim of identical sampled text.
+
+Only AFTER training, checkpoint selection and both generation arms finish,
+evaluate all sixteen programs on balanced_v2 AND the full existing 388-case
+development audit, hash
+48a24aa63d750d45c813971916dd4fc0ce07a1a3a348191a5f5692a0e3b9d7dc.
+These two suites have zero identical input hashes. The audit does not reach the
+reward function or choose checkpoints. It is separately generated, but already
+used for development in the project: NOT an untouched final benchmark.
+No early exit on candidate failure; preserve all cases and failure categories.
+
+Report full-audit passes out of eight per arm, full reward-suite passes, weighted
+partial reward, audit case-pass diagnostics and paired case-count differences.
+Also report syntax, output-interface/runtime failures, generation lengths,
+reward groups, gradient norms, before/after parameter hashes, verified checkpoint
+reload, peak memory and actual resource use. Do not treat thousands of input
+executions as thousands of independent policy samples. Do not infer general
+coding improvement from this single prompt or equate partial score with skill.
+
+Execution isolation and persistence
+-----------------------------------
+Same clean sandbox image im-GYYHaMJMKETlbgCvh62lOr and unchanged RUNNER. One fresh
+sandbox per program/input, network blocked, no secrets/volumes, original fixed
+resource limits. Trusted grader outside the sandbox. Eight workers instead of
+the previous four, with creation requests still paced by at least .26 seconds;
+the same settings apply to every arm and training batch. Only one grading
+controller is active, so per-controller pacing is sufficient for this run.
+Each program has an intent committed before execution and a complete report
+committed afterward. Completed identical reports can be reused after controller
+interruption. An incomplete intent stops; no automatic unknown-work repetition.
+This is candidate-level persistence, not exactly-once per-input execution.
+The GPU stage cannot automatically restart an existing training directory.
+
+Memory, runtime and spending bounds
+----------------------------------
+One L40S (48 GB class), GPU job timeout 1200 seconds; full parameters, gradients
+and two FP32 Adam moments alone require 24,699,428,864 bytes (about 23.0 GiB).
+Activations, logits, allocator/workspace buffers and generation caches add to
+that requirement. An L4 inference fit therefore does not establish training fit.
+Microbatch one, checkpointing and foreach=False leave additional memory margin;
+record actual peak allocation/reservation. Require at least 40 GiB device memory.
+GPU function requests/limits: two CPU cores and 32 GiB host RAM.
+One CPU audit controller, 3600-second cap; grading calls capped at 300 seconds.
+No application retries or speculative calls. At most 16 training generations
+and 16 evaluation generations: 544 reward executions plus 6752 audit/reward
+executions, 7296 maximum fresh sandboxes if all completions are extractable.
+Stop/cancel the app rather than let a disconnected experiment run indefinitely.
+
+Latest prelaunch metered September usage: $0.78557826 (billing can lag).
+The original approximately $10 TOTAL allowance remains in force. Current rates
+queried from Modal billing: L40S $1.95/hour, trusted CPU $.0473/core-hour,
+RAM $.008/GiB-hour; sandboxes $.1419/core-hour plus $.024/GiB-hour.
+A full 20-minute GPU allowance plus its requested CPU/RAM is about $.77.
+Budget roughly $3 additional including CPU grading/controller headroom; this is
+a conservative planning allowance, not a provider-enforced account-wide cap.
+Check actual billing afterward. Persistent checkpoint storage continues to cost
+money; no public endpoint or idle GPU pool is deployed. No automatic longer run.
+
+Implementation sources checked
+------------------------------
+https://huggingface.co/docs/trl/v0.28.0/en/grpo_trainer
+https://raw.githubusercontent.com/huggingface/trl/v0.28.0/trl/trainer/grpo_trainer.py
+Pinned implementation uses group sample standard deviation plus 1e-4 in the
+advantage denominator. The pilot supplies real partial rewards; TRL computes
+advantages and gradients. Its existing synthetic control verifies only a small
+optimizer path and does not establish that this task's rewards are useful.
