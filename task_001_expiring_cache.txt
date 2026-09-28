@@ -5,8 +5,9 @@ Specification version: 0.1
 Defined: 2026-09-23
 Implementation update: 2026-09-24. References, G1/G2/G3, a development audit,
 diagnostic fixtures, and trusted scoring are implemented in verifier_rl/.
-Live update, 2026-09-27 UTC: the Modal CPU trial passed 15 checks across 23
-fresh sandbox executions. A bounded Qwen/GRPO integration trial is implemented;
+Live update, 2026-09-27 UTC: Modal CPU trials passed 16 diagnostic checks and
+five saved Qwen candidates were replayed with stage/output diagnostics. A bounded
+Qwen/GRPO integration trial is implemented;
 its results are recorded separately as they complete. See README.md and Section
 18 onward in the research notes for evidence and remaining validation gates.
 The grading budgets below remain development choices, not a training protocol.

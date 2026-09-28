@@ -1433,22 +1433,32 @@ These candidate counts overlap and must not be summed into a partition of 32.
 The three original exit-137/WaitPID EOF cases remain causally ambiguous even
 though later rechecks produced ordinary Python exceptions (Section 22).
 
-Next milestone, not yet implemented or run:
-  1. Persist bounded stdout/stderr and failure stages: extraction, module load,
-     function call, return validation, comparison, and infrastructure handling.
-     Output and candidate-reported exceptions remain untrusted diagnostics.
-  2. Record extraction failures directly instead of executing placeholder code.
-  3. Check known-correct, semantically incorrect, crashing, wrong-return-type,
-     extra-printing and nonterminating programs under the same sandbox settings.
-  4. Replay a small representative subset of saved Qwen candidates on selected
-     inputs. This needs CPU sandbox work, not new GPU generation.
-  5. Preserve old artifacts and version any prompt, runner or protocol change.
-     Report interface compliance separately from semantic correctness.
+The following diagnostic work is now implemented and exercised:
+  1. Reports retain a bounded 2 KiB stdout preview, byte count and SHA-256;
+     stderr already had a bounded preview. This makes JSON contamination
+     inspectable without storing unbounded output.
+  2. The remote wrapper marks module load, entrypoint lookup, function call,
+     return validation and result serialization. These markers share stderr
+     with untrusted code and are best-effort hints, not authenticated proof.
+  3. Rejected extraction is represented directly as an extraction failure with
+     reward zero for training suites, no test execution, and no sandbox call.
+     It is not represented by executing placeholder Python.
+  4. The live CPU smoke plan now checks function exceptions, missing entrypoint,
+     invalid return type, extra stdout and wall timeout in addition to prior
+     correct-output and sandbox-control fixtures.
+  5. Five saved baseline candidates were replayed on the same one-case input.
+     See Section 24. No GPU generation or training was done.
 
-Only after that gate should a prospectively specified prompt, generation-length,
-or checkpoint comparison be considered. The immediate goal is trustworthy
-measurement, not manufacturing reward variation or an apparent improvement.
-No new cloud jobs or model training were performed for this read-only diagnosis.
+These checks improve the explanation of this baseline but do not retroactively
+rewrite its saved reports. A new baseline uses the instrumented runner and the
+direct extraction-failure record. Continue to report interface compliance
+separately from semantic correctness.
+
+Next gate: inspect these replays, then choose a separately controlled
+prompt/interface change or a different checkpoint. Keep task, grader and
+evaluation criteria fixed during that comparison. Do not start long RL until
+generated programs produce some valid complete-suite passes and training groups
+show reward variation.
 
 Publication note:
 The current cache pilot replaces the earlier framework in the repository's
@@ -1458,3 +1468,1945 @@ that ten new experiments were run or a reconstruction of development dates.
 Local .env files, credentials, virtual environments, and runs/ artifacts are
 excluded. Artifact paths in these notes refer to local/Modal records and are not
 bundled in the GitHub repository; a fresh clone cannot inspect those raw results.
+
+24. DIAGNOSTIC HARNESS VALIDATION AND SAVED-CANDIDATE REPLAY
+----------------------------------------------------------
+Implementation changes (runner stage hashes identify the version used):
+  - Each execution report now keeps up to 2,048 decoded stdout characters,
+    total stdout bytes, and a SHA-256 of the complete bounded stdout stream.
+    Existing stderr previews remain capped at 2,048 bytes. This exposes
+    demonstration output mixed with the wrapper's JSON result.
+  - The runner emits stage markers for module loading, entrypoint lookup,
+    function call, return validation, and result serialization. Because the
+    candidate runs in the same process and stderr is candidate-controlled,
+    markers and tracebacks are hints, not a trusted attestation.
+  - Future baseline runs with rejected extraction record the failure directly,
+    assign zero for a training suite (audit remains reward-null), and execute no
+    placeholder source. Historical reports remain unchanged.
+
+Live controlled run `cpu-20260927T205033-6813ca0f`: CPU only, 16/16 checks passed.
+This included the previous 15 sandbox/conformance checks plus a missing-entrypoint
+case. Diagnostic assertions passed:
+  - Correct candidate reached result serialization and produced `[7]`.
+  - Function exception was labeled at function_call and retained RuntimeError.
+  - Missing function was labeled at entrypoint_lookup.
+  - Wrong return type was labeled at return_validation.
+  - Extra text (`all tests passed`) was visible in stdout and scored invalid_json.
+  - Wall timeout was identified as timeout; whole-sandbox cleanup was confirmed.
+This validates these controlled cases, not adversarial security properties.
+
+Saved-candidate replay `qwen-diagnostic-20260927T205344-c78f856b`: five
+previously generated programs (seeds 4001, 4005, 4028, 4030, 4031) each saw the
+same input: put key a=7 at time 0 with TTL 10, then get key a at time 1. Expected
+output was `[7]`. Each used a fresh CPU sandbox and no retries:
+  seed 4001: candidate_error, stage module_load, KeyError 'value'; unguarded
+    example code fails before the assigned test is called.
+  seed 4005: candidate_error, stage function_call, KeyError 'value' while
+    reading a field absent from a get operation.
+  seed 4028: candidate_error, stage entrypoint_lookup; it printed four `None`
+    lines from examples and defines LRUCache instead of simulate_cache.
+  seed 4030: candidate_error, stage return_validation; example printed `7`, then
+    simulate_cache returned a value shape rejected by the wrapper.
+  seed 4031: completed normally but returned `[]`; this is a semantic wrong
+    answer on the shared put/get input, not a runner failure.
+
+The replay confirms several real failure modes in these saved programs and
+shows that the harness separates the selected cases. It does not re-execute all
+32 candidates or 14,048 historical inputs. Stage markers can be forged or
+disrupted by code in the same process, so abnormal exits remain ambiguous.
+Original baseline reports are not rescored.
+
+Next step: run a controlled prompt/interface comparison or new checkpoint
+baseline with the same cache task and strict suite. Keep model changes separate
+from prompt and generation-length changes, and retain raw completions and
+extraction status. Require complete-suite passes and reward variation before
+committing GPU time to longer RL. This diagnostic work establishes no RL learning
+or general capability gain.
+Local verification after these changes: 68 unit tests pass; the replay script
+compiles without executing candidate code locally. `git diff --check` passes.
+
+25. CONTROLLED INTERFACE-PROMPT PILOT
+------------------------------------
+Next experiment frozen in prompt_interface_pilot.txt before generation.
+Keep the same 0.5B checkpoint, revision, decoding settings, 512-token completion
+cap, task semantics and grader. Generate eight programs from the original prompt
+and eight from that prompt plus explicit interface reminders. Generate both
+conditions fresh with paired seeds 4000..4007 and alternate their order.
+
+The reminders emphasize facts already present in the task: get inputs lack value
+and ttl; return one list containing every get result; define simulate_cache;
+omit demonstration calls and print statements. This is a combined prompt
+intervention. It is not evidence about the isolated effect of each reminder.
+
+Primary outcome is full G3 success per eight programs. Also collect G1 success,
+valid-output rates, error stages and token-cap hits. Both conditions use identical
+G1/G3 inputs (37 assigned cases, 36 unique inputs), at most 576 sandbox executions
+overall after input deduplication.
+The independent development audit is reserved for a later larger baseline.
+No RL or automatic follow-up runs are part of this pilot.
+
+Implementation includes a gate that checks the actual current conformance check
+set, runner hash, image and cleanup evidence. A literal "15 checks" gate in the
+older launchers would have rejected the new passing 16-check diagnostic report;
+those launchers now use the shared evidence check. Extraction rejection records
+are also excluded from the baseline's count of actual sandbox executions.
+
+Pre-run reported usage: $0.39397451, with potential billing lag. Continue within
+the user's approximate $10 trial budget. Protocol results will be appended after
+the frozen pilot completes; no outcome is assumed here.
+
+Operational incident and recovery amendment:
+Generation run qwen-prompt-pilot-20260927T210942-6a293d9f completed all 16
+programs in one GPU call (242.278 seconds including loading/hash checks).
+Weights remained unchanged. Grading stopped on original seed 4001, G3
+target/extend. The trusted preflight process returned Modal deadline code -1;
+the candidate had not started. Parsing empty preflight output then raised
+JSONDecodeError. This is infrastructure failure, not a model error.
+
+The zero-retry stop preserved three complete reports, the fourth partial report,
+all completions, and the source snapshot. We recorded an operational amendment
+in prompt_interface_pilot.txt before resuming. CPU-only recovery reuses every
+resolved outcome, replaces at most one confirmed preflight timeout per input,
+and permits at most three extra attempts across the pilot (579 total maximum).
+Every previous attempt remains in the merged report. Other infrastructure
+failures stop recovery; candidate failures are never retried. No source repair,
+resampling, prompt change, score change, or limit change is allowed.
+
+The adapter now recognizes preflight code -1 before parsing JSON, so future
+records say preflight:TimeoutError instead of the secondary JSONDecodeError.
+The candidate runner is unchanged. Eighty local tests passed before recovery,
+including the retry budget, preserved attempt history, source/suite identity,
+and a check that preflight timeouts never launch the candidate.
+
+Reproducibility check: the eight freshly generated original-prompt completions
+match the historical baseline's seeds 4000..4007 byte for byte (raw text and
+extracted source). They are not eight additional independent draws relative to
+that historical sample. The treatment completions are the new comparison; paired
+seeds do not establish identical token trajectories across different prompts.
+
+Completed results (2026-09-27):
+CPU recovery run: qwen-prompt-recovery-20260927T212712-b0a6704d.
+Parent generation: qwen-prompt-pilot-20260927T210942-6a293d9f.
+Model: Qwen/Qwen2.5-Coder-0.5B-Instruct, pinned revision unchanged.
+
+Measure                                      Original       Reminders
+Extractable / syntactically valid programs       8/8             8/8
+Programs with any valid output                  2/8             2/8
+Programs with valid outputs on every input       0/8             1/8
+Programs passing the entire G1 suite             0/8             0/8
+Programs passing the entire G3 suite             0/8             0/8
+Mixed G3 binary-reward groups of four            0/2             0/2
+Completions reaching the 512-token cap           5/8             4/8
+Diagnostic G1 case passes                       0/40            1/40
+Diagnostic G3 case passes                       6/256          17/256
+
+Case-pass totals count assigned cases, including duplicate inputs shared between
+and within suites. After deduplication there are 36 inputs per program, 576
+candidate/input outcomes across 16 programs. Do not use the case totals as
+independent model sample counts or report them as fractional training rewards.
+
+The reminder condition's seed 4002 is the only program with valid results on all
+inputs. Inspection shows separate put/get dictionaries, but nothing writes to
+the get dictionary; therefore every get appends None. It passes 1/5 G1 and 15/32
+G3 cases, all compatible with missing/expired returns, while failing retrieval.
+Seed 4000 contributes the other two assigned G3 passes. Six reminder programs
+crash in top-level demonstrations: missing fields, integer item assignment, or
+unpacking dictionaries as five values. Reminders did not reliably remove examples
+or enforce the interface. The treatment bundles several reminders, so no causal
+claim about a specific sentence is supported.
+
+Interpretation: this pilot improved the all-input valid-output count by one
+program but did not establish useful complete-task performance. All binary G1
+and G3 rewards remain zero. This does not yet support another meaningful
+group-relative RL update, an algorithm comparison, or a reward-hacking claim.
+No RL was performed, and these development cases are not an untouched final test.
+
+Recovery and independent verification:
+  - One additional preflight attempt was used, out of three allowed.
+  - The failed preflight and its replacement remain together in original seed
+    4001's target/extend history; the replacement gave an ordinary KeyError.
+  - Across all 577 attempts: 529 candidate_error exits with code 1, 47 completed
+    exits with code 0, and one infrastructure error before candidate launch.
+    Six completed outputs were invalid JSON; completed does not mean correct.
+  - No unresolved infrastructure errors or unconfirmed cleanups remain.
+  - Local recomputation matched both arms' summary metrics and checked all 16
+    report identities, 36 unique inputs per report, and attempt counts.
+  - Image identity and candidate runner hash match the validated conformance run.
+  - Before/after model parameter hashes both equal
+    b570713bae9847a0b394cbaa37f3722474ddf5563be7bac0d19cd0852facc9b1.
+
+Evidence: recovery run generation.json, reports.json, summary.json locally under
+runs/ and on verifier-rl-cache-artifacts; the parent run retains original raw
+reports, completions and error.json. Local verification.json records the checks.
+These artifacts are gitignored, not shipped in a fresh GitHub clone. The notes
+and README report the observations, but are not substitutes for raw evidence.
+
+Billing queried during recovery still reported $0.39397451 in available hourly
+intervals starting 2026-09-25, with the latest interval at 20:00 UTC. It excluded
+the current 21:00 pilot/recovery interval; do not present that number as final
+pilot cost. The approximately $10 user trial budget remains in force.
+
+Decision: next specify a controlled larger-checkpoint comparison using the
+same reminder prompt, task, suites, seeds, decoding and 512-token cap. Change
+only the checkpoint, document its exact revision and runtime, and inspect both
+valid outputs and full-suite success. Do not silently increase generation length,
+repair candidate code, or weaken the grader to obtain a positive result. If
+complete-suite successes and reward variation emerge, run a larger baseline and
+independent correctness audit before RL. No further GPU run was launched here.
+
+26. GRADER AND OPTIMIZER CONTROLS; KEEP 0.5B AND DESIGN SFT
+---------------------------------------------------------
+Date: 2026-09-27. The user approved implementing the diagnosis-driven fixes and
+running bounded controls, then explicitly chose to keep the 0.5B checkpoint and
+design an SFT warm-start. That choice supersedes Section 25's proposed next
+comparison with a larger checkpoint. It does not rewrite any earlier result.
+
+Question: is the missing learning caused by a broken grader, broken GRPO wiring,
+or a starting policy that supplies no useful differences in reward?
+
+Diagnosis of the original cache trial:
+  - The actual training configuration was group size four, group-standardized
+    rewards, beta zero, weight decay zero, learning rate 1e-6, one step.
+  - All four rewards were zero, logged gradient norm was zero, and the complete
+    before/after parameter hashes were identical. This is expected with this
+    group-relative estimator: subtracting the group mean leaves all advantages
+    zero. There was no signal selecting one completion over another.
+  - The old v0.1 extractor mishandled prose around fenced Python for three of
+    the four training completions. V0.2 statically extracts parseable code from
+    all four, but interface and implementation bugs remain. Static parseability
+    is not functional correctness, and the historical run was not rescored.
+  - Subsequent generation and prompt pilots still found no full G3 successes.
+    More optimization steps alone cannot create a gradient in an all-zero group.
+    This does not prove every possible future group will be uniform.
+  - A naive fractional reward would introduce a different incentive: the
+    author-written always-None implementation passes 1/5 G1, 21/32 G2, 15/32
+    G3 and 258/388 development audit cases without ever retrieving a value.
+    Keep the binary suite reward unchanged; case counts remain diagnostics.
+
+The inspected implementation is the pinned TRL 0.28.0 GRPO trainer/config,
+not a claim about every library version or every GRPO variant:
+https://github.com/huggingface/trl/blob/v0.28.0/trl/trainer/grpo_trainer.py
+https://github.com/huggingface/trl/blob/v0.28.0/trl/trainer/grpo_config.py
+
+Separate operational problem found during diagnosis:
+A full G3 check of the known-correct fixture from the laptop controller produced
+31 infrastructure errors (32 assigned cases, one duplicate input), each before
+candidate launch. Evidence: runs/grader-audit-correct-g3-20260927/result.json.
+Reward was null, not zero. A bounded trusted-preflight probe could look up and
+create a sandbox but timed out during sandbox.exec command startup; there was
+no candidate return code. This localizes the observed failure to the command
+RPC path, not cache semantics. It does not establish the underlying network,
+client-runtime, or provider cause.
+
+The Modal-hosted controller immediately passed all 16 current CPU conformance
+checks in run cpu-20260927T215503-5fc4d366. Use the architecture we originally
+agreed on: laptop launches and inspects; Modal hosts the trusted controller;
+clean, separate sandboxes execute candidates. Avoid the failing direct-laptop
+command path for current trials. This is a verified working route, not a claim
+that the laptop transport problem itself is repaired.
+
+Implemented changes:
+  1. modal_grading.py supplies a bounded Modal-hosted G3 evaluator and fixed
+     correct/faulty controls. The scoring logic and expected answers remain on
+     its trusted CPU controller, outside the candidate sandbox.
+  2. A fail-fast option stops scheduling new inputs after an unresolved
+     infrastructure failure. In-flight calls finish and clean up. Never-started
+     inputs have empty attempt histories, reason not_executed and passed=null.
+     Affected suites remain unscored; no invented candidate failures or rewards.
+     The generic evaluator's default remains unchanged for older protocols;
+     the new grading/training paths and direct CLI opt into fail-fast behavior.
+  3. Preflight metadata now distinguishes command_start, output_collection and
+     complete. The actual candidate runner and its hash are unchanged.
+  4. Model submissions carry raw text, extracted source, status and extractor
+     version. The controller recomputes extraction to check consistency.
+     Rejected completions become explicit candidate failures without executing
+     placeholder source. Accepted completions retain all code inside the block;
+     we do not delete demonstrations or repair solutions.
+  5. The cache trial pins the same public model revision and supports one to
+     four steps, default one. Each reward group gets a unique train-0000..0003
+     directory, with distinct rollout/reward records. It stops after a uniform
+     reward group. beta=0 and weight_decay=0 remain explicit. No synthetic
+     rewards enter cache training, and G3 still requires the entire suite.
+  6. verifier_rl/training.py centralizes the bounded GRPO configuration and
+     evidence gates. modal_grpo_control.py exercises real Qwen generation,
+     actual TRL backward/optimizer steps, and checkpoint save/reload under that
+     configuration, using explicitly synthetic diagnostic rewards.
+
+The protocol in training_validation_protocol.txt was recorded before the cloud
+controls. It budgets 62 CPU sandbox invocations and one L4 function capped at
+600 seconds, with no automatic reruns or reward-driven sample selection.
+
+LIVE G3 GRADER CONTROL RESULTS
+Run: qwen-grader-control-20260927T222645-b625f8d4.
+  Correct program:          32/32 assigned cases, reward 1.
+  Inclusive-expiry bug:     22/32 assigned cases, reward 0.
+Each program had 31 distinct input executions; 62 actual sandbox calls total.
+No infrastructure errors, all completed normally, all whole-sandbox terminations
+acknowledged. Local rechecking matched every actual output to its author-written
+fixture, checked score counts, deduplication, current suite/runner/source/image
+identities, and cleanup. This establishes the selected positive/negative controls,
+not a proof of sandbox security or all-input grading correctness.
+
+An integration mistake stopped the first optimizer launch before GPU training:
+the evidence gate hashed the raw fixture text, while evaluation correctly hashed
+the extracted source actually executed. Extraction strips surrounding whitespace,
+so those hashes differ. The gate now uses the same extraction policy and checks
+the recorded extraction metadata. A regression test sends both fixtures through
+evaluate_submission and then through the evidence gate; stale/raw-source hashes
+are rejected. The existing valid G3 reports passed the corrected gate unchanged.
+No additional candidate samples, CPU grader rerun, or scoring changes were needed.
+
+LIVE QWEN/TRL OPTIMIZER CONTROL RESULTS
+Run: qwen-optimizer-control-20260927T223422-219f0044.
+Model: Qwen/Qwen2.5-Coder-0.5B-Instruct, revision
+ea3f2471cf1b1f0db85067f1ef93848e38e88c25.
+494,032,768 trainable parameters; L4; float32 parameters / bf16 computation.
+Actual GPU function duration: 81.952 seconds including model/checkpoint work.
+
+Negative control:
+  One optimizer step, rewards [0, 0, 0, 0], gradient norm 0.
+  Parameter hash unchanged; save/reload hash matches.
+Positive control:
+  Two optimizer steps, rewards [0, 1, 0, 0] then [1, 0, 0, 0].
+  Reported gradient norms 44.95244216918945 and 59.41147994995117.
+  Parameter hash changed; save/reload hash matches.
+Both controls started from the same initial hash:
+  b570713bae9847a0b394cbaa37f3722474ddf5563be7bac0d19cd0852facc9b1
+Positive-control final hash:
+  a49a54563f42d3b8ec80e02ad7c450b9b177746f36a81c340177e327725e5421
+
+The synthetic rule gives reward 1 to the lexicographically smallest completion
+text within a group and 0 to other text. Identical texts receive identical labels
+within a group; an all-identical group aborts rather than being resampled. The
+prompt requests a short imaginary-animal sentence, with at most 32 generated
+tokens. No generated text is executed. This deliberately tests whether real
+on-policy sequence log-probabilities produce gradients and change actual weights
+when given differentiated rewards. It is NOT a coding reward, a useful skill
+objective, or evidence of cache improvement. Never use these synthetic-control
+checkpoints as an SFT or cache-RL starting policy.
+
+Important logging lesson: the mixed-reward steps also logged loss near zero
+despite nonzero gradients and changed weights. A centered policy-gradient loss
+can have a near-zero scalar value while its derivative is nonzero. Loss alone
+does not diagnose whether a policy update occurred. Check actual rewards,
+gradient norms, trainable parameters, optimizer steps and checkpoint identity.
+
+Interpretation:
+The selected grader controls distinguish correct and incorrect cache programs,
+and the shared GRPO optimizer configuration can update this 0.5B model when
+rewards vary. This strengthens the explanation that the original zero update
+was caused by absent relative reward signal. It does not demonstrate naturally
+occurring successful cache rollouts, long-code update behavior, convergence,
+an optimizer ranking, or reward hacking. The expanded multi-step cache grading
+loop has local regression coverage but has not had a new live cache-learning run.
+
+Runtime warnings were retained in cloud logs (older reported kernel version and
+tokenizer/config alignment). Both controls nevertheless completed their stated
+checks. The CLI timed out waiting for final app logs after receiving and saving
+the successful summary; it then exited 0. This is not a training failure.
+
+Artifacts: each run has a local summary.json under runs/ and durable records on
+verifier-rl-cache-artifacts. The grader retains per-case attempts and manifests.
+The optimizer retains the frozen plan, source snapshot, package/runtime metadata,
+raw texts/reward groups, trainer configs, metrics and both saved checkpoints.
+Historical trial artifacts were not overwritten. No Git commit or push is part
+of this change. Local verification: 90 unit tests pass; git diff --check passes.
+
+SFT DECISION AND NEXT STEP
+The user chose to keep 0.5B and design an SFT warm-start. sft_warmstart_plan.txt
+specifies a first, small formatting/basic-Python pilot: eight training families
+with four wording variants each and two family-held-out development families
+with four variants each. These are ten authored functions, not forty independent
+skills. The assistant targets must be reviewed and tested before training.
+No TTL implementation, cache reference solution, cache audit input or audit
+answer belongs in that dataset. Assistant-only loss masks prompts and padding,
+keeps genuine EOS supervision, and refuses silent target truncation.
+
+Proposed training is 16 bounded full-parameter steps, followed by paired
+eight-seed original-vs-SFT cache generation using the same reminder prompt,
+decoding settings, 512-token cap and unchanged G3. Load the actual SFT checkpoint
+and verify hashes before the after condition. A lower SFT loss or fewer format
+errors alone will not establish readiness for RL: look for full-suite passes
+and within-group reward variation. A task-specific cache curriculum, if later
+needed, must be named as a different experiment rather than hidden in this one.
+
+Status: SFT is designed, not implemented or trained. Next deliverable is the
+validated dataset and assistant-only training path. No longer cache RL run or
+larger-model experiment was launched. The final reserved evaluation for a full
+research study still needs to be designed; current audit data is development.
+
+Reported billing after the controls still totals $0.53220860 for available
+intervals, latest 21:00 UTC. The 22:00 controls are not included yet, so this is
+neither final trial cost nor proof of exact remaining credit. The user's roughly
+$10 total trial budget remains in force. There is no always-on endpoint.
+
+27. PARTIAL-REWARD VALIDATION AND SFT PILOT
+-----------------------------------------
+The user raised two distinct explanations for zero rewards: invalid Python and
+partial correctness being collapsed into all-or-nothing reward. A read-only
+check of the latest 16 prompt-pilot programs confirmed all compile successfully
+(source was not executed locally). Their failures were largely runtime/interface
+errors and incorrect semantics. The first reminder group passed [2, 0, 15, 0]
+of 32 G3 cases, which binary scoring mapped to [0, 0, 0, 0]. A flat fraction
+would instead be [.0625, 0, .46875, 0]. These are hypothetical scores of saved
+outputs, NOT an RL run or evidence of a model update.
+
+Crucially, every G3 case passed in that pilot expected [] or only None values.
+The 15-case program always returns None on gets. GRPO can accept real-valued
+rewards; full-suite successes were a requirement of our binary scoring choice,
+not of the algorithm. Reward differences can provide gradients without a
+perfect solution, but differences favoring trivial outputs may be unhelpful.
+The user approved: validate balanced partial scoring, run SFT, then (if ready)
+compare binary and partial GRPO from the same SFT weights with strict auditing.
+
+Before cloud training, sft_partial_protocol.txt records the revised decision
+rule and budgets. G1/G2/G3 and the development audit remain unchanged. A new
+cache-balanced-probes-0.1 suite has 24 cases: four each for retrieval, expiry,
+overwrite, multiple keys, ordering and edges. The first five families each
+carry .19 reward weight; all edge cases together carry .05. Each substantive
+probe requires both a real stored value and a missing/expired result. Credit
+requires the complete expected output list for that probe, not matching a few
+elements. Empty and missing inputs are retained but cannot dominate the score.
+The same records yield either full-suite binary reward or the weighted partial
+reward. Infrastructure failures remain unscored under both interpretations.
+
+Offline checks: 16 fixed authored programs at three seeds, 48 evaluations.
+Correct fixture scores 1. Every semantic mutant fails full acceptance. At the
+training seed 20260929: always-None .0375, always-empty .025, constant-7 .025,
+seeded random answers .025, dictionary ignoring expiry .2275. This supplies a
+distinction between tested trivial answers and some useful retrieval behavior.
+It does NOT prove resistance to all exploits. For example, the otherwise-correct
+zero_missing bug still earns .9875 while binary acceptance remains 0; partial
+credit deliberately tolerates some incorrectness. Strict independent evaluation
+must remain the measure of complete task correctness.
+Balanced suite hash:
+062eb5f7ee469a6328094b76d4475e95fbcf0c11911bd8b248666742877cdec7.
+
+SFT implementation: 32 training examples (8 families x 4 wording variants) and
+8 development examples (2 other families x 4). Ten fixed project-authored,
+assistant-written functions; not forty independent algorithmic tasks. All 40
+explicit target tests pass, signatures agree, inputs are not mutated, and no
+cache/TTL implementation or evaluation cases are included. Development target
+loss is measured only, never trained on or used for checkpoint selection.
+Manifest hash:
+bb975612d72160367c1b892cdfbbc7220f7562aaf0c1e796093ffd0378386f22.
+
+Assistant-only labels mask prompt and padding, retain true EOS, and refuse
+truncation. Both rendered-string and token-prefix alignment must pass with the
+actual Qwen tokenizer remotely. Tests also cover the pad-token-equals-EOS case.
+The plan pins 16 full-parameter AdamW steps, lr2e-5, no weight decay, constant
+schedule, batch1/accumulation4, seed20260930, float32 weights/bf16 compute. It
+requires changed parameters, finite gradients/losses and exact checkpoint reload.
+
+Cloud pilot launched: qwen-sft-pilot-20260927T230314-ac2f8eeb.
+App: ap-mOe2HIX5xzJPlfCoetylrf.
+One L4 function (900-second cap) generates eight original-policy programs,
+trains once, saves/reloads actual SFT weights, and generates eight after programs.
+Both conditions use paired seeds4000..4007 and the unchanged reminder prompt,
+512-token limit, temperature .8/top_p .95/top_k0. The hosted CPU controller then
+grades both suites: 56 assigned cases / 54 distinct inputs per candidate, at
+most 864 sandbox calls, four paced workers, zero retries. No dev audit feedback
+is used here. Local verification before launch: 101 tests pass, scripts compile,
+git diff --check passes. No result is assumed in this pre-outcome entry.
+
+RL readiness now requires at least one group of four SFT samples with differing
+balanced rewards and at least one sample above .05 (beyond edge-only credit).
+This supersedes the earlier binary-only/full-pass readiness condition. If the
+gate fails, stop and analyze the SFT result rather than blindly increasing RL.
+If it passes, freeze the independent-evaluation sample budget before comparing
+binary and partial GRPO with identical initial SFT weights, tests and budgets.
+
+Pre-launch reported Modal usage still totals $0.53220860 through available 21:00
+UTC intervals; later charges have not yet appeared. The approximately $10 total
+user trial allowance remains in force, with no automatic sweeps or retries.
+
+COMPLETED SFT RESULTS (same frozen run, no retry or resampling)
+Run qwen-sft-pilot-20260927T230314-ac2f8eeb finished successfully as an execution
+pipeline, but failed the pre-specified readiness gate for a useful RL comparison.
+The actual tokenizer passed all 40 alignment/EOS checks. Training sequences
+were 111..196 tokens (cap1024); assistant targets were 34..89 tokens. No example
+was truncated. 494,032,768 parameters were trainable. All 16 optimizer steps had
+finite, positive gradient norms; the full GPU function took 265.354 seconds.
+The supervised training loop itself took 16.803 seconds; generation/loading,
+evaluation, hashing and checkpoint operations account for the rest.
+
+Teacher-forced dataset losses:
+  Training:     .5364150404930115 -> .012303235940635204
+  Development:  .37335002422332764 -> .37795957922935486
+This shows fitting of the small training set, not improved held-out behavior.
+Development loss did not improve in this run. Two held-out function families
+are far too limited to establish broad generalization or a statistical claim.
+
+Initial hash:
+  b570713bae9847a0b394cbaa37f3722474ddf5563be7bac0d19cd0852facc9b1
+Actual trained/reloaded SFT hash:
+  93f8a3ff548c48b88e042efe05d6d6d89cb38f7e9b027bdb1648e8f7472fe885
+The checkpoint reload matched exactly. Saved at artifact volume path
+qwen-sft-pilot-20260927T230314-ac2f8eeb/gpu/checkpoint.
+
+Cache generation/evaluation outcome             Before SFT       After SFT
+  Syntactically valid programs                     8/8               8/8
+  Raw Python without fenced/prose framing          0/8               8/8
+  Valid returned lists on every evaluated input    1/8               0/8
+  Full G3 passes                                  0/8               0/8
+  Full balanced-suite passes                      0/8               0/8
+  Unique extracted source strings                 8                 2
+  Reached 512-token cap                            4/8               0/8
+  Mean balanced partial score                    .00625            .0125
+
+The before completions reproduce the previous reminder-prompt samples byte for
+byte at seeds4000..4007. They are not eight additional independent baseline
+draws. After SFT, seven completions are identical; the eighth differs only by
+omitting type annotations. Their executable bodies have the same bug:
+  if operation["op"] == "put": cache[key] = value
+  else: results.append(cache[key])
+Neither key nor value is defined. All after programs return [] on empty input
+but raise NameError on every nonempty evaluated input. This is syntactically
+valid Python with runtime errors, not an extraction or sandbox failure.
+Across 432 after-SFT sandbox executions there were 424 candidate errors:
+  304 NameError for undefined value; 120 NameError for undefined key.
+The other eight executions each returned [] on the shared empty input.
+
+Each after program passes 2/32 assigned G3 cases (the same empty input appears
+twice there) and 1/24 balanced probes (empty only). Every after partial reward
+equals .05/4 = .0125. Both four-program groups are uniform and below the .05
+edge-only ceiling. No complete solution or nonempty-case success was observed.
+The mean partial score increased because more programs handle the empty input,
+not because they became useful cache implementations. This is not reward hacking:
+SFT optimized target-token likelihood and never optimized these execution rewards.
+
+Interpretation and action:
+The SFT pipeline did perform genuine weight updates and changed output format,
+but this tiny two-epoch dataset did not supply a useful cache starting policy.
+Reduced sampled diversity and near-memorization of training targets are consistent
+with an overly narrow warm-start; this run alone does not isolate dataset size,
+learning rate, or missing training behaviors as the causal explanation.
+Do not label this improved coding capability or fix it by weakening evaluation.
+
+As pre-specified, the binary-versus-partial GRPO comparison was NOT launched.
+Its independent development audit was also NOT run; there are no post-RL results
+to evaluate. A subsequent data/curriculum revision should be separately specified
+before another GPU job. Keep the original base and this failed SFT checkpoint
+distinct. No automatic sweep, larger model, extra SFT steps or second SFT run.
+
+Independent verification of saved artifacts:
+  - Recomputed the complete summary and RL gate from all 16 saved reports.
+  - Checked candidate/suite hashes, current runner/image identities and preflight.
+  - All 864 distinct candidate/input attempts are present, zero infrastructure
+    errors or retries, and termination acknowledged for every sandbox.
+  - Status counts: 801 candidate_error and 63 completed across both conditions.
+  - Rechecked all 896 assigned outcomes; for the 83 completed assigned outcomes,
+    the saved stdout preview contained the full output and exact comparison
+    reproduced correctness, reason and actual parsed value. Duplicated assignments
+    explain why these counts differ from actual distinct executions.
+  - Local verification.json records these checks. GPU metadata, tokenizer checks,
+    source snapshot, dataset, outputs, grading records and summary persist locally
+    and/or on verifier-rl-cache-artifacts. No candidate source was executed locally.
+
+Local tests remain 101 passing; scripts compile and git diff --check passes.
+Post-run billing reports $0.56307005 through the available 22:00 UTC intervals.
+The 23:00 SFT job is not yet included; this is not its final cost. The approximately
+$10 total trial budget remains in force. No always-on deployment or Git push.
+
+28. WHY THE CURRENT POLICY IS NOT LEARNING; UNTOUCHED 1.5B COMPARISON
+-----------------------------------------------------------------
+The user asked why the project is not producing improvement and explicitly
+requested trying the 1.5B model. Separate three questions before more training:
+  1. Can the grader distinguish correct and incorrect code?
+  2. Can the optimizer change the model when relative rewards differ?
+  3. Does our starting policy produce behavior worth reinforcing on this task?
+The controls in Section 26 support the first two within their tested scope.
+The prompt and SFT experiments show a problem with the third. This is not proof
+that every grader or optimizer path is correct, nor that the task is impossible.
+
+The original real-reward GRPO group had all-zero rewards, giving zero relative
+advantages and zero gradient under that configuration. Additional steps with
+identical rewards would not provide a task-learning direction. Partial rewards
+can help when programs differ in useful behavior, but cannot manufacture that
+behavior: all eight after-SFT programs get exactly .0125 for the empty input.
+Our separate synthetic mixed-reward control updated actual weights. The real
+SFT run also updated weights, but updated weights are not equivalent to better
+cache correctness. We should not describe the whole project as unable to update.
+
+A limitation of our chosen warm-start deserves explicit acknowledgement: only
+eight training functions, repeated under four phrasings, were used for two
+epochs. There was no cache/TTL example and no combined per-key store/expiration
+behavior. Training sequences were 111..196 tokens while the cache prompt is
+substantially longer. The dataset taught short output patterns, but it did not
+demonstrate useful transfer to this task. Falling training loss, unimproved
+development loss, and almost identical erroneous sampled programs are consistent
+with fitting a narrow dataset poorly matched to the desired transfer. They do
+not isolate learning rate, dataset diversity, task mismatch or capacity as the
+single cause. More epochs on that unchanged dataset are not justified by these
+measurements. SFT collapse here is not reward hacking: it optimized token loss.
+
+Decision: evaluate the untouched public Qwen2.5-Coder-1.5B-Instruct checkpoint
+before another SFT or RL run. This tests whether a different starting checkpoint
+already supplies valid code and meaningful reward differences. It is a model
+comparison, not evidence of RL learning or a causal isolation of model size.
+The exact model revision, budget, decoding and decision rules were written in
+checkpoint_1_5b_protocol.txt before launching. No predicted outcome is assumed.
+
+Public revision: 2e1fd397ee46e1388853d2af2c993145b0f1098a.
+Keep the same reminder prompt, seeds4000..4007, 512-token cap, temperature .8,
+top_p .95/top_k0, float32 weights/bf16 inference and current extraction policy.
+Require matching chat template and effective generation defaults across both
+public checkpoints. Reuse the saved original 0.5B BEFORE-SFT outputs and records
+from qwen-sft-pilot-20260927T230314-ac2f8eeb. Do not compare only to the failed
+SFT checkpoint or count reused baseline samples as new independent generations.
+The same G3 and balanced manifests and same clean sandbox image/runner apply.
+
+New implementation: verifier_rl/checkpoint_pilot.py plus modal_checkpoint_pilot.py.
+It leaves the existing 0.5B training launcher unchanged, stores a source/plan
+snapshot, checks parameter hashes before/after generation, saves raw samples
+and per-case records, and stops unscored on infrastructure errors. No optimizer,
+serving endpoint, SFT, repaired code, additional seeds or automatic follow-up.
+One L4 function capped at 600 seconds; controller capped at 1200 seconds; at
+most 432 new distinct candidate/input executions, four paced workers, no retries.
+The 388-case development audit is reserved for the subsequent selected-policy
+experiment. This pilot's development tests are not an untouched final benchmark.
+
+Launched run: qwen-checkpoint-pilot-20260927T233944-27c83c11.
+Modal app: ap-7E5jlo11WrjqNQE1teXnck.
+Pre-launch local verification: 106 tests passed and git diff --check passed.
+Latest available billing: $0.56307005 through 22:00 UTC, excluding later SFT
+charges because reporting lags. The approximately $10 TOTAL trial allowance
+remains in force. No results from the new run are asserted in this launch entry.
+
+Preflight caught a genuine comparison confound: the pinned 0.5B generation
+configuration has repetition_penalty 1.05; 1.5B uses 1.1. This was the only
+differing effective field after our existing overrides. The first attempt
+stopped before model-weight loading, generation or candidate execution. Its
+configuration difference is saved locally and on the volume. This is a setup
+check failure, not evidence that the larger model cannot solve the task.
+Before any larger-model outcomes exist, protocol0.2 explicitly sets 1.05 for
+the larger model to match the historical 0.5B baseline and retains native values
+in metadata. All other comparison gates stay enabled. The corrected attempt
+gets a new run ID; the stopped attempt is preserved. Lesson: temperature and
+top_p alone do not fully specify decoding; inspect checkpoint-specific defaults.
+
+Corrected run: qwen-checkpoint-pilot-20260927T234301-fc4ee586.
+Modal app: ap-jEljT7qwiT2EhfQKTpStkD. Protocol0.2, same sample/execution budgets.
+All 106 tests pass again after the correction. No extra generation was spent
+on the stopped preflight; the corrected run is the first larger-model sample.
+
+Additional read-only classification of the saved original 0.5B reference:
+432 distinct candidate/input attempts = 377 candidate errors and 55 completed.
+The candidate-error stderr classes/messages are:
+  19 invalid return-list contents;
+  34 dict compared with int;
+  54 assigning an item into an int;
+  108 expecting five unpacked fields but receiving three;
+  108 KeyError for value;
+  54 KeyError for ttl.
+These are repeated test executions across eight programs, not 377 independent
+model errors/samples. A get operation has only op/time/key: missing value/ttl
+there is correct input construction, not a broken grader. One original program
+keeps separate put/get dictionaries, never populates the get dictionary, and
+therefore always returns None. It is valid on all inputs but substantively wrong.
+No generated program was executed on the laptop to perform this analysis.
+
+The corrected GPU function completed all eight samples in 139.659 seconds.
+All eight are extractable Python with valid syntax, EOS and no token-cap hit;
+the reminder prompt is 670 tokens. Parameter count 1,543,714,304; unchanged hash
+0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac.
+Peak CUDA allocated bytes 9,336,191,488 (generation, not training memory).
+Top-level ML/tokenizer versions match the saved 0.5B reference. Explicit matched
+repetition penalty 1.05; recorded native values 1.05 and 1.1. Generation evidence
+was downloaded before the later CPU interruption; no GPU retry is needed.
+
+At approximately 23:49 UTC, Modal preempted the grading controller after reports
+4000..4006 had been committed. Its automatic same-input restart raised
+FileExistsError at the existing-directory guard, before any new GPU call. Modal
+documents these platform restarts independently of application retries; see
+https://modal.com/docs/guide/preemption. This exposes a controller-resumption
+limitation, not a candidate failure or a reason to rerun generation.
+
+The saved files were listed remotely: seven complete per-candidate reports and
+all generation data; no 4007 report. The generation-only comparison is incomplete
+until that last report is recovered. Added modal_finish_checkpoint_pilot.py and
+a tested evidence gate allowing at most one missing candidate. Protocol amendment
+permits at most 54 additional CPU sandbox invocations, 300 seconds, no new samples
+or scoring changes. Completed reports are reused exactly, including failed code.
+The eighth candidate may already have executed up to 54 inputs before preemption:
+actual total attempts may be 432..486, not exactly 432. Their cleanup was not
+persisted, so cannot be asserted; original sandbox lifetime cap 120 seconds remains.
+More than 120 seconds elapsed before launching recovery. All confirmed records
+will be verified separately from this unknown interrupted work. A future larger
+service should persist per-input progress and implement idempotent resumption.
+
+COMPLETED 1.5B COMPARISON (original eight samples, no resampling)
+CPU-only recovery: qwen-checkpoint-recovery-20260927T235622-8129215d.
+App: ap-FTpwiYQk8c6HiH6kMrUWJI. Reused seven unchanged complete reports and
+evaluated saved seed 4007 once on 54 distinct inputs. Generation remains from
+qwen-checkpoint-pilot-20260927T234301-fc4ee586. No new GPU call or optimizer.
+
+Measurement                                 Original 0.5B   Original 1.5B
+  Samples                                         8                8
+  Syntactically valid                              8/8              8/8
+  Valid returned lists on every evaluated input    1/8              3/8
+  Full G3 passes                                  0/8              0/8
+  Full balanced passes                            0/8              0/8
+  Mean balanced partial reward                    .00625           .12
+  Reached 512-token generation cap                 4/8              0/8
+  Meaningful mixed partial groups                  0/2              2/2
+  Mixed binary groups                             0/2              0/2
+These are eight programs per checkpoint, not 432 independent model samples.
+The 0.5B evidence is reused from the earlier pre-SFT condition. The larger model
+was not fine-tuned here, so the improvement relative to the smaller checkpoint
+is not an RL improvement, learning curve or isolated causal effect of size.
+
+Larger-model G3 case counts by seeds 4000..4007:
+  [18, 4, 4, 0, 30, 16, 0, 4] out of 32 each.
+Balanced partial rewards grouped as specified BEFORE generation:
+  [.2275, .025, .025, 0]
+  [.62, .0375, 0, .025]
+All binary rewards remain 0. Partial scoring now distinguishes substantive
+behavior; it is not necessary for a program to be perfect to provide a relative
+policy-gradient signal. This is a readiness diagnostic, not a guarantee of
+useful optimization in subsequent rollout groups or improved strict accuracy.
+
+Concrete failure analysis:
+  Seed 4000 receives .2275: passes all four retrieval probes and three edge probes,
+  but no other behavior family. It compares a stored value to expiration time
+  rather than the current clock, and can return the last put value for another
+  key. It is partially useful, not correct and not a demonstrated exploit.
+  Seed 4004 receives .62: 30/32 G3 and 16/24 balanced. Expiry, overwrite, order and
+  all edge probes pass; repeated retrieval and multiple-key probes fail. Its
+  unnecessary `del cache[key]` after a successful get consumes the value.
+  This is exactly the kind of near-correct program binary scoring discarded.
+  Seed 4005 passes 16/32 G3 but receives only .0375 balanced: its time comparison
+  uses the stored value rather than expiration. None of the substantive balanced
+  probes pass. A raw fraction of G3 would exaggerate this program's progress.
+  Seeds 4001/4002/4007 return a scalar/None instead of collecting a list of all
+  get results. Seed 4003 prints demonstration output, corrupting the output JSON;
+  it also changes expiry on reads. Seed 4006's demonstration crashes during
+  module loading because a stored dictionary lacks ttl. Examples remain in the
+  original code; no manual repair or deletion was used to improve these scores.
+
+Independent record verification:
+  - Recomputed both policy summaries and reward groups from saved reports.
+  - Recovery generation is identical to the preview saved before interruption.
+  - Checked all 432 distinct recorded candidate/input executions and 432 distinct
+    sandbox IDs, current image/runner, blocked network, fresh resets and cleanup.
+  - All 448 assigned case outcomes agree with current manifests/reference outputs.
+    Recompared all 254 completed assigned outcomes from full saved stdout previews,
+    checking byte lengths and SHA-256 hashes before parsing.
+  - Recorded execution statuses: 240 completed, 191 candidate_error, 1 timeout.
+    Of completed executions: 96 passes, 90 wrong answers, 54 invalid JSON outputs.
+    Candidate errors: 137 invalid return types and 54 missing-ttl errors.
+  - A G3-only seed 4007 max_bounds input hit the 5-second command deadline with
+    returncode -1 and no runner stage/stdout/stderr. Its cause is unresolved: this
+    does not prove that the candidate code was slow. Under the frozen policy it
+    remains a timeout, with no retry or retrospective score change. It does not
+    affect any balanced partial reward because that input is absent there.
+  - Recorded attempts all have acknowledged termination. Unknown interrupted
+    attempts from the parent run remain outside that claim. There was one
+    controller preemption; do NOT describe the entire pipeline as failure-free.
+  - Local verification.json documents these checks and limitations. Generated
+    source was only parsed/compiled locally, never executed.
+
+Decision after this diagnostic:
+Prefer the untouched 1.5B checkpoint and the validated balanced partial reward
+for the next bounded GRPO experiment. Do not reuse the failed 0.5B SFT weights or
+repeat its narrow training recipe. Keep the all-or-nothing score as a reported
+correctness measure and, if comparing reward shapes, as an explicit control arm.
+Freeze the real-reward training/evaluation plan before another run: explicitly
+match decoding, verify nonzero finite gradients and changed/reloaded weights,
+and compare independent strict development-audit results before versus after.
+Only a subsequent real-reward run can establish useful cache learning. The 388-
+case audit was not used in this pilot, and a truly untouched final task set still
+needs design. No evidence of reward hacking or algorithm superiority exists yet.
+Generation fits the tested L4, but full-parameter 1.5B training needs a separate
+optimizer/gradient/activation memory budget; do not assume inference memory is
+the training requirement. The existing GRPO launcher is still the 0.5B path and
+must be deliberately extended, not used unchanged while claiming a 1.5B run.
+
+Local verification: 108 tests pass; new scripts compile; git diff --check passes.
+Latest billing checked during the run still reported $0.56307005 through 22:00 UTC,
+excluding later SFT and checkpoint-comparison charges due reporting lag. This is
+not a final cost total. The approximately $10 total allowance remains in force.
+No always-on endpoint, new SFT, new RL run, Git commit or push was performed.
+
+29. MEASUREMENT REPAIR BEFORE MORE TRAINING
+-------------------------------------------
+2026-09-28 UTC. The user questioned whether poor results came from the model,
+grader, or research design. A read-only review found real model mistakes AND
+an additional test-design weakness. The user then approved strengthening and
+versioning probes, separating diagnostic outcomes, and keeping 1.5B fixed for
+the next learning test. This entry records implementation of the measurement
+repair; it does not imply that the larger model has been trained.
+
+WHY THE PREVIOUS RECOMMENDATION NEEDED QUALIFICATION
+The core expected answers agree with the specification and the independently
+structured references. The saved best program really fails repeated reads by
+deleting a value after returning it. The synthetic GRPO control changes weights
+when rewards differ, and the SFT checkpoint also genuinely changed. But none of
+these facts proves that the partial reward is a good learning objective.
+
+A deliberately authored control that ignores expiry entirely and consumes each
+value when it is read scores .62 under balanced v1, including full expiry credit.
+This was reproduced on all three seeds 20260929..20260931. The usual expiry
+pattern was put -> live read -> boundary read -> later read, with expected
+[value, None, None]. Consumption on the live read imitates expiry afterward.
+The control fails full acceptance; the problem is that credited probe behavior
+does not establish the mechanism named by its family. This is not an arithmetic
+error, an incorrect oracle answer, or observed model reward hacking.
+
+The initial diagnostic also found that saved 1.5B seed 4003 officially scores
+0/32 G3 because demonstration output contaminates stdout. Inspecting only its
+already-recorded final result lines would produce 26/32 and balanced .2275.
+That was a clearly labelled counterfactual diagnostic, NOT a replacement score.
+The implementation does not adopt last-line parsing: malformed output stays
+malformed. Interface compliance and observable semantic errors are now reported
+separately, so format failures are not casually described as absent coding skill.
+
+WHAT CHANGED, AND WHAT DID NOT
+Added verifier_rl/reward_v2.py with an explicitly named balanced_v2 suite,
+version cache-balanced-probes-0.2. There are 34 cases: six structural patterns
+in retrieval, expiry, overwrites, multiple keys and order, plus four edge cases.
+V1 used four numeric/key variants per substantive pattern; v2 introduces first
+expired reads, repeated live reads, and interactions between replacement, time
+and independent keys. Every expiry probe includes a first read of an already-
+expired write plus a live value, so all-None cannot substitute for expiry logic.
+Not every probe requires every capability: partial credit remains intentional.
+
+Weights remain .19 per substantive family and .05 total for edges. Each probe
+still requires the exact complete output list, with no syntax-only reward.
+Inputs are validated and expected outputs cross-checked by both reference paths.
+Default seed: 20260929. V2 manifest hash:
+39e0ca3f31a99bf44c90f9ae55fcd6fae9fbec121d0059046b4ed606ee79649a.
+The legacy balanced hash and G3 hash have regression assertions and are unchanged.
+No old launcher silently selects v2. No parser, sandbox runner, canonical task
+prompt, model checkpoint or historical result has been overwritten or repaired.
+The independent 388-case development audit remains outside training rewards.
+
+AUTHORED VALIDATION, NOT MODEL PERFORMANCE
+22 registered controls (existing bugs/shortcuts plus six consumption/combined
+mutations) at three seeds yield 66 control/seed comparisons. Correct code scores
+1 at each seed. All 63 faulty combinations fail full acceptance. Always-None,
+always-empty, constant-seven and the fixed random-answer control remain at or
+below the .05 edge allowance. The paired consumption controls now distinguish
+correct expiry from missing expiry; the latter fails every v2 expiry probe.
+
+Default-seed partial scores, preserving increases as well as decreases:
+  correct                     1       -> 1
+  inclusive_expiry            .2275   -> .5125
+  stale_expiry                .81     -> .715
+  max_expiry                  .905    -> .8416666666666667
+  refresh_reads               .4175   -> .7658333333333334
+  zero_missing                .9875   -> .8925
+  shared_expiry               .81     -> .6833333333333333
+  reorder_ties                .715    -> .81
+  extra_put_output            .025    -> .025
+  omit_missing                .025    -> .025
+  always_none                 .0375   -> .0375
+  always_empty                .025    -> .025
+  constant_seven              .025    -> .025
+  ignore_expiration           .2275   -> .4175
+  last_value                  .0375   -> .10083333333333333
+  random_answers              .025    -> .025
+  consume_with_expiry         .62     -> .5566666666666666
+  consume_without_expiry      .62     -> .24
+  consume_inclusive_expiry    .62     -> .335
+  consume_shared_expiry       .62     -> .30333333333333334
+  ignore_expiry_zero_missing  .2275   -> .4175
+  refresh_zero_missing        .4175   -> .7025
+
+The full matrix and manifests are saved at runs/behavior-v2-controls-20260928/.
+These results support repair of a specific confound, not universal superiority
+of v2 or proof that every shortcut scores below the readiness threshold. In
+particular, last-value-only now exceeds .05. That threshold cannot certify
+underlying capability. Both suite size and structures changed; this is not a
+controlled coverage-only causal comparison. Do not equate partial score with
+percent of actual programming capability or isolate skills from family names.
+
+SEPARATED, NON-EXECUTING DIAGNOSTIC REPORTS
+Added verifier_rl/diagnostics.py. It consumes saved generation/report JSON,
+validates seed/source/prompt/suite/input identities and aggregate consistency,
+rechecks complete stdout previews against hashes and expected outputs, and
+deduplicates repeated case assignments for each candidate. It only parses or
+compiles source for syntax; it never imports or executes that source locally.
+It never repairs code or recovers an answer from the last stdout line.
+
+Buckets distinguish correct output, valid-but-wrong output, invalid JSON/schema,
+candidate execution errors, unattributed execution timeouts, output limits,
+extraction rejection, infrastructure failure and unexecuted inputs. A missing
+or truncated preview is explicitly unavailable/incomplete, not silently parsed.
+Stage/exception text is labelled untrusted. Timeouts are not automatically
+attributed to slow code. Conditional correctness on valid outputs has an explicit
+denominator and unobservable-case count; do not use that selection-biased value
+as the main model score. Old official suite scores remain unchanged in reports.
+
+Saved sidecars:
+  runs/diagnostics-1-5b-20260928/diagnostics.json
+  runs/diagnostics-0-5b-sft-20260928/diagnostics.json
+For the existing eight 1.5B programs, the 432 recorded distinct input evaluations
+divide into 96 correct, 90 wrong valid outputs, 191 execution errors, 54 output
+protocol failures and 1 unattributed timeout. These are executions, not independent
+model samples. The SFT-before/after sidecar retains both arms separately. Unknown
+interrupted work from the earlier run is not counted as verified evidence.
+
+FROZEN CPU-ONLY RE-EVALUATION
+measurement_v2_protocol.txt is written before new model-output grading. Reuse the
+eight untouched 1.5B programs from qwen-checkpoint-pilot-20260927T234301-fc4ee586
+and the complete old reports in qwen-checkpoint-recovery-20260927T235622-8129215d.
+No new generation, SFT, optimizer, selected sample subset or repaired code.
+At most 272 fresh CPU sandbox calls (8 programs x 34 v2 cases), same image/runner
+and execution limits, four workers, .26-second pacing, no application retries.
+The initial $10 total trial budget remains in force. Latest reported usage is
+$0.71421617 through available 23:00 UTC intervals; reporting can still lag.
+
+New measurement_v2.py contracts pin the original model/revision, parameter hash,
+prompt, eight seeds, source hashes and new manifest. modal_measure_v2.py uses a
+900-second CPU controller and at most 180 seconds per candidate controller.
+Each candidate's intent is committed BEFORE execution; its report is committed
+immediately afterward. A completed report can be revalidated and reused on a
+controller restart. An intent without a complete report stops rather than
+silently repeating unknown execution. No infrastructure failure becomes reward 0.
+This is bounded resumption, not a full per-input transactional execution service.
+
+Pre-launch verification: 128 tests pass, scripts compile, git diff --check passes.
+The v2 score differences will measure the changed evaluator on identical code,
+not model learning. No outcome automatically starts training. An independent
+strict before/after learning test still needs its own frozen plan and training
+memory budget; inference fitting on an L4 does not imply full training fits.
+
+COMPLETED V2 MEASUREMENT: SAME PROGRAMS, NEW TESTS
+Run: qwen-behavior-v2-20260928T003755-28724af6
+Modal app: ap-NgZc74L1HeYgYWV703dDBk
+The run completed successfully with all eight saved programs, 34 cases each,
+272 distinct sandbox IDs, and exactly one recorded attempt per candidate/input.
+There were no recorded infrastructure failures, timeouts, or unexecuted cases.
+All recorded preflight checks completed, network access was blocked, reset mode
+was fresh_sandbox_per_input, and cleanup was reported terminated. Image, runner
+and resource limits matched the frozen contract on every attempt. These checks
+validate the saved execution evidence, not an absolute proof of sandbox security.
+
+Seed      V1 partial       V2 partial       V2 exact cases passed
+4000      .2275            .3225            12/34
+4001      .025             .025              2/34
+4002      .025             .025              2/34
+4003      0                0                 0/34
+4004      .62              .5566666667       20/34
+4005      .0375            .0375             3/34
+4006      0                0                 0/34
+4007      .025             .025              2/34
+
+All-or-nothing success remains 0/8. The mean weighted partial score is
+.12395833333333334, versus .12 on v1. DO NOT call this an improvement in the
+model: the programs and model are unchanged, while test structures and count
+differ. The .5567 partial score is not the unweighted 20/34 case-pass rate.
+
+The preassigned groups of four are:
+  [.3225, .025, .025, 0]
+  [.5566666666666666, .0375, 0, .025]
+Both now have reward variation above the edge-only allowance. Partial scoring
+therefore distinguishes these candidates where binary scoring gives all zeros.
+That supplies a possible relative-reward signal, not proof that an optimizer
+will improve strict correctness or that these probes cannot be gamed.
+
+Separated outcomes across the 272 executions:
+  Correct exact output:                 41
+  Valid output, wrong answer:           68
+  Candidate execution error:           129
+  Output protocol failure:              34
+  Infrastructure failure / timeout:      0
+
+All eight source files are syntactically valid. Only three programs return a
+validly shaped output on every input. Seeds 4001, 4002 and 4007 have recorded
+TypeError hints at return validation; seed 4006 has KeyError hints during module
+load. Seed 4003 still has invalid JSON from contaminated output. These hints
+come from untrusted execution text, and invalid output does not establish what
+the underlying function would return under a different wrapper. No source
+repair or last-line rescue was applied. The best program remains incorrect on
+repeated-read behavior; full acceptance was never granted to it.
+
+Post-run verification on the laptop reads data and trusted reference code only.
+It independently rechecks all 143 complete stdout previews and their hashes,
+recomputes per-family weighted rewards with exact fractions, confirms all 272
+unique execution IDs, and reproduces the saved summary and diagnostics exactly.
+The generation document matches the original saved document, and all 25
+snapshotted implementation/protocol files match the code used for the run.
+The local run directory contains verification.json with document hashes and
+explicit limitations. Historical scores and artifacts are untouched. Repeated
+evaluations of eight programs are not hundreds of independent model samples.
+
+INTERPRETATION AND NEXT GATE
+The evidence still points to multiple issues, not one universal cause: real
+candidate mistakes, interface/output failures, and a repairable reward-coverage
+confound. The corrected probes distinguish the particular consumption/expiry
+controls, and the unchanged 1.5B samples retain measurable partial variation.
+We have not yet shown that training on this reward improves the model.
+
+Next, freeze a small 1.5B GRPO pilot using this explicitly versioned partial
+reward, with matched before/after generation and an independent strict
+development audit excluded from the training reward. First budget optimizer,
+gradient and activation memory; deliberately extend the legacy 0.5B launcher
+rather than assuming it now uses 1.5B or v2. Require finite nonzero gradients,
+parameter changes, successful checkpoint reload, and separate reporting of
+strict correctness and partial reward. A negative transfer result must remain
+a negative result, not trigger automatic grading changes or more training.
+Any meaningful final research claim still requires more samples, seeds, task
+families and an untouched final evaluation. No reward-hacking discovery or
+algorithm ranking is claimed here.
+
+This step used CPU execution only: no GPU call, new generation, SFT, RL update,
+always-on endpoint, commit or push. The latest reported bill before launch was
+$0.71421617 through 2026-09-27 23:00 UTC; it does not include this measurement or
+necessarily all earlier work because reporting lags. The approximately $10
+TOTAL trial allowance remains in force. No automatic follow-up run was started.
+
+30. FIRST 1.5B GRPO PILOT WITH REAL PARTIAL REWARDS
+-------------------------------------------------
+2026-09-28 UTC. The user approved moving from the measurement repair to a small
+actual learning run. This section is distinct from Section 29: that earlier
+experiment reused eight saved programs and never changed model weights.
+
+DECISION AND PRELAUNCH CHECKS
+Added verifier_rl/grpo_pilot.py and modal_grpo_pilot.py as an explicit new path.
+The original 0.5B smoke launcher, v1 probes and historical artifacts are unchanged.
+The complete protocol was frozen before launch in grpo_1_5b_protocol.txt, with
+model/revision/parameter and suite identities, fresh evaluation seeds, training
+configuration, memory allowance, stopping rules and interpretation limits.
+The local suite passes 136 tests, including eight new pilot-contract tests.
+These verify fractional rewards, exclusion of audit from training, environment
+and report identities, infrastructure-not-zero semantics, legitimate zero-signal
+outcomes, nonfinite/reload checks and paired summary completeness.
+
+Why a larger GPU, not a different training method?
+The 1.5B checkpoint has exactly 1,543,714,304 parameters. FP32 parameters,
+gradients and two Adam moment tensors alone total 24,699,428,864 bytes, about
+23.0 GiB. Generation caches, activations, logits and temporary buffers add more.
+We chose a 48 GB-class L40S to preserve full-parameter FP32 training and avoid
+introducing adapters/quantization at the same time as the reward change.
+Microbatch one, gradient checkpointing and foreach=False reduce memory pressure.
+The measured memory peak, not this estimate alone, will establish actual fit.
+
+Why four updates and fresh paired samples?
+The immediate question is whether actual execution rewards drive measurable
+gradients and a saved/reloadable policy update. We are not yet running a multi-
+algorithm efficacy study. Four updates at the existing 1e-6 learning rate bound
+the cost and reuse the validated optimizer settings. There is no hyperparameter
+search or automatic retry until a pleasing result appears. Training uses fresh
+on-policy groups, not the previously best saved solution. The group size remains
+four; stop after any uniform group and preserve a zero-signal outcome honestly.
+Evaluation seeds 8000..8007 are new, rather than the 4000..4007 seeds inspected
+during grader development. Both arms are generated on the same GPU with identical
+sampling settings, and the after arm uses the actual reloaded checkpoint.
+
+What is separated?
+Training sees only weighted partial success on 34 balanced_v2 cases. The grader
+continues to report binary correctness too. No syntax-only bonus, relaxed JSON
+parsing, source fixes or hidden-audit feedback enters the reward function.
+The independent audit's 388 cases have zero exact input overlap with the reward
+suite. Both evaluation arms are graded only after training, checkpoint selection
+and generation finish, so the audit cannot select updates. The audit is still
+development data previously used in this project, not a pristine final test set.
+We will separately report optimizer evidence, strict full-suite acceptance,
+partial scores and execution/output failure categories. A changed hash does
+not establish useful learning, and thousands of case executions do not become
+thousands of independent model samples.
+
+Frozen package documentation/source checked before implementation:
+https://huggingface.co/docs/trl/v0.28.0/en/grpo_trainer
+https://raw.githubusercontent.com/huggingface/trl/v0.28.0/trl/trainer/grpo_trainer.py
+Explicit group normalization, token-level ratios, GRPO loss, clipping epsilon
+.2 and beta=0 are documented in the protocol; no reference model/KL penalty is
+used in this small test. TRL computes advantages and backpropagates; the grader
+only supplies the four scalar partial rewards.
+
+BOUNDED LAUNCH
+Run: qwen-grpo-partial-20260928T010255-4a0e6d52
+Modal app: ap-BHVVK4ZwVMUWQQUJK000eE
+At most 1200 seconds on one L40S, 3600 seconds for the CPU audit controller,
+300 seconds per grading call. At most 544 training and 6752 evaluation sandbox
+executions. Eight workers share paced creation (.26 seconds) in one active
+grading controller; execution image, permissions, per-sandbox limits and clean
+resets are unchanged. No application retries. Completed identical candidate
+reports can be reused, but an incomplete intent stops. This is not a claim of
+exactly-once execution under every provider failure. Keep the local entrypoint
+connected for the GPU-to-audit handoff; detached mode protects only the active
+remote call, not future calls that have not been submitted.
+
+The latest prelaunch bill reported $0.78557826 metered September usage. Reporting
+can lag. The $10 TOTAL trial allowance remains in force. Live billing rates
+reported L40S $1.95/hour; its full 20-minute GPU allowance plus requested two CPU
+cores and 32 GiB RAM is about $.77. Plan roughly $3 additional including CPU
+headroom, not a hard account-wide spending cap. No always-on endpoint, automatic
+longer training, Git commit or push is part of this step. The checkpoint remains
+on the artifact volume, with continuing storage cost explicitly noted.
+
+GPU STAGE COMPLETED: ACTUAL EXECUTION REWARDS UPDATED WEIGHTS
+All four prescribed groups had reward variation:
+  Step 1: [1, .0375, .5566666666666666, .5125]
+  Step 2: [1, 0, .025, .5566666666666666]
+  Step 3: [.025, .025, 1, .3225]
+  Step 4: [.4175, .0125, 0, 0]
+Pre-clipping gradient norms were respectively 3.2258660793, 3.1556999683,
+3.7411127090 and 3.1509909630. The configured clipping norm was 1. These are
+gradient norms before clipping, not norms of the actual parameter differences.
+All parameters were finite. Four optimizer updates completed; the early uniform-
+reward stop did not trigger. The full parameter hash changed from
+0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac
+to
+deffbdcb3588c358232c8e241072ec5ffedf0dc3d7a3a1c7ecb82bd4decf0e23.
+Reloading the saved checkpoint reproduced the latter hash exactly. This is
+stronger evidence than a successful trainer call or reward printout. It shows
+that real task rewards, rather than synthetic labels, drove this optimizer path.
+It does NOT yet show improved coding or independently verified correctness.
+
+Why does the printed loss round to zero despite nonzero gradients?
+Group-centered advantages sum to approximately zero. At a fresh single-iteration
+on-policy update, policy ratios are initially one, so the average surrogate loss
+can cancel numerically even though its derivatives do not: different sampled
+programs have different log-probability gradients. Hence a nearly zero printed
+loss is not, by itself, evidence of no learning signal. The measured gradients,
+parameter hashes and checkpoint reload supply the relevant update checks here.
+There is no reference-policy KL measurement because beta=0 in this protocol.
+
+The group mean reward declined across these four different sampled groups.
+Neither that sequence nor one high-reward completion proves a change in expected
+capability. Preserve it as observed; the fixed before/after evaluation is the
+comparison we planned. Do not rewrite the story as monotonically rising reward.
+
+The 16 training programs used exactly 544 distinct fresh sandbox IDs. A local
+read-only check reproduced all reward values and verified all 414 complete
+stdout previews. Outcome counts: 197 correct, 147 valid wrong answers, 70 invalid
+JSON and 130 execution errors. No training infrastructure failures or timeouts
+were recorded. All 16 programs parse; nine return valid outputs on all their
+training inputs. Three pass all v2 cases; those training outputs have NOT been
+graded on the independent audit and are not being called general solutions.
+
+Actual device: NVIDIA L40S, 47.3742 GiB reported memory. Peak CUDA allocation:
+26.2044 GiB; peak reserved memory: 27.7285 GiB. This directly supports the larger-
+GPU choice. The GPU function used 437.6008 seconds, including model setup,
+generation, checkpoint operations and waits for CPU rewards; it is not pure
+backpropagation time. All pinned package versions match the protocol. Both
+eight-sample evaluation arms were generated; three paired extracted sources are
+identical (seeds 8002, 8003 and 8005), although raw text need not be identical.
+The independent audit was then launched, after the GPU result returned.
+
+Local training-verification.json records these checks, source/document hashes
+and caveats. This verification never imports or executes generated programs on
+the laptop. The before/after audit outcome must be recorded separately below.
+
+IMPORTANT ATTRIBUTION LIMIT: PARTIAL REWARD WAS NOT THE ONLY CHANGE
+Binary labels on these same recorded training rollouts would be:
+  [1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0].
+The first three groups therefore already contain binary reward variation; the
+fourth gains a relative signal specifically from partial scoring. This supports
+a narrower claim than saying that partial reward alone fixed all previous zero-
+gradient problems. The current larger starting policy and fresh rollout draws
+also matter. These are counterfactual labels on partial-trained rollouts, NOT
+an actual binary-reward training control: a binary-trained policy could generate
+different programs at later steps. Causal benefit from partial scoring requires
+a matched training comparison and multiple seeds, which this pilot does not run.
+
+COMPLETED INDEPENDENT AUDIT: QUALITY RESULT WAS NEGATIVE
+The full application completed at approximately 2026-09-28 01:40 UTC. This is the
+matched result for fresh seeds 8000..8007, not a comparison against the earlier
+0/8 checkpoint-debugging samples, which used different seeds and GPU hardware.
+
+Metric                                 Before            After
+Full 388-case audit passes                 4/8              0/8
+Full 34-case reward-suite passes           4/8              1/8
+Mean weighted partial reward             .50625           .2554166667
+Audit case passes (diagnostic)          1650/3104          944/3104
+Audit case-pass fraction                 .5315722         .3041237
+
+Paired audit counts out of 388:
+  Seed 8000: 388 ->   0
+  Seed 8001: 388 -> 367
+  Seed 8002:   0 ->   0
+  Seed 8003:  49 ->  49
+  Seed 8004: 388 ->  92
+  Seed 8005: 388 -> 387  (identical source; unexplained execution kill)
+  Seed 8006:   0 ->  49
+  Seed 8007:  49 ->   0
+
+No evaluation generation hit the 512-token limit; all sixteen ended with EOS.
+Before: seven accepted Python blocks and one rejected multiple-fence completion.
+After: eight accepted Python blocks. More extractable outputs did not translate
+into higher correctness. Three paired extracted sources are identical; source
+identity is stronger than superficial raw-text differences from explanation text.
+
+The training pipeline now performs actual optimization; the capability outcome
+did not improve in this sample. Keep these as separate conclusions. Four updates,
+one training seed and eight evaluation samples are not enough to estimate a
+stable general effect. Neither increase the grader score after seeing failures
+nor tell a reward-hacking story unsupported by the data: BOTH evaluation partial
+reward and strict success decreased. This is not the targeted phenomenon of
+rising proxy reward alongside falling hidden correctness.
+
+EXECUTION ANOMALY: DO NOT BLAME THIS PARTICULAR FAILURE ON A WEIGHT CHANGE
+Seed 8005's extracted source is byte-identical before and after; hash:
+1244008fe973e1386fa3c92327448efec00b3127f5318972737153513bd51061.
+It passed all reward probes in both arms and all but one audit execution after.
+The changed outcome is exhaustive/0035, input
+  [{"op":"get","time":0,"key":"b"},
+   {"op":"get","time":0,"key":"a"}]
+with expected [None, None]. Before it passed. After it returned no stdout and
+exit code 137, with the last recorded stage hint module_load. Preflight completed;
+execution roundtrip was 2.1467 seconds; complete sandbox lifecycle 4.6496 seconds;
+cleanup reported terminated. Sandbox: sb-AtbGSKpILeDSLIEzSRw1io.
+The backend records this as candidate_error/nonzero_exit, not a timeout or an
+explicit infrastructure exception. That classification does not prove the
+candidate caused the kill. Stage text is untrusted evidence; 137 alone does not
+distinguish hard CPU-limit enforcement, memory pressure, or a platform kill.
+The function imports typing and its input here is tiny. Root cause remains open.
+
+The official score remains 387/388 and the strict sample remains failed. We did
+not silently replace it, run repeatedly until it passed, or alter the limits.
+As a clearly labelled sensitivity bound only, converting this ONE unresolved
+event to a pass would yield 1/8 after full passes, still below 4/8 before. This is
+not a replacement measurement or proof that it deserved acceptance. The other
+two identical-source pairs (8002 and 8003) have identical outcomes on all cases.
+The run therefore contains both genuine program errors and execution variability.
+
+CONCRETE MODEL FAILURES, INSPECTED WITHOUT LOCAL EXECUTION OR REPAIR
+  - After 8000 unpacks operation.values() into four variables for a put, although
+    the schema has five fields including op; its top-level demonstration triggers
+    a ValueError during module loading. It also has other semantic problems.
+  - After 8001 decrements the stored absolute expiry on each successful read.
+    It scores .905 partial and 367/388 audit cases, but repeated live reads can
+    expire a value early. Saved retrieval/later_repeats: put at 474, TTL 6, then
+    reads at 475 and 479. Expected [298, 298, None], actual [298, None, None].
+    The two references and recorded stdout agree on the mismatch. High partial
+    credit means near-correct behavior under these probes, not full correctness.
+  - After 8004 treats TTL as a read counter and omits missing-key outputs.
+  - After 8006 uses undefined time.time(), not the supplied logical timestamps,
+    and also appends values for puts. Reports show NameError on nontrivial inputs.
+  - After 8007 prints a demonstration and consumes values on read. Its observed
+    output is invalid JSON under the unchanged protocol; semantic inspection
+    does not override that official format failure.
+None of these examples alone establishes intentional or optimized exploitation.
+
+FINAL RECORD CHECKS AND COST CAVEAT
+7296 assigned candidate-input pairs comprise 544 training plus 6752 evaluation
+assignments. The one rejected baseline completion did not execute its 422 cases,
+leaving exactly 6874 distinct sandbox IDs: 544 training and 6330 evaluation.
+There was one attempt per executed input, no recorded infrastructure-error or
+timeout statuses, but the exit-137 anomaly makes a failure-free-environment claim
+inappropriate. Every recorded preflight completed, network was blocked, resource
+limits matched and cleanup reported terminated. These are metadata checks, not
+a proof of isolation security. All 5579 completed stdout previews and hashes
+were independently rechecked using the full output, never last-line parsing.
+Summary, diagnostics and partial rewards recompute exactly from the saved data;
+all 26 snapshotted code/protocol files match. Local verification.json records
+document hashes and the unresolved kill. No model program was executed locally.
+
+Latest post-run workspace billing query reported $1.08557826 metered September
+usage. Credits make billed cash zero at that snapshot, but we budget against
+metered usage, not free-credit assumptions. Reporting lags; this is neither the
+settled trial cost nor evidence that the run cost exactly the difference between
+two workspace summaries. The approximately $10 TOTAL allowance remains in force.
+The app completed; no extra training, diagnostic re-execution, endpoint, Git
+commit or push followed. The saved checkpoint and logs remain on the artifact
+volume. Current local tests: 136 pass.
+
+NEXT DECISION, NOT AN AUTOMATIC NEW RUN
+First characterize the unexplained process kill and retain protected, bounded
+execution; do not globally loosen resource limits based on one event. Then plan
+a better-powered, fixed-verifier learning test with more evaluation samples and
+training seeds. Four steps establish update plumbing, not expected convergence.
+Keep the 1.5B base model and evaluator fixed while investigating optimization;
+do not jump to five RL algorithms or keep revising the grader until results look
+positive. A matched binary-versus-partial comparison would isolate reward shape
+more cleanly than comparing this pilot with the earlier 0.5B zero-signal run.
+
+
+31. REWARD-FIRST REVIEW: COVERAGE AND SCORING ARE DIFFERENT QUESTIONS
+-------------------------------------------------------------------
+2026-09-28 UTC. The user chose reward design as the first hypothesis to investigate,
+deferring the exit-137 investigation. Deferring it does not resolve it: the saved
+failure remains in every official result. This section supersedes the ordering
+of the NEXT DECISION paragraph above, not its evidence or interpretation limits.
+
+WHY INVESTIGATE REWARDS WITHOUT ASSUMING THEY CAUSED THE REGRESSION?
+The previous trial established that real rewards generated gradients and changed
+weights. It did not establish better answers. The reward is one possible reason,
+but small-sample variation, optimization settings and implementation details
+remain possible causes. We must not agree that the reward is broken just because
+that is a plausible explanation. The useful question is whether we can identify
+a concrete defect, show its effect on a controlled example, and isolate its
+effect from changing the optimizer at the same time.
+
+The review has three layers:
+  - Comparator: does an executed output equal the reference output exactly?
+  - Coverage: which input situations do we test at all?
+  - Aggregation: how do the pass/fail cases become one scalar training reward?
+Each can fail differently. GRPO then turns the scalar rewards into relative
+advantages. A lower printed reward is not necessarily a weaker update after
+normalization. A program passing a finite suite is not a proven general solution.
+
+SCOPE AND IMPLEMENTATION
+New reward_review_protocol.txt records the questions, candidate formulas,
+coverage proposal and interpretation limits. New verifier_rl/reward_review.py
+rechecks existing JSON records and runs only fixed, project-authored functions.
+It never imports or executes model source; existing diagnostic code compiles/
+parses text statically and rechecks saved stdout using the strict JSON comparator.
+No last-line rescue, source repair, model generation, sandbox execution, training,
+checkpoint change, Git commit or push occurred in this review.
+
+The CLI writes exclusively to a NEW local directory and refuses to overwrite.
+Completed report: runs/reward-review-20260928-v1/reward_review.json. The sidecar
+includes the source run identity, canonical hashes of generation/reports JSON,
+per-program family scores and failure categories, actual reward groups,
+counterfactual scalar advantages, all authored-control results and limitations.
+Both suite manifests and hashes of the four relevant implementation files are
+also saved beside the report. Original scorers and pilot launchers are unchanged.
+
+FINDING 1: THE SAVED SCORES ARE CONSISTENT, AND OBSERVED RANKING IS NOT REVERSED
+All sixteen recorded training rewards recompute exactly from the saved case
+outcomes. The preexisting diagnostics revalidate extraction/source identities,
+expected outputs, aggregates, and complete saved stdout. No arithmetic or reward-
+to-candidate alignment discrepancy was found in these records. This is bounded
+evidence, not a proof against every possible bug in the entire training stack.
+
+For the sixteen before/after evaluation records (13 unique extracted sources),
+compare reward ordering with development-audit CASE accuracy, not just all-or-
+nothing success. Among 120 pairs: 94 have different scores on both metrics and
+agree in ordering; zero disagree; 22 tie on both; four tie in reward but differ
+on audit accuracy. Those four ties involve the single unresolved exit-137 record.
+We keep them rather than silently changing that program to an audit pass.
+Pairs share programs and sources and are not independent statistical trials.
+This is not a correlation study on a large held-out corpus. It does rule out the
+simple claim that this small observed reward table systematically ranks the
+worst outputs above the best ones. Full correctness still matters separately.
+
+For example, the post-training decrement-on-read program earned .905 partial
+credit while passing 367/388 audit cases. That is an incorrect program, but high
+partial credit is not automatically misgrading: most of its observed behavior
+was correct. Whether rewarding that behavior helps reach full correctness is a
+learning question, not answered by its score alone.
+
+FINDING 2: TWO REAL TEST-COVERAGE BLIND SPOTS
+The task permits 200 operations and keys of one through eight lowercase letters.
+All 34 v2 probes use at most SIX operations and ONLY one-character keys. Two
+new, explicitly authored faulty functions demonstrate the gap:
+  short_inputs_only: correct for at most six operations, otherwise all None.
+  single_character_keys_only: correct for one-character keys, otherwise all None.
+Both receive 1.0 and full acceptance on v2 at all three checked seeds.
+Neither function is claimed to have been generated or discovered by the model.
+They are controlled counterexamples to coverage, not evidence of exploitation.
+
+SEPARATE OPT-IN COVERAGE PROPOSAL, NOT A SILENT GRADER REPLACEMENT
+New verifier_rl/reward_v3.py defines balanced_v3, version cache-balanced-probes-0.3.
+Default suite hash:
+9a1cae82c4f3bb2f413968257f791a564162bd70cc93a5214a98f2bfc9e49765.
+All original 34 v2 cases remain byte-identical. Each substantive family gains
+one long trace and one consistently renamed eight-character-key, time-translated
+variant. The additions cover repeated reads, expiry, repeated overwrites, many
+independent keys and tied operation ordering. The five long traces have 200,
+44, 43, 62 and 120 operations. Wide-key variants preserve the reference answers.
+There are 44 cases and 643 operations total versus v2's 34 and 153. Inputs stay
+inside the original task contract and both reference implementations agree.
+No inputs are copied from the development audit; exact overlap is zero at the
+three checked seeds. This does not make the already-seen audit a fresh final set.
+
+The aggregation remains .19 per substantive family, .05 for edges, and exact
+whole-output correctness per case. Substantive family denominators increase from
+six to eight; edges stay at four. No syntax bonuses, per-output-element credit,
+source recognition, negative exception penalties or correctness bonuses are
+enabled in v3. The training launchers continue to use v2. A future switch needs
+an explicit new protocol and measurements; no model candidate has run v3 yet.
+
+Validation: existing 22 controls plus the two domain-limited functions and a
+fixed authored decrement-expiry-on-successful-read function, at three seeds:
+75 control/seed combinations. Correct behavior receives 1.0 throughout. All
+24 faulty controls fail full v3 acceptance throughout. Trivial output controls
+stay within the existing .05 edge-only allowance. Both new domain-limited
+functions drop from 1.0 to .88125, NOT to zero. Partial reward is still partial.
+
+IMPORTANT NEGATIVE FINDINGS ABOUT THE PROPOSAL
+V3 is broader in tested domain, not a universally stronger partial-score metric.
+The decrement-on-read control still scores .905 on both suites. Some other faulty
+controls gain partial credit: stale_expiry .715 -> .73875, max_expiry .841667 ->
+.8575 at the default seed. Additional passing cases can dilute old failures in
+a family mean even though every old test remains. We did not keep adjusting the
+weights until those numbers looked better. The two new blind spots are detected,
+but this does not establish that the RL learning signal is improved.
+Only key lengths one and eight are present in this proposal; intermediate lengths
+and many other combinations remain uncovered. Fixed finite tests never establish
+general correctness or resistance to arbitrary shortcuts. Broader inputs may
+also increase execution cost or reduce useful reward variation in small models.
+
+FINDING 3: PARTIAL SCORING CAN REINFORCE AN INCOMPLETE PROGRAM NEXT TO A FULL PASS
+The actual first group was [1, .0375, .556667, .5125]. Its group-relative
+advantages are approximately [1.2027, -1.2429, .0762, -.0360]. Rollout 9002, which
+fails fourteen of the 34 cases, still receives a positive advantage. The second
+group [1, 0, .025, .556667] likewise gives incomplete rollout 9007 a positive
+advantage .3374. The full-pass solution gets the largest advantage in each group;
+the scorer is not preferring the incomplete solution over it.
+
+This is normal relative optimization with partial reward, not necessarily a bug
+or proof of harm. Partial solutions may be useful intermediate steps. But it
+provides a precise hypothesis: does emphasizing the jump to full-suite success
+help once the starting policy already samples some full passes? No edge-only
+candidate received positive advantage in the four observed groups, so the
+observations do not support blaming trivial edge credit for this particular run.
+
+COUNTERFACTUAL FORMULAS: DIAGNOSTIC ONLY, NO NEW TRAINING
+Keep the exact saved cases/outputs and compare:
+  existing partial p;
+  binary b, where b=1 only when the entire reward suite passes;
+  illustrative completion bonus (p+b)/2.
+The half weight was chosen as a simple explicit diagnostic, not optimized using
+the audit. It retains fractional scores below .5 for incomplete programs and
+gives 1 to full-test-pass programs. In groups one and two it changes the positive
+advantage of 9002/9007 to negative, while keeping 9000/9004 positive. Group three
+already has only the full-pass candidate positive under existing partial reward.
+This proposal changes relative score gaps, not the ordering of programs.
+
+The fourth group is [.4175, .0125, 0, 0], all incomplete. The bonus merely halves
+these numbers. Under the pinned GRPO group/sample-std normalization, the winning
+incomplete rollout 9012 has advantage 1.498666 before and 1.497942 after, essentially
+unchanged. Positive affine rescaling cancels exactly if the denominator epsilon
+is zero; TRL uses sample standard deviation plus 1e-4. Subtracting a constant
+penalty from every reward also cancels. Thus saying "the bad answer's score was
+cut in half" does not mean its reinforcement was halved. Binary scoring would
+produce all zeros for that fourth group and remove its learning signal instead.
+
+Formula checked against the pinned primary implementation:
+https://raw.githubusercontent.com/huggingface/trl/v0.28.0/trl/trainer/grpo_trainer.py
+The local arithmetic is a scalar diagnostic at ordinary float precision, not
+bitwise reproduction of Torch, gradient accumulation or actual parameter motion.
+Positive advantage is an optimization signal, not a measurement of a particular
+completion's post-update probability. Changing the rewards would change future
+samples; relabeling saved rollouts is NOT a binary/bonus-trained control model.
+
+WHAT WE CAN SAY, AND WHAT WE CANNOT
+We found and demonstrated coverage weaknesses, and identified a testable choice
+about rewarding incomplete solutions. We did NOT establish that these caused
+the before/after regression, demonstrate reward hacking, or improve a model.
+Existing reward rankings in the inspected pool actually track case correctness
+well. The correct next step is a bounded same-candidate v2/v3 sandbox measurement
+with source identities and per-input limits fixed, before further training.
+Then compare one reward change at a time from the same initial checkpoint while
+keeping GRPO fixed. Preserve a separate final test set; this entire review is
+development. No billable job or automatic follow-up was launched in this step.
+
+VERIFICATION AT THE END OF THIS REVIEW
+The full local suite passes 155 tests (136 existing plus 19 new). The new checks
+cover deterministic expanded suites, oracle agreement, domain boundaries, no
+exact audit overlap, authored false-acceptance controls, unchanged strict parsing,
+unscored infrastructure failures, reward-record corruption, group/sample-std
+advantages, affine scaling, non-execution of submitted source, retained exit-137
+failure, and exclusive sidecar creation. Compile checks and git diff --check
+also pass. After capturing expected CLI-overwrite stderr explicitly in the test,
+that test was rerun; this test-only cleanup changes no production behavior.
+Original generation/reports canonical hashes match the completed pilot's saved
+verification. The current coverage/formula proposals have no model-training
+efficacy result. No new Modal jobs were launched and no spending limit was changed.
+
+SECTION 32 -- PAIRED V2/V3 GRADER MEASUREMENT (CPU ONLY)
+
+WHY THIS EXPERIMENT COMES BEFORE ANOTHER RL RUN
+The user approved comparing the graders on existing programs. The question is
+whether broader inputs change what the verifier accepts or rewards. It is not
+yet whether v3 trains a better policy. Keep the model, generated programs,
+extraction, runner, parser, family weights and resource limits fixed. Do not add
+the illustrative completion bonus at the same time as expanding test coverage.
+
+The frozen protocol is measurement_v3_protocol.txt. Implementation lives in
+verifier_rl/measurement_v3.py and modal_measure_v3.py. No trainer default is
+changed, no model endpoint/GPU is needed, and no generated source executes locally.
+This follows the reward-first review; the Countdown-Code paper motivates careful
+separation of proxy success and intended correctness, but its editable-test threat
+surface does not establish the cause of our protected-grader pilot's regression.
+
+WHY FRESH PAIRED EXECUTIONS INSTEAD OF PATCHING OLD REPORTS
+Each saved program is evaluated on the 44-input union once. V2 reads the original
+34 outcomes, and v3 reads all 44. Shared inputs have exactly the same execution
+evidence in both reports. We separately compare fresh v2 with historical v2.
+This prevents rerun noise from masquerading as a coverage effect, retains all
+original evidence, and provides a repeatability check without rerunning the
+388-case development audit or resolving its old exit-137 anomaly by assumption.
+
+There are 16 saved training rollouts and 16 before/after records: 32 program
+records, 29 distinct extracted source strings. Repeated sources are retained and
+identified, not treated as independent samples. Three authored controls run first:
+correct, short-inputs-only, and single-character-keys-only. Their every output
+must match the authored behavior, including the two v2 false acceptances and v3
+partial .88125/full rejection. These controls are not model-discovered exploits.
+
+SAFETY, COST AND FAILURE GATES
+35 records times 44 inputs are 1540 assigned pairs. One historical extraction
+rejection remains unexecuted, giving at most 1496 actual CPU sandboxes. There is
+no generation, SFT, RL, retry, source repair, or automatic follow-up. Eight workers
+are paced at .26 seconds per creation; only one candidate batch runs at a time.
+Candidate sandbox lifetime is at most 120 seconds, grading function at most 300
+seconds, overall controller at most 2400 seconds. All budgets and initial billing
+are stored. Prelaunch billing showed $1.07557826 metered and $0 after credits;
+metered cost, not the credit-discounted amount, counts toward the $10 total limit.
+Even assigning every sandbox its maximum lifetime, every worker its maximum
+timeout, plus the controller and a $1 overhead/lag reserve fits below $10 at the
+checked rates. This is a resource envelope, NOT a provider-enforced spending cap.
+
+Each candidate intent is committed before any execution, and each result before
+validation. Complete matching records are reused; incomplete intents are refused
+because their execution count is ambiguous. Unresolved infrastructure/cleanup,
+unexpected control outputs, signal-style exits or timeouts stop progression.
+Changed historical-versus-fresh v2 outcomes also stop subsequent program batches.
+None are silently retried, rescued or interpreted as model-learning effects.
+
+HOW TO INTERPRET THE RESULT
+Inspect full acceptance, family partial scores, added-case failure reasons,
+historical-v2 repeatability and the four original reward groups. Adding cases can
+increase partial credit by diluting old failures even when no program changes.
+The same GRPO advantage calculation is diagnostic only: relabeled old rollouts
+are not an alternative training trajectory. A mixed group does not itself prove
+a better learning signal. These are development tests; final generalization and
+the efficacy of any future reward change remain separate questions.
+
+COMPLETED LIVE RESULT -- 2026-09-28 UTC
+Run: qwen-grader-v3-20260928T041709-7e90839d
+Modal app: ap-W2fqJtirTtMPXCcRFpcmG2 (stopped after completion).
+Source pilot: qwen-grpo-partial-20260928T010255-4a0e6d52, unchanged.
+Full records: runs/qwen-grader-v3-20260928T041709-7e90839d/reports.json
+Per-program comparisons and groups: the same directory's summary.json.
+Independent local verification: runs/
+qwen-grader-v3-20260928T041709-7e90839d-verification/verification.json.
+
+The run completed all 1496 planned actual sandbox executions with no retry,
+infrastructure error, timeout or signal-style exit. Every sandbox has a distinct
+ID and a termination acknowledgement. All 1198 completed stdout records were
+revalidated against their saved hashes and the strict external comparator.
+The remaining actual executions were 298 ordinary candidate execution errors.
+The 44 assigned outcomes for the rejected completion required no sandbox.
+Do not call those 44 failures execution failures, or 1496 independent samples.
+
+All 32 records reproduce historical v2 outcomes, return codes and stdout hashes.
+That covers 1054 fresh model/v2 executions and 34 unchanged extraction-rejection
+outcomes. Shared v2/v3 inputs use the same output record, not repeated runs.
+Both deliberately limited controls pass v2 fully and fail five new v3 cases:
+  correct control:                1.00000 -> 1.00000; full pass -> full pass
+  short-inputs-only control:      1.00000 -> 0.88125; full pass -> rejection
+  single-character-keys control:  1.00000 -> 0.88125; full pass -> rejection
+All per-case outputs agree with the authored behavior, not merely an expected
+aggregate score. This establishes the intended coverage demonstrations in the
+actual sandbox. It does not establish that Qwen learned either shortcut.
+
+SAVED MODEL RESULTS (FRESH V2 VERSUS V3)
+Population          Records   Full passes v2/v3   Mean partial v2 -> v3
+Training rollouts      16           3 / 3          .34317708 -> .340703125
+Before evaluation      8           4 / 4          .50625000 -> .506250000
+After evaluation       8           1 / 1          .25541667 -> .253437500
+These are remeasurements of old programs, not new before/after learning results.
+Eight program records pass both verifiers; none passes v2 fully and fails v3.
+They include a repeated source, so eight full-pass records are not eight unique
+solutions. This small development pool does not exclude unseen coverage exploits.
+
+Only four of the 32 model records change partial score:
+  training 9002: .55666667 -> .54875
+  training 9003: .51250000 -> .48875
+  training 9007: .55666667 -> .54875
+  after    8004: .08833333 -> .07250
+The other 28 partial scores are unchanged; no model partial score increases here.
+The offline authored controls in Section 31 still demonstrate that increases
+from dilution are possible. Their negative finding is not erased by this pool.
+Adding tests can change which cases fail even when a weighted score stays equal.
+For example, after-8001 (decrementing expiry on reads) fails the new multi-key
+long trace but remains at .905 because passing additions offset the effect on
+family averages. Its incomplete behavior was already rejected by v2.
+
+Across the 1408 assigned MODEL/input pairs (excluding the three controls):
+  correct output:              520
+  valid JSON, wrong answer:    324
+  invalid JSON output:         222
+  candidate execution error:   298
+  extraction rejected:         44 (no execution)
+These categories separate semantic observations from interface/execution errors.
+They are not independent samples and cannot identify a cause of training failure.
+The new inputs do not convert the earlier protocol/exception failures into useful
+semantic feedback; a program still has to return usable output to earn those
+nontrivial correctness points.
+
+GROUP-RELATIVE OPTIMIZATION DIAGNOSTIC
+All four original groups still have varied rewards. Positive-advantage incomplete
+program IDs remain exactly the same: 9002 in group 1, 9007 in group 2, none in
+group 3, 9012 in group 4. Their v3 advantages are approximately .07618, .32554,
+and 1.49867 respectively. Group 4's entire reward vector is unchanged:
+[.4175, .0125, 0, 0]. The extra coverage did not remove its reinforcement of the
+best incomplete program. This is ordinary relative optimization, not proof of
+an implementation bug or of harm. These diagnostics do not update any weights.
+
+CONCLUSION AND NEXT DECISION
+The paired measurement and intended coverage checks worked. The stronger claim
+that v3 fixes the learning regression is unsupported. In this pool, broader tests
+have a small effect on rewards, no effect on full acceptance, and no effect on
+which completions receive positive relative advantage. We have not demonstrated
+reward hacking, improved coding capability, or the root cause of the regression.
+The original strict-audit exit 137 is still unresolved and its score unchanged;
+the absence of new terminations does not explain the old event.
+
+Do not keep adding complexity simply to obtain a more dramatic result. A useful
+next controlled question is reward FORMULA: with coverage and GRPO fixed, compare
+existing partial credit with an explicitly frozen full-completion bonus from
+the same starting checkpoint. This is a recommendation, not an automatically
+launched run or a claim that shaping is the cause. Retain an unchanged-policy
+baseline, matched budgets/seeds and separate correctness evaluation. The previous
+coverage-only training ablation is still possible, but this measurement gives
+no reason to expect a large benefit from these particular ten added cases.
+
+FINAL VALIDATION AND SPENDING RECORD
+172 local tests pass: 155 prior tests plus 17 paired-measurement/verification
+tests. These include mocked cloud durability, incomplete-intent refusal,
+same-result reuse without execution, failure persistence before validation,
+protected limits/identity checks, shared-input deduplication, budget rejection,
+and frozen-record recomputation. Model source never executes locally.
+The independent verifier checks 29 frozen implementation/protocol files and
+recomputes the completed summary exactly. Original pilot document hashes match.
+Reports and frozen inputs persist on Modal and locally; the verification sidecar
+is local. No training defaults changed and no follow-up billable job was started.
+
+Prelaunch resource envelope, including prior metered use and $1 reserve:
+$9.649016593333... against the $10 total trial budget. This was a conservative
+maximum-lifetime envelope, NOT actual spend. The immediate post-run workspace
+snapshot is $1.09557826 metered, $0 after credits. The $0.02 snapshot increase is
+NOT a reliable final per-run cost: billing can lag, notably for sandboxes, and
+the snapshot includes workspace usage. billing_after.json preserves this caveat.
+The comparison app is stopped with zero tasks; the standing evaluation app is
+deployed but also has zero tasks. No GPU was used in this experiment.
+
+The no-dependency path was also checked with python3 -S: 168 tests passed and
+the four optional mocked-launcher checks skipped as intended. Those four pass
+with the installed SDK. Compile checks and git diff --check pass. This final
+test-only compatibility change does not modify the frozen experiment code.
+
+SECTION 33 -- REPOSITORY CLEANUP WITHOUT LOSING THE EXPERIMENT HISTORY
+
+The user asked to remove unnecessary files, then selected "archive retired tools;
+preserve results." We moved 12 completed one-off Modal launchers into
+archive/launchers and six historical planning/protocol files into archive/protocols.
+The six future-task planning documents moved into docs/tasks. The implemented
+cache contract stays at its original path because the prompt and reproducibility
+checks depend on it. The old README is preserved verbatim as
+docs/experiment_history.md; its paths describe the historical checkout.
+The new root README is a concise current-workflow guide.
+
+archive/manifest.json records original path, new path and SHA-256 for all 25
+relocated files. Each destination was checked byte-for-byte by hash. These are
+recoverable relocations, not destroyed research evidence. No runs, candidates,
+checkpoints, tests, or research notes were deleted. Shared Python modules remain:
+several historical-looking modules still supply model/prompt constants, graders,
+regression tests, or saved-artifact verification. Removing them would not merely
+remove clutter. Old launcher imports may need their original paths restored
+before an explicitly approved historical reproduction.
+
+The completed v2/v3 measurement was independently reverified AFTER cleanup:
+all 29 frozen implementation/protocol files still match, the exact summary
+recomputes, 1496 sandbox IDs/cleanup acknowledgements remain valid, and all 1198
+completed stdout records revalidate. The verification sidecar is
+runs/qwen-grader-v3-20260928-post-cleanup-verification/verification.json.
+The archival changes therefore do not invalidate the preceding scientific record.
+
+SECTION 34 -- MATCHED REWARD-SHAPING PILOT, PRELAUNCH DECISIONS
+
+The user explicitly approved launching two matched four-update runs, with eight
+evaluation samples per policy, within the original approximately $10 total trial
+budget. Expected wall time is roughly an hour because CPU grading dominates;
+this is not an expanded five-algorithm study or a promise of improved learning.
+The frozen specification is reward_shaping_protocol.txt. The existing
+modal_grpo_pilot.py launcher now has an explicit ::shaping entrypoint, avoiding
+another duplicate GPU training implementation. Legacy v2 behavior remains its
+separate ::main entrypoint. Pure contracts and offline verification are in
+verifier_rl/reward_shaping.py; tests use authored functions and mocked cloud calls.
+
+WHAT CHANGES AND WHAT DOES NOT
+Both arms independently load the same untouched project 1.5B checkpoint, verified
+by full FP32 parameter hash. Neither continues from the earlier regressed model.
+Both use v3's exact 44 cases, unchanged family weights and output parsing, identical
+prompt/decoding, training seed 20260930, GRPO settings, resource limits and image.
+Arm A returns partial credit p. Arm B returns (p+b)/2, where b means all 44 cases
+passed. For example, p=.8 becomes .4 for an incomplete program, while a full pass
+still gets 1. This is not proof that its reinforcement is halved: within-group
+normalization mostly cancels the scaling if there is no full-pass program.
+Only the reward formula is the intended training treatment. No KL change, SFT,
+model-size change, test-weight tuning, new algorithm, source repair or resampling.
+
+The live before generations use new evaluation seeds 10000..10007, rather than
+the previously inspected 8000..8007 generations. Before samples must match in
+text, extracted source, token count and prompt/extraction identities across arms.
+The initial on-policy training group must match as well, before the bonus arm
+updates. Later on-policy groups may diverge because the policies diverge.
+The common baseline is graded once, not counted as two independent baselines.
+There are at most 64 new generation calls, including eight deliberate duplicated
+before calls, 32 training rollouts, and 16 trained-policy evaluation calls.
+
+Only AFTER both arms finish training, checkpoint reload and generation does the
+independent correctness phase start. Grade 24 program records (baseline plus
+eight per trained arm) on the same v3 and existing 388-case development audit.
+The audit is not used for rewards, early stopping, or checkpoint selection, but
+it is already-used development data, not a final untouched benchmark. Report
+common raw partial scores and common correctness metrics for both policies;
+comparing the bonus arm's shaped reward to the partial arm's raw reward would
+not be an apples-to-apples result. Four steps and one training seed cannot
+establish general learning efficacy or algorithm resistance to reward hacking.
+
+DURABILITY AND SPENDING
+One durable Modal parent owns BOTH GPU calls and the later CPU audit; the laptop
+does not have to launch a second stage after the first completes. Two sequential
+L40S calls have 1200-second limits each. CPU parent limit: 5400 seconds, with an
+absolute deadline checked before new submissions. Each grading call is limited
+to 300 seconds, eight workers and .26-second sandbox creation pacing.
+At most 11776 sandbox executions: 32*44 training plus 24*(44+388) evaluation.
+Rejected extraction is recorded without executing placeholder code. No retries.
+Stop on unresolved infrastructure, cleanup, timeout/signal termination, uniform
+rewards, nonfinite weights, mismatched initial generations, or failed reload.
+
+Prelaunch metered workspace usage was $1.09557826, with $0 billed after credits;
+the undiscounted value counts against the trial budget, and reporting can lag.
+At checked rates, the fixed reserve including existing usage, both full GPU
+timeouts, all CPU function timeouts, and a $1 lag/build/storage contingency is
+$3.98232826. Before EACH candidate batch, additionally reserve its entire possible
+sandbox lifetime cost plus prior accounted sandbox time. The largest batch
+reserve is $2.12976 (432 inputs, each potentially lasting 120 seconds).
+Refuse a new batch if that sum exceeds $10. This does not assume all 11776
+executions will be cheap before authorizing them.
+
+After a complete, validated batch, its reservation is replaced with rounded-up
+trusted lifecycle timings, capped by the configured 120-second provider lifetime.
+The clock includes startup, pacing, RPC and cleanup, not just candidate CPU time.
+Every reservation and report-hashed receipt is saved and later recomputed in
+canonical execution order. A missing/interrupted result cannot silently release
+its reservation or authorize a retry. This is conservative resource accounting,
+not an invoice or an account-wide provider spending cap. Other workspace jobs,
+reporting anomalies and continued checkpoint storage remain explicit caveats.
+Both checkpoints are retained; their storage can incur costs after the run.
+
+The spending guard, formula math, matched contracts, source/output integrity,
+initial baseline matching, delayed-audit ordering, single-baseline accounting,
+saved-result reuse, incomplete-intent refusal and receipt recomputation have
+local tests. No model program executes locally during those checks. A launch or
+optimizer update alone will not be reported as a successful learning result.
+
+FINAL LOCAL PRELAUNCH CHECKS
+The complete installed-environment suite passes: 186 tests, no skips. The
+dependency-free check (python3 -S) also passes: 186 discovered, six optional
+mocked-Modal-launcher tests skipped. Compile checks and git diff --check pass.
+All 25 archive/document relocations still match their recorded SHA-256 hashes.
+The new orchestration-order test initially had an incomplete filesystem mock;
+fixing that test kept its temporary files out of /artifacts on the laptop. Its
+focused rerun and the full suite pass. That test failure involved no cloud work
+or generated-program execution and was not a model/training failure.
+
+LIVE LAUNCH -- 2026-09-28 05:13:45 UTC (2026-09-27, LOS ANGELES)
+Launched exactly one approved study after the 186-test suite passed:
+  study: qwen-shaping-20260928T051345-8cc25b49
+  Modal app: ap-BfpzsdOkyAE1I5M6aBevp0
+  durable parent call: fc-01M3K6XXD5X3R6RCQ6VX0NZC43
+  dashboard: https://modal.com/apps/sujalsin/main/ap-BfpzsdOkyAE1I5M6aBevp0
+The prelaunch app check found no active training job. Billing was freshly read
+by the launcher: metered usage $1.09557826 and fixed reserve $3.98232826,
+including that prior usage. The additional per-batch sandbox guard remains on.
+Local plan, budget, validation, suites, source snapshot and launch identifiers
+are saved under runs/qwen-shaping-20260928T051345-8cc25b49. The remote artifact
+volume also receives committed evidence before each new execution/update stage.
+The parent logged "Starting matched arm: partial." This establishes startup,
+not completion, a weight update, or a useful-learning result. The second arm
+and independent evaluation are owned by that same durable parent. Do not rerun
+the launch command to retrieve results or check progress; that starts new work.
+
+SECTION 35 -- TRAINING FINISHED; RECOVER THE AUDIT, NOT THE TRAINING
+
+The original shaping parent stopped at 2026-09-27 22:45:57 Los Angeles time,
+while evaluating the shared baseline. Both partial and completion_bonus arms
+had already completed all four updates, with four varied reward groups, four
+nonzero gradients, changed finite parameters, and verified checkpoint reloads.
+Their initial eight generations and first on-policy group matched exactly.
+Both checkpoints still exist on the artifact volume. We downloaded both saved
+generation records and independently revalidated all 32 training rewards.
+
+Five baseline evaluations completed. The sixth, before-10005, recorded 432
+attempts: 417 completed, 14 ordinary candidate errors, and one infrastructure
+error on audit exhaustive/0211. That last sandbox had not reached candidate
+execution; metadata stopped at trusted preflight command_start. Its cleanup
+returned unconfirmed:TimeoutError, and the record retained cleanup_unconfirmed.
+The code then raised "unresolved infrastructure failure, not a zero reward."
+This was a conservative validity gate, not a zero-reward training failure.
+
+The cleanup handler overwrote the initiating startup error, so the underlying
+provider cause is not established. Nearby CPU-capacity warnings are context,
+not proof. The exact failed sandbox is sb-buXskhjQWmoQwQUOmMw3Ho. A later bounded
+cleanup attempt sent termination successfully, but status still had no terminal
+result within 50 seconds. Do not claim successful termination or infer costs
+from the configured lifetime alone. Original evidence remains unchanged in the
+source study; copied failure/intent/stop records are stored locally beside it.
+
+The user requested a practical recovery, then explicitly raised the spending
+ceiling to $20 total INCLUDING prior usage. We did not interpret this as $20
+per run, unlimited retries, or an instruction to repeat successful GPU work.
+Fresh metered billing last read $1.92557826, with credits reducing billed cost
+to zero; undiscounted metered usage still counts, and reporting can lag.
+
+RECOVERY DECISION
+Use the exact saved candidates and grader. Reuse all five completed reports,
+including incorrect results, byte-for-byte as data. Run the nineteen pending
+program evaluations on a persistent CPU controller rather than reacquiring a
+short-lived grading worker for each program. This reduces scheduling handoffs;
+it is not evidence that capacity scheduling caused the original failure.
+No model generation, optimizer update, reward formula, prompt, test, sandbox
+image, runner, parsing, or per-candidate execution-limit change is made.
+All 29 frozen core implementation files still match the original snapshot.
+
+The new ::recover entrypoint and verifier_rl/evaluation_recovery.py define this
+explicit post-failure continuation. evaluation_recovery_protocol.txt freezes it
+before launch. One old infrastructure-failed program batch is evaluated afresh;
+the original failed report is retained, not overwritten or relabeled as zero.
+Any new infrastructure failure gets at most one replacement per program and
+two across the entire recovery, only after confirming its sandbox cleanup.
+Never retry a wrong answer, candidate timeout/signal or controller interruption
+to obtain a better score. All replacements and extra executions stay visible.
+
+CPU1/RAM2GiB, 4500-second controller deadline; eight workers and .26-second
+creation pacing remain. Each candidate batch is bounded at 300 seconds plus
+bounded cancellation cleanup. Candidate intent, raw report, and validated receipt
+are committed in that order. A new unresolved cleanup or exhausted allowance
+stops recovery. A lost controller does not authorize blind directory restart.
+
+SPENDING AND INTERPRETATION
+Recompute and retain the entire previous outstanding reservation ($6.51454059),
+which already includes previous usage, full GPU/worker ceilings, contingency,
+and the full failed batch. Add the new controller reserve and $0.50 to cover
+the quarantined handle during the bounded recovery. The provisional fixed total
+is $7.09472059; each candidate's full possible sandbox lifetime is reserved ON
+TOP before submission. Fresh billing is rechecked at launch. The new total cap
+is $20; at most 9072 new submissions including two infrastructure replacements.
+Failed replacement batches keep their full reservation. This is resource
+accounting rather than a provider invoice or account-wide hard spending cap.
+
+Only a complete set of 24 reports, matched to frozen sources and suites, supports
+the final before/after comparison. The offline verifier recomputes training
+evidence, both common reward formulas, independent correctness, replacement
+lineage and every spending receipt. It includes failed batches in total execution
+counts, not in the number of model samples. An operational recovery is not a
+learning improvement, and no additional RL run follows automatically.
+
+RECOVERY VALIDATION AND LAUNCH
+All 192 installed-environment tests passed before launch. This includes mocked
+CPU orchestration with one infrastructure-only replacement, preserved cached
+reports, held failed-batch reserves, no GPU calls, and offline recomputation of
+the entire comparison. Unit-test fixture scores are NOT model results. Compile
+checks and git diff --check also passed. Direct checks of the actual source-run
+artifacts verified all 24 sample identities and all 29 frozen core files.
+
+Launched once at 2026-09-28 06:21:09 UTC (2026-09-27 23:21:09 Los Angeles):
+  recovery: qwen-eval-recovery-20260928T062109-d1a04fd6
+  app: ap-XSarwMD9p9h3PYpTjCMjRa
+  durable CPU call: fc-01M3KASBGTHBX5P1QQSJAQDK53
+  dashboard: https://modal.com/apps/sujalsin/main/ap-XSarwMD9p9h3PYpTjCMjRa
+Fresh billing passed the new $20 total guard. Fixed prior/controller/quarantine
+reserve: $7.094720593333333333333333333, not an invoice or amount newly spent.
+Nineteen pending saved programs, five reused reports, zero GPU calls requested.
+Local inputs, current source snapshot, deadline, budget and launch identifiers
+are saved under runs/qwen-eval-recovery-20260928T062109-d1a04fd6.
+The previous app is stopped; inspect this new app for recovery progress. Launch
+is not evidence that grading finished or that either model improved.
+
+FIRST RESUMED PROGRAM COMPLETED
+The recovery reused the five completed reports, then successfully evaluated
+baseline-10005 in fresh sandboxes with no replacement needed: 3/44 v3 cases and
+258/388 audit cases passed. All required execution/output/cleanup checks passed
+for the report; the program itself is incorrect. Progress reached 6/24 complete
+evaluation records and continued to baseline-10006. This confirms that recovery
+advanced past the original failure, not that either trained policy improved.
+
+SECTION 36 -- STOPPED RECOVERY, USABLE SUBSET, AND WHAT WE ACTUALLY LEARNED
+
+Recorded 2026-09-28. The CPU recovery subsequently stopped at 2026-09-27
+23:46:57 Los Angeles time, while validating completion_bonus-10001. This was
+not another failed training update and did not discard the checkpoints.
+Seventeen program reports are complete and validated: eight shared baseline,
+eight partial-arm, and one completion-bonus report. The eighteenth report was
+saved but rejected by the signal-attribution gate; six bonus programs were not
+evaluated. The full three-policy comparison remains unfinished.
+
+The affected report has 432 execution records. Audit case exhaustive/0020
+returned 137, with a WaitPID RPC/EOF error. Preflight succeeded, no candidate
+stdout was recorded, and cleanup was confirmed terminated. The exact operations
+were put(a, value=1, time=0, ttl=2) then get(b, time=0), expected [None]. The same
+source and input completed successfully in baseline-10001. This is evidence
+consistent with intermittency, not proof of its cause. Exit 137 alone does not
+establish an out-of-memory event or identify who killed the process. Do not
+conflate the program's genuine cache semantics bugs with this unattributed kill.
+
+The frozen validation gate deliberately rejects unattributed timeouts/signals.
+Its caller currently stops the entire audit, so one ambiguous execution prevents
+completion of otherwise independent programs. A proposed follow-up is to retain
+the ambiguity, continue remaining evaluations, and report coverage or score
+bounds explicitly. That is NOT implemented or retroactively applied here. No
+automatic signal retry or zero-reward replacement occurred. Rerunning ::recover
+is not a resume operation: it knows only the original five cached reports and
+would start new billable work. Do not use that command just to inspect results.
+
+VALIDATED SUBSET, NOT A COMPLETE STUDY
+All seventeen accepted reports were locally revalidated from saved evidence,
+without executing generated code or making cloud calls. Source extraction,
+case identities, complete stdout, suite aggregates, execution settings, cleanup,
+and non-reuse across 7344 sandbox IDs passed their existing checks.
+The complete baseline/partial subset contains all eight preselected seeds per
+policy, including failed programs; it is not a success-only selection.
+
+  policy       mean v3 reward   audit cases passed   full-audit programs
+  baseline     0.30484375       2169/3104 (69.8776%)  0/8
+  partial      0.19765625       1563/3104 (50.3544%)  0/8
+
+Per-seed audit passes (each out of 388), baseline -> partial:
+  10000: 311 -> 311; 10001: 344 -> 344; 10002: 344 -> 344;
+  10003: 344 -> 0;   10004: 0 -> 0;     10005: 258 -> 258;
+  10006: 257 -> 257; 10007: 311 -> 49.
+
+The 19.5232 percentage-point decline is concentrated in two sampled outputs.
+These are eight model programs per policy, not 3104 independent model samples.
+Both common reward and audit correctness declined. We therefore did not observe
+the reward-up/correctness-down pattern that would motivate a reward-hacking
+investigation. One task, one training seed, four updates, and eight samples do
+not establish that partial reward generally causes degradation. The v3 reward
+is family-weighted and the audit has a different case distribution, so their
+absolute numerical values should not be treated as equivalent accuracy scales.
+
+WHAT IS VALUABLE EVEN WITHOUT A POSITIVE PERFORMANCE RESULT?
+First, both training arms had four varying-reward groups, four nonzero gradient
+steps, changed weights, and verified checkpoint reloads. The concern that all
+rewards are zero and weights cannot update does not explain these runs. This
+establishes an operating update path, not meaningful skill acquisition.
+
+Second, the first group provides a matched reward-formula observation. Rollout
+9002 deletes a cache entry after reading it. With partial reward, the group is
+[1, .0375, .54875, .48875], mean .51875, giving that incomplete answer advantage
+approximately +.07618. With completion bonus the same answers receive
+[1, .01875, .274375, .244375], mean .384375, and its advantage becomes -.25817.
+The reward formula changes the direction of that sampled answer's training
+signal while holding the group fixed. Positive credit for incomplete solutions
+is normal and can be useful; it is not automatically a bug or exploitation.
+This local mechanism does not prove that bonus training improves final behavior.
+
+Third, earlier authored short-input-only and single-character-key-only controls
+demonstrated real coverage gaps. V2 fully accepted both; v3 rejected full
+acceptance but still awarded .88125 partial reward. No full-pass decisions
+changed among the 32 saved model-program records. A targeted coverage repair
+was demonstrated; model-discovered exploitation and a solved learning problem
+were not. Keep this distinction when telling the development story in a blog.
+
+PUBLICATION SNAPSHOT
+The user requested multiple meaningful commits and a GitHub push. Publish the
+implementation, tests, protocols, recoverable archive, and descriptive findings,
+including this negative/incomplete result. Keep credentials, local run artifacts,
+raw logs, and checkpoints outside Git. docs/pilot_results.md summarizes the
+observations and data-availability limits; README now marks recovery stopped.
+This publication work changes no frozen scientific implementation or protocol
+and authorizes no new cloud run. The $20 total ceiling remains in place.
+
+PRE-PUSH VALIDATION
+The installed-environment suite passed all 192 tests. The dependency-free check
+(python3 -S) discovered 192 tests, passed 185, and skipped the seven optional
+Modal-launcher tests as intended. Compilation and working-diff whitespace checks
+passed. All 25 archived/relocated files match the manifest's SHA-256 values.
+The publication file set has no files over 1 MB; common credential/private-key
+pattern scans found no matches. These scans are a precaution, not a proof that
+arbitrary future files are safe to publish. No runs/, virtual environment,
+credential files, or checkpoints are tracked. The baseline/partial aggregate
+numbers above were recomputed again from the validated local evidence before
+publication, with zero cloud calls and no generated-source execution.
