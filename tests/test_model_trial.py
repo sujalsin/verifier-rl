@@ -3,7 +3,38 @@ import unittest
 
 from verifier_rl.model_trial import (EXTRACTION_VERSION, LEGACY_EXTRACTION_VERSION,
                                     canonical_prompt, extract_completion, extract_source,
-                                    require_scored_rewards, validate_run_id)
+                                    require_scored_rewards, validate_run_id, evaluate_submission,
+                                    submission_from_completion, validate_submission)
+from verifier_rl.suites import build_suites
+from tests.test_grading import FakeBackend
+
+
+class SubmissionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_training_rejection_never_submits_placeholder_source(self):
+        backend = FakeBackend()
+        submission = submission_from_completion("```python\ndef incomplete(")
+        result = await evaluate_submission(submission, (build_suites()[2],), backend)
+        self.assertEqual(backend.calls, [])
+        self.assertEqual(result["suites"][0]["reward"], 0)
+        self.assertEqual(result["execution_config"]["attempts"], 0)
+
+    async def test_extraction_metadata_cannot_disagree_with_raw_completion(self):
+        submission = submission_from_completion("```python\ndef simulate_cache(x): return []\n```")
+        self.assertEqual(validate_submission(submission), submission)
+        for key in ("source", "extraction_status", "extraction_version"):
+            bad = dict(submission, **{key: "changed"})
+            backend = FakeBackend()
+            with self.assertRaises(ValueError):
+                await evaluate_submission(bad, build_suites()[:1], backend)
+            self.assertEqual(backend.calls, [])
+
+    async def test_valid_submission_preserves_code_and_reward(self):
+        backend = FakeBackend()
+        source = "def simulate_cache(x): return []\nprint('demo')"
+        result = await evaluate_submission(submission_from_completion(source), build_suites()[:1], backend)
+        self.assertEqual(backend.calls[0].source, source)
+        self.assertTrue(result["extraction"]["accepted"])
+        self.assertTrue(result["execution_config"]["stop_on_infrastructure_error"])
 
 
 class ModelTrialTests(unittest.TestCase):

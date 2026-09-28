@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from .grading import MAX_SOURCE_BYTES
 
 MODEL_ID = "Qwen/Qwen2.5-Coder-0.5B-Instruct"
+MODEL_REVISION = "ea3f2471cf1b1f0db85067f1ef93848e38e88c25"
 LEGACY_EXTRACTION_VERSION = "single-python-fence-or-verbatim-0.1"
 EXTRACTION_VERSION = "single-python-block-or-raw-0.2"
 MAX_COMPLETION_TOKENS = 512
@@ -72,6 +73,32 @@ def extract_completion(completion: str, *, version: str = EXTRACTION_VERSION) ->
 
 def extract_source(completion: str, *, version: str = EXTRACTION_VERSION) -> str:
     return extract_completion(completion, version=version).source
+
+
+def submission_from_completion(raw: str):
+    extraction = extract_completion(raw)
+    return {"raw": raw, "source": extraction.source, "extraction_status": extraction.status,
+            "extraction_version": extraction.version}
+
+
+def validate_submission(submission):
+    """Recompute extraction so a rejected completion cannot be relabelled as code."""
+    expected = submission_from_completion(submission["raw"])
+    if any(submission.get(k) != value for k, value in expected.items()):
+        raise ValueError("submission does not match the current extraction policy")
+    return expected
+
+
+async def evaluate_submission(submission, suites, backend, *, concurrency=4):
+    from .grading import evaluate_candidate, rejected_extraction_report
+    entry = validate_submission(submission)
+    if entry["extraction_status"].startswith("rejected_"):
+        return rejected_extraction_report(entry["source"], entry["extraction_status"], suites)
+    report = await evaluate_candidate(entry["source"], suites, backend, concurrency=concurrency,
+                                      max_retries=0, stop_on_infrastructure_error=True)
+    report["extraction"] = {"status": entry["extraction_status"], "accepted": True,
+                            "version": entry["extraction_version"]}
+    return report
 
 
 def validate_run_id(run_id: str):

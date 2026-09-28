@@ -2,6 +2,7 @@ from copy import deepcopy
 import unittest
 
 from verifier_rl.baseline import SEEDS, inspect_completion, summarize, validate_recovered_report
+from verifier_rl.grading import rejected_extraction_report
 from verifier_rl.suites import build_suites, digest
 
 
@@ -73,3 +74,14 @@ class BaselineTests(unittest.TestCase):
         report["sample_seed"] = 4001
         with self.assertRaises(ValueError):
             validate_recovered_report(sample, report, suites, "im-test")
+
+    def test_rejected_extraction_recovery_needs_no_sandbox_identity(self):
+        suites = build_suites()
+        sample = {"seed": 4000, "source": "# rejected", "extraction_status": "rejected_fence_count"}
+        report = rejected_extraction_report(sample["source"], sample["extraction_status"], suites)
+        report["sample_seed"] = sample["seed"]
+        self.assertTrue(validate_recovered_report(sample, report, suites, "im-unused"))
+        changed = dict(report)
+        changed["execution_config"] = {**report["execution_config"], "submitted_to_backend": 1}
+        with self.assertRaises(ValueError):
+            validate_recovered_report(sample, changed, suites, "im-unused")

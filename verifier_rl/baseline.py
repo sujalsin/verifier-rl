@@ -6,10 +6,9 @@ from collections import Counter
 import json
 from pathlib import Path
 
-from .model_trial import EXTRACTION_VERSION, extract_completion
+from .model_trial import EXTRACTION_VERSION, MODEL_REVISION, extract_completion
 from .suites import canonical_json, digest
 
-MODEL_REVISION = "ea3f2471cf1b1f0db85067f1ef93848e38e88c25"
 SEEDS = tuple(range(4000, 4032))
 BASELINE_VERSION = "cache-generation-baseline-0.1"
 
@@ -22,6 +21,19 @@ def validate_recovered_report(sample, report, suites, image_id):
         raise ValueError("recovery suite mismatch")
     if any(s["infrastructure_errors"] for s in report["suites"]):
         return False  # Retain but do not reuse incomplete/unscored attempts.
+    if sample.get("extraction_status", "").startswith("rejected_"):
+        if report.get("extraction", {}).get("status") != sample["extraction_status"]:
+            raise ValueError("recovery extraction status mismatch")
+        if report.get("execution_config", {}).get("submitted_to_backend") != 0:
+            raise ValueError("rejected extraction unexpectedly reached the backend")
+        for suite in report["suites"]:
+            expected_reward = 0 if suite["purpose"] == "training" else None
+            if suite["reward"] != expected_reward or any(
+                outcome["reason"] != "extraction_rejected"
+                for outcome in suite["outcomes"]
+            ):
+                raise ValueError("invalid rejected-extraction recovery record")
+        return True
     for suite in report["suites"]:
         for outcome in suite["outcomes"]:
             for attempt in outcome["attempts"]:
@@ -87,6 +99,8 @@ def summarize(samples, reports):
         completed = 0
         valid_output = False
         for outcome in unique.values():
+            if outcome["reason"] == "extraction_rejected":
+                continue  # Assigned failure, but no sandbox execution occurred.
             reasons[outcome["reason"]] += 1
             attempt = outcome["attempts"][-1]
             statuses[attempt["status"]] += 1
