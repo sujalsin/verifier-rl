@@ -90,7 +90,8 @@ def main(argv=None):
                       "controller_python": platform.python_version()}
             write_private(directory / "config.json", canonical_json(config))
             report = asyncio.run(evaluate_candidate(source, selected, backend,
-                                                     args.concurrency, args.max_retries))
+                                                     args.concurrency, args.max_retries,
+                                                     stop_on_infrastructure_error=True))
             write_private(directory / "result.json", canonical_json(report))
             for result in report["suites"]:
                 print(f"{result['suite']}: {result['passed_count']}/{result['total']} "

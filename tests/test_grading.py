@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import unittest
 from dataclasses import fields
@@ -6,7 +7,8 @@ from unittest.mock import patch
 
 from verifier_rl.cache import reference
 from verifier_rl.grading import (ExecutionRequest, ExecutionResult, MAX_OUTPUT_BYTES,
-                                 Status, compare_output, evaluate_candidate, score_suite)
+                                 Status, compare_output, evaluate_candidate,
+                                 rejected_extraction_report, score_suite)
 from verifier_rl.suites import Suite, build_suites, case, get
 
 
@@ -61,8 +63,51 @@ class ComparisonTests(unittest.TestCase):
         self.assertIsNone(result["reward"])
         self.assertEqual(result["infrastructure_errors"], 1)
 
+    def test_report_keeps_bounded_output_preview_and_hash(self):
+        c = case("stdout", [get(0)])
+        output = b"example output\\nnot-json"
+        execution = {c.input_hash: (ExecutionResult(Status.COMPLETED, stdout=output),)}
+        outcome = score_suite(Suite("g", "training", (c,), 0), execution)["outcomes"][0]
+        attempt = outcome["attempts"][0]
+        self.assertEqual(attempt["metadata"]["stdout_preview"], output.decode())
+        self.assertEqual(attempt["metadata"]["stdout_bytes"], len(output))
+        self.assertEqual(attempt["metadata"]["stdout_sha256"], hashlib.sha256(output).hexdigest())
+
+    def test_rejected_extraction_is_unscored_by_runner_and_preserves_reward_contract(self):
+        suites = build_suites()[:1]
+        report = rejected_extraction_report(
+            "# extraction rejected", "rejected_fence_count", suites)
+        self.assertEqual(report["execution_config"]["submitted_to_backend"], 0)
+        self.assertEqual(report["extraction"]["status"], "rejected_fence_count")
+        self.assertEqual(report["suites"][0]["reward"], 0)
+        self.assertTrue(all(o["reason"] == "extraction_rejected"
+                            for o in report["suites"][0]["outcomes"]))
+
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_fail_fast_stops_submissions_without_inventing_attempts(self):
+        backend = FakeBackend([ExecutionResult(Status.INFRASTRUCTURE_ERROR)] * 4)
+        result = await evaluate_candidate("source", build_suites()[:3], backend,
+                                          concurrency=2, max_retries=0, stop_on_infrastructure_error=True)
+        self.assertEqual(len(backend.calls), 2)
+        self.assertEqual(result["execution_config"]["attempts"], 2)
+        self.assertGreater(result["execution_config"]["not_executed_inputs"], 0)
+        for suite in result["suites"]:
+            self.assertIsNone(suite["reward"])
+            self.assertIsNone(suite["all_passed"])
+            for outcome in suite["outcomes"]:
+                if outcome["reason"] == "not_executed":
+                    self.assertEqual(outcome["attempts"], [])
+                    self.assertIsNone(outcome["passed"])
+
+    async def test_fail_fast_does_not_stop_on_candidate_failures(self):
+        suite = build_suites()[:1]
+        backend = FakeBackend([ExecutionResult(Status.CANDIDATE_ERROR)] * 5)
+        result = await evaluate_candidate("source", suite, backend, stop_on_infrastructure_error=True)
+        self.assertEqual(len(backend.calls), 5)
+        self.assertEqual(result["suites"][0]["reward"], 0)
+        self.assertEqual(result["execution_config"]["not_executed_inputs"], 0)
+
     async def test_oracle_disagreement_stops_before_execution(self):
         backend = FakeBackend()
         with patch("verifier_rl.cache.reverse_scan_oracle", return_value=[123]):

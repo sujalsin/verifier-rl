@@ -4,6 +4,7 @@ import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import StrEnum
+from hashlib import sha256
 import json
 from typing import Protocol
 
@@ -22,6 +23,7 @@ class Status(StrEnum):
     TIMEOUT = "timeout"
     OUTPUT_LIMIT = "output_limit"
     INFRASTRUCTURE_ERROR = "infrastructure_error"
+    EXTRACTION_REJECTED = "extraction_rejected"
 
 
 @dataclass(frozen=True)
@@ -59,12 +61,17 @@ def compare_output(stdout: bytes, expected: list[int | None]):
     return True, "pass", actual
 
 
-def score_suite(suite: Suite, executions: dict[str, tuple[ExecutionResult, ...]]):
+def score_suite(suite: Suite, executions: dict[str, tuple[ExecutionResult, ...]], *, allow_unexecuted=False):
     outcomes = []
     for case in suite.cases:
         attempts = executions[case.input_hash]
         if not attempts:
-            raise ValueError("cannot grade a case without an execution")
+            if not allow_unexecuted:
+                raise ValueError("cannot grade a case without an execution")
+            outcomes.append({"case": case.name, "input_hash": case.input_hash,
+                             "passed": None, "reason": "not_executed", "actual": None,
+                             "expected": case.expected, "attempts": []})
+            continue
         result = attempts[-1]
         expected = case.expected
         actual = None
@@ -72,37 +79,50 @@ def score_suite(suite: Suite, executions: dict[str, tuple[ExecutionResult, ...]]
             passed, reason, actual = compare_output(result.stdout, expected)
         elif result.status == Status.INFRASTRUCTURE_ERROR:
             passed, reason = None, result.status.value
+        elif result.status == Status.EXTRACTION_REJECTED:
+            passed, reason = False, result.status.value
         else:
             passed, reason = False, result.status.value
+        recorded_attempts = []
+        for attempt in attempts:
+            metadata = dict(attempt.metadata)
+            if attempt.stdout:
+                metadata.setdefault("stdout_bytes", len(attempt.stdout))
+                metadata.setdefault("stdout_preview", attempt.stdout[:2048].decode("utf-8", errors="replace"))
+                metadata.setdefault("stdout_sha256", sha256(attempt.stdout).hexdigest())
+            recorded_attempts.append({"status": attempt.status.value, "detail": attempt.detail,
+                                      "retryable": attempt.retryable, "metadata": metadata})
         outcomes.append({
             "case": case.name, "input_hash": case.input_hash,
             "passed": passed, "reason": reason, "actual": actual, "expected": expected,
-            "attempts": [{"status": r.status.value, "detail": r.detail,
-                          "retryable": r.retryable, "metadata": r.metadata} for r in attempts],
+            "attempts": recorded_attempts,
         })
-    infra = sum(o["passed"] is None for o in outcomes)
+    infra = sum(o["reason"] == Status.INFRASTRUCTURE_ERROR.value for o in outcomes)
+    unexecuted = sum(o["reason"] == "not_executed" for o in outcomes)
     passed_count = sum(o["passed"] is True for o in outcomes)
     # Conservative: any unresolved infrastructure failure leaves the entire suite
     # unscored, even if a separate case already failed. No silent partial grading.
-    all_passed = None if infra else passed_count == len(outcomes)
+    all_passed = None if infra or unexecuted else passed_count == len(outcomes)
     return {
         "suite": suite.name, "purpose": suite.purpose, "suite_version": suite.version,
         "suite_hash": suite.fingerprint, "seed": suite.seed,
         "total": len(outcomes), "passed_count": passed_count,
-        "infrastructure_errors": infra, "all_passed": all_passed,
+        "infrastructure_errors": infra, "not_executed_count": unexecuted, "all_passed": all_passed,
         "reward": int(all_passed) if suite.purpose == "training" and all_passed is not None else None,
         "outcomes": outcomes,
     }
 
 
 async def evaluate_candidate(source: str, suites: tuple[Suite, ...], backend: Backend,
-                             concurrency=4, max_retries=1):
+                             concurrency=4, max_retries=1, *, stop_on_infrastructure_error=False):
     if not source.strip() or len(source.encode("utf-8")) > MAX_SOURCE_BYTES:
         raise ValueError("candidate source must be nonempty and at most 32768 UTF-8 bytes")
     if type(concurrency) is not int or not 1 <= concurrency <= 32:
         raise ValueError("concurrency must be 1..32")
     if type(max_retries) is not int or not 0 <= max_retries <= 2:
         raise ValueError("max_retries must be 0..2")
+    if type(stop_on_infrastructure_error) is not bool:
+        raise ValueError("stop_on_infrastructure_error must be boolean")
     if not suites or len({s.name for s in suites}) != len(suites):
         raise ValueError("provide nonempty, uniquely named suites")
     unique: dict[str, Case] = {c.input_hash: c for s in suites for c in s.cases}
@@ -112,9 +132,10 @@ async def evaluate_candidate(source: str, suites: tuple[Suite, ...], backend: Ba
         c.expected
         queue.put_nowait(c)
     executions = {}
+    stopped = asyncio.Event()
 
     async def worker():
-        while True:
+        while not stopped.is_set():
             try:
                 case = queue.get_nowait()
             except asyncio.QueueEmpty:
@@ -134,6 +155,8 @@ async def evaluate_candidate(source: str, suites: tuple[Suite, ...], backend: Ba
                 if attempt < max_retries:
                     await asyncio.sleep(0.05 * 2**attempt)
             executions[case.input_hash] = tuple(attempts)
+            if stop_on_infrastructure_error and result.status == Status.INFRASTRUCTURE_ERROR:
+                stopped.set()  # Let in-flight calls finish and clean up; submit no new inputs.
             queue.task_done()
 
     workers = [asyncio.create_task(worker()) for _ in range(min(concurrency, len(unique)))]
@@ -144,6 +167,8 @@ async def evaluate_candidate(source: str, suites: tuple[Suite, ...], backend: Ba
             if not worker_task.done():
                 worker_task.cancel()
         await asyncio.gather(*workers, return_exceptions=True)
+    for input_hash in unique:
+        executions.setdefault(input_hash, ())
     return {
         "schema_version": "0.1", "package_version": __version__,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -151,6 +176,33 @@ async def evaluate_candidate(source: str, suites: tuple[Suite, ...], backend: Ba
         "comparator_version": COMPARATOR_VERSION,
         "execution_config": {"concurrency": concurrency, "max_retries": max_retries,
                              "unique_inputs": len(unique),
+                             "stop_on_infrastructure_error": stop_on_infrastructure_error,
+                             "not_executed_inputs": sum(not a for a in executions.values()),
                              "attempts": sum(len(a) for a in executions.values())},
-        "suites": [score_suite(s, executions) for s in suites],
+        "suites": [score_suite(s, executions, allow_unexecuted=stop_on_infrastructure_error) for s in suites],
+    }
+
+
+def rejected_extraction_report(source: str, extraction_status: str, suites: tuple[Suite, ...]):
+    """Record a rejected model completion without sending placeholder code to a sandbox."""
+    if not extraction_status.startswith("rejected_"):
+        raise ValueError("an explicit rejected extraction status is required")
+    if not suites or len({s.name for s in suites}) != len(suites):
+        raise ValueError("provide nonempty, uniquely named suites")
+    execution = ExecutionResult(
+        Status.EXTRACTION_REJECTED, detail=extraction_status,
+        metadata={"failure_stage": "extraction", "extraction_status": extraction_status},
+    )
+    unique = {c.input_hash for suite in suites for c in suite.cases}
+    executions = {input_hash: (execution,) for input_hash in unique}
+    return {
+        "schema_version": "0.1", "package_version": __version__,
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "task_id": TASK_ID, "candidate_hash": digest(source),
+        "comparator_version": COMPARATOR_VERSION,
+        "execution_config": {"concurrency": 0, "max_retries": 0,
+                             "unique_inputs": len(unique), "attempts": 0,
+                             "submitted_to_backend": 0},
+        "extraction": {"status": extraction_status, "accepted": False},
+        "suites": [score_suite(suite, executions) for suite in suites],
     }

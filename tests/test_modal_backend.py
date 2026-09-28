@@ -54,6 +54,10 @@ class ModalContractTests(unittest.IsolatedAsyncioTestCase):
         result = await backend.execute(REQUEST)
         self.assertEqual(result.status, Status.COMPLETED)
         self.assertEqual(result.stdout, b"[null]")
+        self.assertEqual(result.metadata["stdout_preview"], "[null]")
+        self.assertEqual(result.metadata["stdout_bytes"], 6)
+        self.assertEqual(len(result.metadata["stdout_sha256"]), 64)
+        self.assertEqual(result.metadata["runner_stage"], "unknown")
         kwargs = sdk.Sandbox.create.aio.call_args.kwargs
         self.assertTrue(kwargs["block_network"])
         self.assertEqual(kwargs["cpu"], (1.0, 1.0))
@@ -116,6 +120,15 @@ class ModalContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.status, Status.CANDIDATE_ERROR)
         sandbox.terminate.aio.assert_awaited_once()
 
+    async def test_failure_stage_is_recorded_as_untrusted_diagnostic(self):
+        stderr = b"\x0a".join((b"VERIFIER_RL_STAGE=function_call", b"Traceback (most recent call last):",
+                                b"RuntimeError: fixture")) + b"\x0a"
+        sdk, _ = fake_sdk(process(b"", stderr=stderr, code=1))
+        result = await ModalBackend("test", "im-approved", sdk=sdk).execute(REQUEST)
+        self.assertEqual(result.metadata["runner_stage"], "function_call")
+        self.assertIn("RuntimeError: fixture", result.metadata["stderr_preview"])
+        self.assertEqual(result.status, Status.CANDIDATE_ERROR)
+
     async def test_sdk_timeout_sentinel_is_timeout(self):
         sdk, sandbox = fake_sdk(process(code=-1))
         result = await ModalBackend("test", "im-approved", sdk=sdk).execute(REQUEST)
@@ -135,6 +148,17 @@ class ModalContractTests(unittest.IsolatedAsyncioTestCase):
         sdk, sandbox = fake_sdk(preflight=process(b"not ready", code=1))
         result = await ModalBackend("test", "im-approved", sdk=sdk).execute(REQUEST)
         self.assertEqual(result.status, Status.INFRASTRUCTURE_ERROR)
+        self.assertEqual(sandbox.exec.aio.await_count, 1)
+        sandbox.terminate.aio.assert_awaited_once()
+
+    async def test_preflight_deadline_never_launches_candidate(self):
+        sdk, sandbox = fake_sdk(preflight=process(b"", code=-1))
+        result = await ModalBackend("test", "im-approved", sdk=sdk).execute(REQUEST)
+        self.assertEqual(result.status, Status.INFRASTRUCTURE_ERROR)
+        self.assertEqual(result.detail, "preflight:TimeoutError")
+        self.assertEqual(result.metadata["preflight_returncode"], -1)
+        self.assertNotIn("returncode", result.metadata)
+        self.assertEqual(result.metadata["cleanup"], "terminated")
         self.assertEqual(sandbox.exec.aio.await_count, 1)
         sandbox.terminate.aio.assert_awaited_once()
 

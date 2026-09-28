@@ -6,6 +6,7 @@ is still required. See README.md before using this with generated programs.
 
 import asyncio
 from dataclasses import asdict, dataclass, replace
+from hashlib import sha256
 import json
 import re
 import time
@@ -62,10 +63,20 @@ RUNNER = BOOTSTRAP + '''
 payload = json.loads(sys.argv[1])
 prepare(payload["limits"])
 namespace = {"__name__": "candidate"}
+def report_stage(name):
+    os.write(2, b"VERIFIER_RL_STAGE=" + name.encode("ascii") + bytes((10,)))
+
+report_stage("module_load")
 exec(compile(payload["source"], "<candidate>", "exec"), namespace)
+report_stage("entrypoint_lookup")
+if "simulate_cache" not in namespace or not callable(namespace["simulate_cache"]):
+    raise TypeError("required callable simulate_cache is missing")
+report_stage("function_call")
 answer = namespace["simulate_cache"](payload["input"])
+report_stage("return_validation")
 if type(answer) is not list or any(x is not None and type(x) is not int for x in answer):
     raise TypeError("simulate_cache must return a list of integers or None")
+report_stage("result_serialization")
 print(json.dumps(answer, allow_nan=False, separators=(",", ":")))
 '''
 
@@ -189,18 +200,27 @@ class ModalBackend:
             ), timeout=self.limits.rpc_seconds)
             metadata["sandbox_id"] = sandbox.object_id
             stage = "preflight"
+            metadata["preflight_stage"] = "command_start"
             preflight = await asyncio.wait_for(sandbox.exec.aio(
                 "python3", "-I", "-c", PREFLIGHT, canonical_json(asdict(self.limits)),
                 timeout=self.limits.wall_seconds, text=False,
             ), timeout=self.limits.rpc_seconds)
+            metadata["preflight_stage"] = "output_collection"
             out, preflight_stderr, code = await asyncio.wait_for(collect(preflight), self.limits.rpc_seconds)
             metadata["preflight_returncode"] = code
             if code != 0:
                 metadata["preflight_stderr_preview"] = preflight_stderr[:2048].decode("utf-8", errors="replace")
+            if code == -1:
+                # The trusted preflight timed out before any candidate launch.
+                # Do not mask the provider timeout as JSONDecodeError on empty stdout.
+                raise TimeoutError("trusted_preflight_execution_deadline")
+            if code != 0:
+                raise RuntimeError("preflight_nonzero_exit")
             ready = json.loads(out)
             if code != 0 or ready.get("ready") is not True or ready.get("uid") != 65534:
                 raise RuntimeError("preflight_failed")
             metadata["runtime_python"] = ready["python"]
+            metadata["preflight_stage"] = "complete"
             metadata["startup_seconds"] = time.monotonic() - started
             stage = "launch"
             payload = canonical_json({"source": request.source, "input": operations,
@@ -215,8 +235,16 @@ class ModalBackend:
                 collect(process), self.limits.wall_seconds + self.limits.rpc_seconds)
             metadata["execution_roundtrip_seconds"] = time.monotonic() - running
             metadata["returncode"] = code
+            metadata["stdout_bytes"] = len(out)
+            metadata["stdout_preview"] = out[:2048].decode("utf-8", errors="replace")
+            metadata["stdout_sha256"] = sha256(out).hexdigest()
             metadata["stderr_bytes"] = len(stderr)
             metadata["stderr_preview"] = stderr[:2048].decode("utf-8", errors="replace")
+            # This marker is emitted by the wrapper but shares stderr with
+            # untrusted candidate code. Treat it as a diagnostic hint, not
+            # authenticated proof of which code raised the exception.
+            stages = re.findall(rb"(?m)^VERIFIER_RL_STAGE=([a-z_]+)$", stderr)
+            metadata["runner_stage"] = stages[-1].decode("ascii") if stages else "unknown"
             # Modal 1.5.5 ContainerProcess.wait catches ExecTimeoutError and
             # returns -1; signals instead return 128 + signal. Do not mistake
             # this documented-in-SDK sentinel for an ordinary program error.
