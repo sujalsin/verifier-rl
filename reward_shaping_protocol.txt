@@ -1,0 +1,106 @@
+MATCHED V3 REWARD-FORMULA PILOT -- VERSION 0.1
+
+Question and scope
+With verifier coverage and GRPO held fixed, does emphasizing full-suite success
+change the learning trajectory or independent development correctness?
+This is a two-arm integration/signal pilot, not an efficacy study or RL ranking.
+User approved launch within the original approximately $10 TOTAL trial budget.
+
+Arms, fixed before launch
+A: partial reward p on the 44-case balanced_v3 suite.
+B: completion bonus (p+b)/2, where b=1 only if the entire v3 suite passes.
+Both formulas use the SAME exact-output comparison and .19/.05 family weights.
+No per-element credit, syntax bonus, parser relaxation, source repair or penalty.
+The bonus does not reorder programs; it changes reward gaps when full passes
+coexist with incomplete solutions. With no full passes it simply halves rewards,
+which mostly cancels under group normalization (apart from epsilon).
+
+Both arms independently load the pinned untouched Qwen2.5-Coder-1.5B-Instruct
+revision 2e1fd397ee46e1388853d2af2c993145b0f1098a. Require initial FP32 parameter hash
+0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac and
+1,543,714,304 trainable parameters. No SFT or adapters. Same reviewed prompt and
+chat-template hashes as the original 1.5B pilot. Both use training seed 20260930.
+Arm order is fixed: partial then completion_bonus; no choosing the better arm
+or tuning settings after looking at results. One training seed is a limitation.
+
+GRPO and generation
+Reuse the existing pinned implementation: TRL 0.28.0, Torch 2.8.0,
+Transformers 4.57.1, Accelerate 1.12.0, Datasets 3.5.1, Modal 1.5.5.
+At most four updates per arm, four completions per prompt/group, accumulation
+four, one rollout use, lr=1e-6 constant, AdamW foreach=False, weight decay=0,
+beta=0 (no KL reference), group normalization, GRPO loss, token ratios, clip .2,
+gradient clip 1, FP32 weights/optimizer, BF16 autocast, gradient checkpointing.
+512-token completion cap, temperature .8, top_p .95, top_k 0, repetition 1.05.
+The loss does not discard truncated completions; extraction failures remain
+failures. Save rewards, rollouts, gradients, weight hashes, runtime and config.
+Stop after a uniform group, nonfinite update, unresolved execution failure,
+deadline, spending guard, or reload mismatch; never resample to force a signal.
+An early-stopped arm remains a negative/incomplete comparison, not a replacement.
+
+Baseline and independent evaluation
+Generate eight before and eight after samples in EACH arm at seeds 10000..10007.
+These differ from the previously inspected 8000..8007 evaluation generations.
+Require identical initial weights AND identical before text/source/token counts
+between arms. The second arm checks this before its first update. A mismatch
+halts the comparison rather than silently treating different samples as one.
+The first on-policy training group must also match before the second arm updates;
+only later groups are expected to diverge as weights change.
+Only eight baseline programs are graded, and that shared baseline is reported
+once. Duplicated before generations are not independent evaluation evidence.
+After BOTH arms finish training and checkpoint reload/generation, evaluate the
+baseline and both trained policies against v3 plus the unchanged 388-case audit.
+The suites have no identical inputs. The audit is already-used DEVELOPMENT data,
+not a fresh final evaluation, and it supplies no reward or checkpoint selection.
+Require exact checkpoint reload hash; evaluate the last completed checkpoint.
+Same initial RNG seeds do not imply identical later on-policy rollouts once
+reward differences change the policies. Do not label relabeled old rollouts RL.
+
+Budgets and accounting
+Two sequential L40S GPU functions, each <=1200 seconds, CPU hard limit 2,
+host RAM hard limit 32 GiB. One durable CPU parent <=5400 seconds, CPU 1/RAM2GiB.
+One active grading function at a time (CPU1/RAM1GiB, <=300 seconds), eight sandbox
+workers, .26-second creation pacing. Each sandbox has CPU1/RAM256MiB hard limits,
+120-second lifetime, 5-second execution and 2-second process CPU limits.
+No automatic retries. A finite absolute submission deadline covers nested jobs.
+Maximum generation calls: 64 (32 training, 32 before/after); eight before calls
+are deliberate baseline duplicates. Only 24 evaluation records are graded.
+Maximum fresh sandboxes: 32*44 + 24*(44+388) = 11776, fewer for rejected outputs
+or an early stop. These executions are not independent model samples.
+
+Read current metered billing and resource rates before launch. Reserve both
+GPU functions at their full timeouts, all 56 grading functions at full timeouts,
+the parent CPU timeout, and $1 for lag/build/storage. Before EVERY new candidate,
+add already-accounted sandbox usage plus ALL of that candidate's possible
+sandbox lifetimes. Refuse new work if the sum exceeds $10 total. After successful
+record validation, replace that batch reservation with rounded-up trusted
+lifecycle timings, capped by the provider lifetime. This is conservative
+resource accounting, not a provider invoice or an account-wide hard limit.
+Metadata timings include initialization, pacing, RPCs and cleanup. Unconfirmed
+or interrupted work cannot free a reservation or authorize a retry. Preserve
+the intent and stop. Other workspace use or billing anomalies require review.
+Store every reservation and hashed receipt; do not equate credits with free usage.
+Keep both checkpoints on the volume; ongoing storage can add future charges.
+
+Safety and durability
+Unchanged sandbox image and runner; no network, credentials or volumes for
+candidates. Expected answers stay in the trusted controller. v3 live controls,
+saved measurement verification, current sandbox conformance and prior synthetic
+optimizer controls must pass before launch. An infrastructure error is unscored.
+New timeout/signal-style terminations stop for review rather than becoming a
+learning label. Ordinary Python/output failures keep their explicit categories.
+Commit candidate intent before execution, result before validation, and budget
+receipt only after validation. Reuse a complete identical result without new
+execution; an incomplete intent refuses restart. The parent orchestrates both
+arms and evaluation remotely, so it does not need a laptop handoff between stages.
+Never automatically restart a GPU training directory or a completed study.
+
+Report and decision
+For each policy, show full audit passes/8, full v3 passes/8, BOTH reward formulas,
+audit case counts, syntax/interface/runtime categories and source duplicates.
+For each training group, show rewards, partial/full scores, relative advantages,
+positive-advantage incomplete outputs and actual gradient/weight evidence.
+Do not compare one arm's shaped reward against the other's raw partial reward as
+if they were the same objective. Prefer common correctness and common scores.
+Record uniform stops, generation repeatability, runtime, receipt counts, limits
+and billing caveats. Report unchanged/worse results without further tuning.
+No automatic longer training, extra seeds, new model, or algorithm comparison.

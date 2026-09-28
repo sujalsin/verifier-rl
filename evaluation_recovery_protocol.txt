@@ -1,0 +1,77 @@
+SAVED SHAPING AUDIT RECOVERY -- VERSION 0.1
+
+Purpose: finish the existing comparison without another model generation or GPU
+training call. The source study is qwen-shaping-20260928T051345-8cc25b49. Both
+four-update runs and checkpoint reloads succeeded; independent evaluation stopped
+on baseline 10005 after five complete baseline records. Preserve that stopped
+study and its failure without rewriting it into a successful original run.
+
+The user requested a practical path forward, then raised the total trial ceiling
+to $20, INCLUDING prior usage. This is not $20 per run, unlimited spending, or
+approval for automatic new RL runs. Keep limits and spending reservations.
+
+Frozen scientific inputs
+Reuse both exact saved generations, all training evidence and the five completed
+baseline reports. Keep the original model, prompt, seeds, reward formulas, v3's
+44 cases, the 388-case development audit, comparison rules, runner/image,
+extraction, network policy and execution limits. Verify original core source
+files against the source snapshot. No repair of candidate code or test answers.
+The only replayed old program batch is the infrastructure-failed baseline 10005.
+Grade it in fresh sandboxes, followed by baseline 10006..10007 and the sixteen
+already-generated post-training programs. Nineteen pending program evaluations,
+not nineteen new model samples. Never rerun a completed wrong answer to improve it.
+
+Operational change
+Use one persistent CPU controller for the entire remaining audit, rather than
+scheduling a separate short-lived grading worker for every program. Continue to
+use eight sandbox workers, .26-second creation pacing and fresh isolation per
+input. Controller CPU1/RAM2GiB, 4500-second limit, absolute submission deadline;
+each program batch has a 300-second wait limit, with bounded cleanup on cancel.
+Write the candidate intent/reservation before executing, the raw result before
+validation, and the receipt after validation. Commit after every program. A
+controller restart must not silently restart the recovery directory or training.
+
+Bounded infrastructure replacement
+Allow at most ONE fresh batch replacement per program and TWO across this whole
+recovery. This is a declared deviation from the original no-retry pilot. A prior
+failed batch remains in the record with its full resource reservation held.
+Replacement requires verified report/source/suite identities, a genuine
+infrastructure outcome, and confirmed termination of all newly failed sandboxes.
+A bounded 45-second reconciliation may terminate only those identified handles.
+Never retry wrong answers, candidate timeouts/signals, parser failures, unexpected
+exceptions or controller interruptions. No resampling or reward conversion.
+The complete comparison separately reports replacements and all executions,
+including discarded infrastructure-failed batches, without treating them as
+additional independent model samples.
+
+Original quarantined handle
+sb-buXskhjQWmoQwQUOmMw3Ho did not reach candidate-code execution. Its original
+termination confirmation timed out, and a later explicit termination request was
+accepted but a 50-second status check still returned no terminal result. Do not
+claim that shutdown succeeded. The old failure stays unscored. Fresh executions
+never reuse this sandbox. Hold the original full failed-batch reservation and
+an additional $0.50 for this handle during the bounded recovery. Do not release
+its reservation based solely on the configured 120-second lifetime. This is
+quarantine and cost containment, not diagnosis of the provider control plane.
+The launch gate checks that elapsed time plus the full recovery duration fits
+the extra allowance. Any further unresolved cleanup prevents a replacement and
+stops recovery; no accumulating unconfirmed sandboxes to force completion.
+
+Spending and interpretation
+Recompute the old outstanding reservation from saved training and cached reports;
+retain its full amount (including old GPU ceilings and contingency), compare it
+against fresh metered billing plus contingency, reserve the new CPU controller,
+and reserve every new batch's full possible sandbox lifetimes before launch.
+At most 21*432 = 9072 new sandbox submissions, fewer for rejected extraction.
+After a valid batch use rounded-up trusted lifecycle timing; after an infra
+failure keep the entire batch reservation. Refuse new work above $20 total.
+Billing can lag; this is a resource guard, not a provider account hard cap.
+Persistent checkpoint storage and unrelated account usage remain caveats.
+
+Compare full independent audit passes/8 and common partial/full reward metrics,
+not the two arms' differently scaled training rewards. Require all 24 final
+records, exact recomputation of both training trajectories, unchanged reused
+reports, unique sandbox IDs, all replacement evidence and a recomputed spending
+journal. No improvement claim before this completes. This is still one task,
+one training seed and eight samples per policy, not evidence of general efficacy.
+Report worse or unchanged results without triggering another RL run.
