@@ -1,0 +1,71 @@
+PAIRED V2/V3 GRADER MEASUREMENT -- VERSION 0.1
+Frozen before execution. No training, new generation, or automatic RL follow-up.
+
+Question
+Do the proposed domain-coverage tests distinguish already-saved programs that v2
+accepts, and how do they change partial scores and group-relative advantages?
+This measures the grader on a fixed pool, not an improved model or a causal
+explanation of the previous GRPO regression.
+
+Source population and ordering
+Use the exact generation.json and reports.json from
+qwen-grpo-partial-20260928T010255-4a0e6d52, pinned by canonical document hashes.
+First run three authored controls: correct, short_inputs_only,
+single_character_keys_only. Then the 16 training rollouts 9000..9015 and the
+eight before/eight after records 8000..8007, in the saved order. These are 32
+program records, 29 distinct extracted sources, not 32 independent tasks.
+The previously rejected completion remains rejected without executing placeholder
+source. Do not generate, repair, filter, or select programs based on new scores.
+
+Paired scoring
+Evaluate the union of v2's 34 and v3's 44 inputs in fresh CPU sandboxes. The first
+34 inputs are identical. Each shared input is executed once per program record,
+then the SAME output supplies both scores. Thus any fresh v2/v3 difference is a
+coverage/aggregation difference, not a second execution of the shared input.
+Keep v2's family weights (.19 each substantive, .05 edge) and exact whole-list
+JSON equality unchanged. Full-suite binary acceptance is reported separately.
+No completion bonus, per-output-element reward, or syntax bonus in this run.
+
+Repeatability and controls
+For the correct authored control, every output must match the independent oracle
+and both partial scores must be 1. For each known domain-limited control, check
+every output against its authored behavior: v2=1, v3=.88125, v3 binary=0.
+These are deliberate fixture flaws, not model-discovered exploits.
+Compare historical v2 and fresh v2 outcomes, return codes and stdout hashes.
+Any difference stops later program submissions after persisting evidence. Do not
+silently treat nondeterminism or infrastructure noise as a grader improvement.
+No strict audit is rerun. The prior exit-137 audit failure remains untouched.
+
+Execution and cost bounds
+Same pinned sandbox image, runner, extraction, resource limits and strict parser.
+Network blocked, no candidate volume mounts/secrets; grading remains outside.
+Fresh sandbox per unique program/input, 8 concurrent workers, .26-second creation
+pacing. One candidate-controller at a time; no algorithm/model parallelism.
+35 records x 44 inputs = 1540 assigned pairs. One rejected record is unexecuted:
+at most 1496 actual sandboxes, zero retries, sandbox lifetime at most 120 seconds.
+One CPU/1 GiB controller <=2400 seconds; each sequential grading worker one
+CPU/1 GiB <=300 seconds. Both use explicit hard CPU/memory limits. No GPU.
+Before launch, check current workspace metered usage plus all 1496 sandboxes at
+their full lifetime, all worker/controller timeout budgets and a $1 overhead/lag
+reserve against the original $10 TOTAL trial budget. This resource envelope is
+not a provider-enforced account spending cap; billing lag/other jobs can matter.
+
+Durability and stopping
+Persist frozen artifacts and candidate intent before submission. Save each result
+before validation. Reuse a complete matching result without executing again;
+refuse an intent with no result, because its work count is ambiguous.
+Infrastructure errors stop new input submissions; in-flight workers clean up.
+Unconfirmed cleanup, missing evidence, unexpected control output, or any new
+signal-style exit/timeout stops the run after the current candidate report.
+Do not relabel failures, loosen limits, retry, or tune tests during this run.
+If it stops, report partial evidence and investigate before any amended protocol.
+
+Outputs and interpretation
+Per record: historical v2, fresh v2, v3 partial/full scores, per-family rates,
+added-case failures/reasons, source identity and execution evidence.
+Per original training group: reward vectors, sample-std-normalized advantages,
+uniform groups, positive-advantage incomplete programs. These are diagnostics,
+NOT counterfactual trained trajectories. Report partial-score increases explicitly:
+adding passing tests can dilute old failures without improving the program.
+All data are development data. Finite tests cannot prove general correctness.
+Do not claim learning, reward hacking, or a better RL signal from a score change.

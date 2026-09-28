@@ -1,0 +1,74 @@
+REWARD-FIRST DIAGNOSTIC AND OPT-IN COVERAGE PROPOSAL
+==================================================
+2026-09-28 UTC. The user chose to investigate reward design first.
+
+Scope
+-----
+Inspect the completed four-step 1.5B pilot, recompute its rewards from saved
+execution records, and test fixed authored counterexamples locally. Never run
+model-generated code on the laptop. No model generation, Modal calls, training,
+checkpoint selection, Git push, or changes to historical scores are included.
+The original binary comparator, partial scorers, GRPO settings and pilot stay
+unchanged. Finding a verifier weakness does not establish why training regressed.
+
+Questions and distinctions
+-------------------------
+1. Are recorded outcomes/rewards consistent with the trusted exact-JSON grader?
+2. Which family/case outcomes supply credit, including credit for trivial cases?
+3. On the already-observed sixteen evaluation samples, does higher v2 reward
+   rank programs above or below programs with higher development-audit case
+   accuracy? Report pair counts descriptively, not as independent observations
+   or evidence of generalization. Keep the exit-137 outcome and flag it.
+4. Can fixed, deliberately faulty functions obtain full v2 credit? In particular,
+   v2 only uses sequences up to six operations and one-character keys, whereas
+   the task supports 200 operations and keys up to eight characters.
+5. Would a reward-formula change actually change the group-normalized signal?
+
+Offline formula comparison on the SAME saved v2 case outcomes
+------------------------------------------------------------
+Compare existing weighted partial p, binary full-suite b, and the illustrative
+completion-bonus proposal (p+b)/2. The half weight is an explicit diagnostic
+choice, not a tuned optimum or a new training default. This proposal preserves
+rank order; it changes relative gaps when a group contains a full-suite pass.
+If a group contains no full pass, it merely halves all rewards. Group
+normalization largely cancels positive scaling (exactly without the denominator
+epsilon). Thus a lower score printed for an incorrect program is NOT proof that
+its reinforcement was reduced. Binary rewards may remove useful variation.
+Compute sample-standard-deviation advantages with epsilon=1e-4, matching the
+pinned TRL 0.28.0 formula to floating-point tolerance, not bitwise Torch parity:
+https://raw.githubusercontent.com/huggingface/trl/v0.28.0/trl/trainer/grpo_trainer.py
+Counterfactual labels on saved rollouts are not alternative training runs; later
+rollouts would change if rewards changed. Do not infer a causal learning benefit.
+
+Separate opt-in coverage revision: balanced_v3
+---------------------------------------------
+Retain the original 34 v2 probes, plus two probes for each of the five substantive
+families: one longer interaction sequence and one consistently renamed eight-
+character-key/time-translated variant. Total 44 probes; lengths reach the task
+limit of 200. Keep the same family weights (.19 each, edges .05), exact complete
+output comparison and equal weighting within each family. No correctness bonus,
+syntax reward, source inspection, substring matching or relaxed output handling
+enters this proposal. This isolates coverage from reward-formula experiments.
+The new probes are derived from the task contract and training probe structures,
+not copied from independent audit cases. They are training/development data.
+
+Validate using existing authored controls plus explicit short-input-only,
+single-character-keys-only and decrement-expiry-on-read controls. Fixed authored
+controls are diagnostic counterexamples, not newly sampled model programs or
+evidence of discovered exploitation. Known-correct behavior must pass all 44;
+each faulty control must fail at least one case; trivial-output controls must
+remain within the existing .05 edge-only credit allowance. Check three seeds,
+oracle agreement, input boundaries, deterministic manifests, and separation from
+the existing development audit. Do not choose weights using the audit results.
+
+Decision rule and next experiment (NOT launched here)
+----------------------------------------------------
+Record gaps, contradictions, and negative findings, not just a pleasing result.
+If controls pass, v3 becomes an opt-in proposal, NOT an automatic replacement for
+v2. Before any new training, freeze a bounded same-candidate sandbox comparison
+of v2/v3; the extra tests may eliminate useful partial-reward variation or expose
+execution problems. Label that comparison development, not a learning gain.
+Then, if justified and within separately checked spending, compare training from
+the same initial policy with GRPO fixed and one reward change at a time. Use fresh
+evaluation samples and reserve genuinely untouched final tests for later work.
+This review neither promises an improvement nor establishes reward hacking.
