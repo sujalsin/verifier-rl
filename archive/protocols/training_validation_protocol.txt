@@ -1,0 +1,50 @@
+TRAINING-PATH VALIDATION BEFORE SFT (2026-09-27)
+===============================================
+Purpose: distinguish a functioning grader and optimizer from coding capability.
+This is a debugging protocol, not an RL efficacy study or algorithm comparison.
+
+The strict G3 reward and cache specification do not change. Historical runs are
+immutable. Continue within the user's approximately $10 trial budget; resource
+deadlines are not an account-wide billing limit. Latest reported usage before
+these controls is $0.53220860, with billing lag possible.
+
+1. CPU controls on a Modal-hosted trusted controller
+   Grade the existing author-written correct and inclusive-expiry fixtures on
+   every G3 case. Expect rewards [1, 0]. There are 32 assigned cases and 31
+   distinct inputs per program: at most 62 sandbox invocations, four workers,
+   creation pacing 0.26 seconds, zero retries, a 600-second controller deadline.
+   Stop new submissions on an infrastructure error, let in-flight cleanup
+   finish, and mark unsubmitted inputs as unexecuted, never failed or rewarded.
+
+2. Optimizer controls on the actual pinned Qwen2.5-Coder-0.5B-Instruct
+   Same TRL 0.28.0 / Torch 2.8.0 / Transformers 4.57.1 stack and shared GRPO
+   configuration as the cache trainer: group four, loss_type=grpo, group reward
+   scaling, beta=0, weight_decay=0, learning_rate=1e-6, full-parameter training.
+   One L4 job, maximum 600 seconds, no application retries.
+   Use a short non-code prompt and a 32-token completion cap for the control.
+   No generated text is executed or interpreted as a cache solution.
+
+   Negative condition: one optimizer step with all rewards zero. Expect zero
+   gradient norm and unchanged parameter hashes.
+   Positive condition: two optimizer steps with explicitly synthetic rewards.
+   Label the lexicographically smallest completion text in each group 1 and
+   the other texts 0. Abort on an all-identical group instead of resampling.
+   This is a group-dependent diagnostic score, NOT the cache grader or a useful
+   skill objective. Identical text always has identical labels within a group.
+   Both conditions start from the same initial weights. Require finite positive
+   gradient norms on both positive steps and a changed parameter hash. Save and
+   reload each checkpoint and require exact parameter-hash agreement.
+
+   Passing these controls establishes optimizer/checkpoint wiring under this
+   short-sequence configuration. It does not prove code learning, robustness to
+   long rollouts, improvement from naturally occurring coding rewards, or any
+   algorithm's superiority. Synthetic-control checkpoints must never be used as
+   the cache starting policy.
+
+3. Follow-up chosen by the user
+   Keep the 0.5B model and design an SFT warm-start. The dataset, train/development
+   separation, and cache exclusion policy must be recorded before SFT. Do not
+   use the cache audit to construct or choose supervised answers. Check that
+   later generation/training actually loads the saved SFT checkpoint, rather
+   than silently reloading the public base checkpoint. Test reward variation
+   before a longer cache RL run. No switch to a larger model is part of this plan.

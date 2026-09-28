@@ -1,0 +1,94 @@
+V2 MEASUREMENT REPAIR AND SAVED-1.5B RE-EVALUATION
+================================================
+2026-09-28 UTC. The user approved repairing measurement before further training.
+
+Purpose
+-------
+Separate four issues: generated program correctness, strict output compliance,
+reward informativeness, and verifier coverage. Do not declare one model, reward
+shape or optimizer successful merely because some reward now varies.
+
+Frozen changes
+--------------
+The legacy balanced suite (cache-balanced-probes-0.1), G1/G2/G3, all old scores,
+the sandbox runner, source extractor and strict output comparator stay unchanged.
+A NEW suite, balanced_v2 / cache-balanced-probes-0.2, has 34 cases: six structural
+variants in each of retrieval, expiry, overwrite, multiple keys and ordering,
+plus four edge cases. The weighting stays .19 per substantive family and .05
+for all edges. Expected outputs still require full exact-list matches per case.
+There is no token/format-only bonus and no permissive last-line output parsing.
+Default seed 20260929; suite hash:
+39e0ca3f31a99bf44c90f9ae55fcd6fae9fbec121d0059046b4ed606ee79649a
+
+Each expiry case includes a first read of an already-expired write, plus a live
+value. Other cases cover repeated reads, late first reads, write replacement,
+ties, and interleaved keys. This addresses the observed expiry/deletion confound.
+Families identify probe patterns, not isolated or proven learned capabilities.
+
+Author-written validation, separate from model results
+-----------------------------------------------------
+22 fixed controls x 3 suite seeds = 66 control/seed comparisons. Correct code
+must score 1; every registered faulty control must fail full acceptance; the
+four trivial-output controls must remain within the .05 edge allowance.
+Deleting on read while ignoring expiry must fail ALL expiry probes, score less
+than under v1, and score less than the matched consumption control with correct
+expiry handling. Include compound faults; do not validate only single bugs.
+These finite checks do not prove resistance to arbitrary shortcuts.
+
+Observed fixture scores before the model re-evaluation:
+  ignore expiry + consume on read: .62 -> .24
+  correct expiry + consume on read: .62 -> .5566666666666666
+  correct implementation: 1 -> 1
+  always-None: .0375 -> .0375
+Some other bugs receive MORE partial credit (for example refresh-on-read and
+ignore-expiration). Retain the full matrix. This is a targeted coverage repair,
+not a proof of uniformly stronger scoring or a controlled coverage-only causal
+experiment: both case count and structure changed. Full acceptance and an
+independent evaluation remain necessary; do not equate partial reward with
+percent of programming capability.
+
+Diagnostics
+-----------
+New sidecar reports classify correct outputs, wrong valid outputs, invalid JSON
+or schema, candidate execution errors, unattributed execution timeouts, output
+limits, extraction failures, infrastructure failures and unexecuted inputs.
+Validate source/suite/input identities and complete stdout hashes. Count shared
+inputs once per candidate. Report valid-output-only correctness with its explicit
+denominator and missing cases; it is selection-biased, not headline accuracy.
+Stage/exception strings are untrusted hints. Never salvage the final stdout line
+or change an old reward. No source execution occurs in the local report tool.
+
+CPU-only model re-evaluation
+----------------------------
+Use EXACTLY the eight saved, untrained Qwen2.5-Coder-1.5B-Instruct programs from
+qwen-checkpoint-pilot-20260927T234301-fc4ee586, seeds 4000..4007. Reuse old reports
+from qwen-checkpoint-recovery-20260927T235622-8129215d for comparison only.
+Pin model revision 2e1fd397ee46e1388853d2af2c993145b0f1098a and unchanged parameter
+hash 0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac.
+No generation, SFT, policy update, source repair or extra candidate sampling.
+New scores must be labelled as new-test measurements, not model improvement.
+
+Run each program on all 34 v2 inputs: at most 272 fresh CPU sandbox executions.
+Same current conformance report, clean image, runner, resource limits and network
+blocking. Four workers, .26-second creation pacing, zero application retries.
+One CPU controller capped at 900 seconds; each candidate's trusted controller is
+capped at 180 seconds. Commit per-candidate intent before any execution and its
+result immediately after. A completed candidate can be resumed by validated
+result reuse; an interrupted intent without a result stops rather than silently
+re-executing unknown work. No lost infrastructure outcome becomes reward 0.
+
+Report all eight partial/binary scores and both preassigned groups of four,
+their execution/interface diagnostics, actual recorded attempts and cleanup.
+Variation above the edge allowance is a necessary practical starting-policy
+diagnostic here, NOT proof the reward is good or that RL will improve correctness.
+No branch starts training automatically. Preserve the existing 388-case strict
+development audit for a separately planned before/after learning test. It is
+development data, not a final untouched task-generalization benchmark.
+
+Budget and next decision
+------------------------
+Stay within the previously approved approximately $10 TOTAL trial allowance and
+check available billing before launch, accounting for reporting lag. No always-
+on service or GPU is needed for this measurement. If it completes, propose the
+small 1.5B partial-reward GRPO experiment separately, with a training memory
+budget, explicit decoding, checkpoint/gradient checks and independent auditing.

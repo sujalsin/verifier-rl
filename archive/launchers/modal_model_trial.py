@@ -1,4 +1,4 @@
-"""One bounded GPU smoke job and protected CPU grading, not a research run.
+"""Bounded one-to-four-step GPU trial and protected CPU grading, not a research run.
 
 Requires a passing CPU trial report for the same sandbox image.
 No deployed endpoint; candidate programs execute only in clean CPU sandboxes.
@@ -14,12 +14,13 @@ import uuid
 import modal
 
 from verifier_rl.cli import create_run_directory, save_suites, write_private
-from verifier_rl.grading import evaluate_candidate
 from verifier_rl.modal_backend import ModalBackend
-from verifier_rl.model_trial import (EXTRACTION_VERSION, MAX_COMPLETION_TOKENS, MODEL_ID,
-                                    canonical_prompt, extract_completion,
-                                    require_scored_rewards, validate_run_id)
+from verifier_rl.model_trial import (EXTRACTION_VERSION, MAX_COMPLETION_TOKENS, MODEL_ID, MODEL_REVISION,
+                                    canonical_prompt, evaluate_submission, submission_from_completion,
+                                    require_scored_rewards, validate_run_id, validate_submission)
 from verifier_rl.suites import build_suites, canonical_json, digest
+from verifier_rl.smoke import require_current_conformance
+from verifier_rl.training import grpo_kwargs, training_batch_id, validate_batch_id, validate_steps
 
 app = modal.App("verifier-rl-cache-model-trial")
 artifacts = modal.Volume.from_name("verifier-rl-cache-artifacts", create_if_missing=True)
@@ -35,34 +36,35 @@ gpu_image = (modal.Image.debian_slim(python_version="3.12")
 @app.function(image=cpu_image, cpu=1, memory=1024, timeout=1800,
               retries=0, max_containers=1, scaledown_window=2,
               volumes={"/artifacts": artifacts})
-def grade_batch(setup: dict, run_id: str, batch_id: str, sources: list[str], audit: bool = False):
+def grade_batch(setup: dict, run_id: str, batch_id: str, submissions: list[dict], audit: bool = False):
     validate_run_id(run_id)
-    if batch_id not in ("train-0", "evaluation"):
-        raise ValueError("unexpected batch ID")
-    if not 1 <= len(sources) <= 4 or audit != (batch_id == "evaluation"):
+    validate_batch_id(batch_id, audit)
+    if not 1 <= len(submissions) <= 4:
         raise ValueError("bounded trial batch contract violated")
+    for submission in submissions:
+        validate_submission(submission)
     directory = create_run_directory(f"/artifacts/{run_id}/{batch_id}")
     suites = build_suites()
     selected = suites if audit else tuple(s for s in suites if s.name == "g3")
     save_suites(directory, selected)
     write_private(directory / "inputs.json", canonical_json({
-        "sources": sources, "setup": setup, "concurrency": 4, "max_retries": 0,
+        "submissions": submissions, "setup": setup, "concurrency": 4, "max_retries": 0,
         "audit_not_used_for_training": audit,
     }))
     artifacts.commit()
 
     async def evaluate():
-        backend = ModalBackend(setup["app_name"], setup["sandbox_image_id"])
+        backend = ModalBackend(setup["app_name"], setup["sandbox_image_id"], creation_interval_seconds=0.26)
         reports = []
-        for index, source in enumerate(sources):
-            report = await evaluate_candidate(source, selected, backend, concurrency=4, max_retries=0)
+        for index, submission in enumerate(submissions):
+            report = await evaluate_submission(submission, selected, backend)
             reports.append(report)
             write_private(directory / f"candidate-{index}.json", canonical_json(report))
             await artifacts.commit.aio()
             print(f"{batch_id} candidate {index}: " + ", ".join(
                 f"{s['suite']}={s['passed_count']}/{s['total']} infra={s['infrastructure_errors']}"
                 for s in report["suites"]), flush=True)
-            if any(s["infrastructure_errors"] for s in report["suites"]):
+            if any(s["all_passed"] is None for s in report["suites"]):
                 raise RuntimeError("infrastructure failure: saved report, stopping batch")
         return reports
 
@@ -72,30 +74,31 @@ def grade_batch(setup: dict, run_id: str, batch_id: str, sources: list[str], aud
 @app.function(image=gpu_image, gpu="L4", cpu=2, memory=16384,
               timeout=900, retries=0, max_containers=1, scaledown_window=2,
               volumes={"/artifacts": artifacts})
-def train_smoke(setup: dict, run_id: str, prompt: str):
+def train_smoke(setup: dict, run_id: str, prompt: str, max_steps: int = 1):
     import gc
     import hashlib
     import importlib.metadata
     import torch
     from datasets import Dataset
-    from huggingface_hub import HfApi
-    from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
+    from transformers import AutoModelForCausalLM, AutoTokenizer, TrainerCallback, set_seed
     from trl import GRPOConfig, GRPOTrainer
 
     validate_run_id(run_id)
+    validate_steps(max_steps)
     started = time.monotonic()
     directory = create_run_directory(f"/artifacts/{run_id}/gpu")
-    revision = HfApi().model_info(MODEL_ID).sha
+    revision = MODEL_REVISION
     config = {"model_id": MODEL_ID, "model_revision": revision, "prompt": prompt,
               "prompt_hash": digest(prompt), "setup": setup,
               "extraction_version": EXTRACTION_VERSION,
-              "max_steps": 1, "group_size": 4, "max_completion_tokens": MAX_COMPLETION_TOKENS,
+              "max_steps": max_steps, "group_size": 4, "max_completion_tokens": MAX_COMPLETION_TOKENS,
               "training_suite": "g3", "loss_type": "grpo", "beta": 0.0,
               "scale_rewards": "group", "learning_rate": 1e-6, "weight_decay": 0.0,
               "seed": 20260926, "evaluation_seeds": [3001, 3002],
               "gpu": torch.cuda.get_device_name(),
               "packages": {d.metadata["Name"]: d.version for d in importlib.metadata.distributions()},
-              "scope": "pipeline smoke only; no SFT; no efficacy or algorithm comparison claim"}
+              "stop_after_uniform_reward_group": True,
+              "scope": "bounded integration trial; no SFT; no efficacy or algorithm comparison claim"}
     write_private(directory / "config.json", canonical_json(config))
     artifacts.commit()
     set_seed(config["seed"])
@@ -129,10 +132,7 @@ def train_smoke(setup: dict, run_id: str, prompt: str):
                                          eos_token_id=tokenizer.eos_token_id)
             completion_tokens = tokens[0, inputs["input_ids"].shape[1]:]
             raw = tokenizer.decode(completion_tokens, skip_special_tokens=True)
-            extraction = extract_completion(raw)
-            outputs.append({"seed": seed, "raw": raw, "source": extraction.source,
-                            "extraction_status": extraction.status,
-                            "extraction_version": extraction.version,
+            outputs.append({**submission_from_completion(raw), "seed": seed,
                             "tokens": len(completion_tokens),
                             "hit_token_cap": len(completion_tokens) == MAX_COMPLETION_TOKENS})
         return outputs
@@ -144,37 +144,34 @@ def train_smoke(setup: dict, run_id: str, prompt: str):
         artifacts.commit()
         calls = []
 
+        class StopWithoutSignal(TrainerCallback):
+            def on_step_end(self, args, state, control, **kwargs):
+                if calls and len(set(calls[-1])) == 1:
+                    control.should_training_stop = True
+                return control
+
         def execution_reward(completions, **kwargs):
-            if calls or len(completions) != 4:
+            if len(calls) >= max_steps or len(completions) != 4:
                 raise RuntimeError("smoke reward-call budget exceeded")
+            batch_id = training_batch_id(len(calls))
             raw = [c[0]["content"] if isinstance(c, list) else c for c in completions]
-            extractions = [extract_completion(c) for c in raw]
-            sources = [e.source for e in extractions]
-            write_private(directory / "rollouts.json", canonical_json({
-                "raw": raw, "sources": sources, "extraction_version": EXTRACTION_VERSION,
-                "extraction_statuses": [e.status for e in extractions]}))
+            submissions = [submission_from_completion(c) for c in raw]
+            write_private(directory / f"{batch_id}-rollouts.json", canonical_json(submissions))
             artifacts.commit()
-            reports = grade_batch.remote(setup, run_id, "train-0", sources)
+            reports = grade_batch.remote(setup, run_id, batch_id, submissions)
             rewards = require_scored_rewards(reports)
             calls.append(rewards)
-            write_private(directory / "rewards.json", canonical_json(rewards))
+            write_private(directory / f"{batch_id}-rewards.json", canonical_json(rewards))
             artifacts.commit()
             print("GRPO rollout rewards:", rewards, flush=True)
             return rewards
 
-        args = GRPOConfig(output_dir=str(directory / "trainer"), max_steps=1,
-                          per_device_train_batch_size=1, gradient_accumulation_steps=4,
-                          num_generations=4, max_completion_length=MAX_COMPLETION_TOKENS,
-                          learning_rate=1e-6, weight_decay=0.0, lr_scheduler_type="constant",
-                          bf16=True, gradient_checkpointing=True, use_vllm=False,
-                          beta=0.0, loss_type="grpo", scale_rewards="group",
-                          temperature=0.8, top_p=0.95, top_k=0,
-                          save_strategy="no", logging_steps=1, report_to="none",
-                          seed=config["seed"], data_seed=config["seed"])
+        args = GRPOConfig(**grpo_kwargs(directory / "trainer", max_steps=max_steps,
+                                       completion_tokens=MAX_COMPLETION_TOKENS, seed=config["seed"]))
         write_private(directory / "trainer_config.json", args.to_json_string())
         trainer = GRPOTrainer(model=model, args=args, reward_funcs=execution_reward,
                               train_dataset=Dataset.from_list([{"prompt": messages}] * 4),
-                              processing_class=tokenizer)
+                              processing_class=tokenizer, callbacks=[StopWithoutSignal()])
         trained = trainer.train()
         after_hash = parameter_hash(model)
         checkpoint = directory / "checkpoint"
@@ -184,6 +181,7 @@ def train_smoke(setup: dict, run_id: str, prompt: str):
                    "global_step": trainer.state.global_step, "rewards": calls,
                    "before_parameter_hash": before_hash, "after_parameter_hash": after_hash,
                    "parameters_changed": before_hash != after_hash,
+                   "stop_reason": "uniform_rewards" if calls and len(set(calls[-1])) == 1 else "step_budget",
                    "groups_with_reward_variation": sum(len(set(r)) > 1 for r in calls)}
         write_private(directory / "training.json", canonical_json(metrics))
         artifacts.commit()
@@ -213,24 +211,20 @@ def train_smoke(setup: dict, run_id: str, prompt: str):
 
 
 @app.local_entrypoint()
-def main(setup_file: str, cpu_report: str):
+def main(setup_file: str, cpu_report: str, max_steps: int = 1):
+    validate_steps(max_steps)
     setup = json.loads(Path(setup_file).read_text())
     conformance = json.loads(Path(cpu_report).read_text())
-    if not conformance.get("passed") or conformance.get("completed_checks") != 15:
-        raise ValueError("a passing 15-check CPU trial is required")
-    image_ids = {a["metadata"]["image_id"] for c in conformance["checks"]
-                 for s in c["report"]["suites"] for o in s["outcomes"] for a in o["attempts"]}
-    if image_ids != {setup["sandbox_image_id"]}:
-        raise ValueError("sandbox image differs from the conformance-tested image")
+    require_current_conformance(conformance, setup["sandbox_image_id"])
     prompt = canonical_prompt(Path("task_001_expiring_cache.txt").read_text())
     run_id = "qwen-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
     local = create_run_directory(f"runs/{run_id}")
     write_private(local / "inputs.json", canonical_json({"setup": setup, "cpu_report": cpu_report,
                                                         "prompt_hash": digest(prompt)}))
-    result = train_smoke.remote(setup, run_id, prompt)
+    result = train_smoke.remote(setup, run_id, prompt, max_steps)
     write_private(local / "model.json", canonical_json(result))
-    sources = [r["source"] for r in result["before"] + result["after"]]
-    reports = grade_batch.remote(setup, run_id, "evaluation", sources, audit=True)
+    submissions = [submission_from_completion(r["raw"]) for r in result["before"] + result["after"]]
+    reports = grade_batch.remote(setup, run_id, "evaluation", submissions, audit=True)
     write_private(local / "evaluation.json", canonical_json(reports))
     print("Model trial:", run_id)
     print("Training rewards:", result["metrics"]["rewards"])

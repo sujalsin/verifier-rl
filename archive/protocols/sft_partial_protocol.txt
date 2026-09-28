@@ -1,0 +1,83 @@
+SFT THEN BINARY / BALANCED-PARTIAL GRPO: BOUNDED DEVELOPMENT PROTOCOL
+==================================================================
+2026-09-27. The user approved the recommended sequence. This amends the earlier
+SFT plan's binary-only readiness gate; it does not change historical evidence.
+
+1. Validate a new balanced training suite offline, before any policy training.
+   Version cache-balanced-probes-0.1; fixed seed 20260929. Six families with four
+   cases each (24 total). Retrieval, expiry, overwrite, multiple keys and order
+   each have weight .19; edge cases together have weight .05. Each substantive
+   probe requires a stored integer and a missing/expired output. Edge probes
+   retain empty, write-only, missing-only, and zero/negative-value behavior.
+   Credit is exact correctness of a whole probe, not individual output elements.
+   Partial reward = weighted mean of family pass fractions. Binary reward =
+   all 24 probes correct. Both are derived from identical execution records.
+   Existing G3 and development audit are unchanged. No syntax/format bonus.
+   Candidate failure loses that probe; infrastructure failure leaves the entire
+   candidate unscored. Expected answers and scoring remain outside the sandbox.
+
+   Pre-specified controls at seeds 20260929..20260931: correct fixture scores 1;
+   every existing semantic mutant fails full acceptance; always-None, always-[],
+   constant-7 and seeded random-answer controls score at most .05. A functioning
+   dictionary that ignores expiry must score strictly between .05 and 1.
+   Finite checks bound these tested shortcuts, not all possible false acceptance.
+
+2. Build the 32-train / 8-development non-cache SFT examples described in
+   sft_warmstart_plan.txt. Fixed project-authored functions, four prompt variants
+   per family, eight training and two held-out development families. Preserve
+   provenance, source hashes, signature checks, and explicit reference tests.
+   No cache/TTL code, cache cases, audit answers, or external generated corpus.
+   The fixed trusted functions are tested directly; arbitrary generated code
+   never executes on the laptop.
+
+   One 16-step full-parameter SFT job on Qwen2.5-Coder-0.5B-Instruct at the
+   existing pinned revision. Seed 20260930; lr 2e-5, weight decay 0, AdamW,
+   constant schedule, batch 1, accumulation 4, float32 weights / bf16 compute,
+   gradient checkpointing; maximum 1024 training tokens, no silent truncation.
+   Prompt and padding labels are -100; genuine assistant EOS remains supervised.
+   Validate string AND token-prefix alignment with the actual tokenizer.
+   Evaluate teacher-forced train/dev loss before and after, without selecting
+   checkpoints on it. Require finite gradients, changed parameter hash, and
+   exact checkpoint reload identity. Loss alone is not coding performance.
+
+   Generate eight before/eight after cache programs with the reminder prompt,
+   paired seeds 4000..4007, temperature .8/top_p .95/top_k 0/512-token cap.
+   Always load the real saved SFT checkpoint for the after condition. Grade
+   both G3 and the balanced suite for readiness; up to 55 distinct inputs per
+   candidate before cross-suite deduplication (880 maximum invocations).
+   Report both binary and partial scores; never replace old G3 reward fields.
+   No per-candidate repair, resampling, or retry. Stop on infrastructure errors.
+   One L4 function capped at 900 seconds; separate hosted CPU controller capped
+   at 1500 seconds, four paced workers. Persist each sample/report as it arrives.
+
+3. Gate the following comparison on observed reward diversity, not on a
+   guarantee of complete solutions: at least one SFT group of four must have
+   differing balanced partial rewards and at least one candidate above .05
+   (positive evidence beyond all edge-case credit). Full passes are required
+   for binary reward variation but not for partial reward variation. If the
+   partial gate fails, stop after recording the SFT result; no longer blind RL.
+
+   If eligible, compare binary and partial GRPO from the IDENTICAL saved SFT
+   checkpoint and prompt. Fixed balanced suite, same decoding, group size four,
+   lr 1e-6/beta0/weight_decay0/group scaling, same seed and maximum four steps
+   per arm. Do not early-stop one arm merely for a uniform group: equal maximum
+   optimizer-step/sampling opportunity is the pilot comparison. Retain raw
+   rewards, gradient norms, hashes, tokens and wall time; stop both if an
+   infrastructure failure makes the comparison incomplete. Maximum 900 seconds
+   per L4 arm, zero application retries. This is an integration comparison,
+   not sufficient training or seeds for a scientific efficacy conclusion.
+
+4. Independent strict development evaluation: compare the unchanged SFT
+   policy with both post-RL checkpoints using matched generation seeds and the
+   existing audit, which never supplies reward. Freeze exact evaluation sample
+   count/budget before launching comparison. It remains a development audit,
+   not an untouched final research benchmark or a test of new coding tasks.
+
+BUDGET AND REPRODUCIBILITY
+The user's roughly $10 TOTAL Modal trial budget includes earlier work. Check
+reported billing before SFT and before any comparison; account for reporting
+lag. Function deadlines are exposure limits, not an account-wide billing cap.
+Do not launch a sweep, additional model sizes, or repeat disappointing trials.
+Record all manifests/hashes, source snapshot, package/image versions, fixed
+settings, model/checkpoint hashes, actual outcomes and exceptions. Preserve all
+old runs. No Git push is authorized by this experiment approval.

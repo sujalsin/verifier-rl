@@ -1,0 +1,134 @@
+QWEN 0.5B SFT WARM-START: PROPOSED FIRST PILOT
+=============================================
+Decision (2026-09-27): the user chose to keep Qwen2.5-Coder-0.5B-Instruct
+and design an SFT warm-start rather than switch to the 1.5B checkpoint.
+This supersedes the larger-checkpoint next-step recommendation in research
+notes Section 25. It does not change or invalidate the previous pilot results.
+
+WHY SFT HERE
+------------
+The observed code frequently reads fields missing from get operations, returns
+a scalar instead of a result list, and runs unwanted demonstrations. Binary
+cache rewards were uniformly zero in the sampled groups. SFT can provide a
+correct target completion even when the starting policy generates no passing
+solution; GRPO's relative rewards could not do that in the zero-reward group.
+
+Separate two goals:
+  A. Learn the submission format and basic conditional/stateful Python patterns.
+  B. Learn the expiring-cache implementation itself.
+The first pilot targets A. Do not train on the cache reference or mutate grading
+to manufacture a positive RL result. A later task-specific curriculum would be
+a separately named experiment and could not claim unseen-cache generalization.
+
+DATASET DESIGN
+---------------
+Use small author-written, reviewed Python-function examples with explicit input
+schemas and complete correct code as assistant targets. The targets contain
+only function code, no demonstration calls, prose, test assertions or expected
+evaluation outputs. Keep raw examples, authorship, task-family IDs and hashes.
+
+Initial training families (not additional research-evaluation tasks):
+  - Running totals of a numeric list.
+  - Clamping values to supplied lower/upper bounds.
+  - Counts of how often each key has appeared so far.
+  - First-index lookups, using None when a query is absent.
+  - A balance accumulator with add/read operations; read lacks a value field.
+  - A resettable counter with add/reset/read operations and distinct schemas.
+  - Replacing negative values while preserving length and order.
+  - Selecting elements at even input positions, including empty input.
+
+Reserve run-length encoding and merging two sorted lists as development
+families. Split by family before generating any wording variants. Do not put
+paraphrases or renamed copies of a training function in the development split.
+Shared basic Python constructs are expected; this is not a broad benchmark of
+algorithmic generalization. Report family counts separately from example counts.
+
+Proposed small dataset: eight training families x four prompt phrasings = 32
+examples; two reserved development families x four phrasings = eight examples.
+These are ten authored functions, not 40 independent coding capabilities.
+Check every target on hand-reviewed normal, boundary and empty-input cases
+before training. Validate prompt/target signature agreement and exact schemas.
+
+Exclude expiring-cache solutions, TTL logic, cache evaluation inputs, audit
+answers, and candidate failures selected from the audit. Keep the original
+cache task specification and G3 unchanged. The existing audit is development
+data, not an untouched final evaluation; the larger research study still needs
+a genuinely reserved final task set.
+
+TRAINING CONTRACT TO FREEZE BEFORE LAUNCH
+----------------------------------------
+Base: Qwen/Qwen2.5-Coder-0.5B-Instruct, revision
+ea3f2471cf1b1f0db85067f1ef93848e38e88c25.
+Start from the original checkpoint, NOT a synthetic optimizer-control checkpoint.
+Use the tokenizer's chat template and train on assistant completion tokens only.
+Mask prompt and padding labels with -100, but retain real assistant EOS labels.
+Check the rendered prompt is an exact prefix of the full conversation before
+constructing labels. Refuse silent truncation of supervised target code.
+
+Proposed initial budget: 16 optimizer steps, batch size one, accumulation four,
+full-parameter AdamW, learning rate 2e-5, weight decay zero, bf16 compute with
+float32 parameters, gradient checkpointing, fixed seed and pinned packages.
+Record all resolved settings, token counts, trainable parameter counts, loss,
+gradient norms, before/after parameter hashes and checkpoint reload checks.
+This is a deliberately small warm-start smoke experiment, not convergence.
+
+Pre-specify the exact dataset manifest and remaining spending allowance before
+launch. Target one L4 job with a hard function deadline; do not add a sweep or
+automatic repeat if performance disappoints. The user's approximately $10 total
+trial budget remains in force, including earlier trials and reporting lag.
+
+EVALUATION AND DECISION RULES
+-----------------------------
+Evaluate original and SFT checkpoints with the same cache reminder prompt,
+eight paired seeds 4000..4007, temperature .8, top_p .95, top_k 0, 512-token cap,
+the same extractor, sandbox limits and fixed G3 suite. Save every completion.
+Load the actual SFT checkpoint and verify its hash; do not accidentally reload
+the public model ID for the after condition. Release the GPU before CPU grading.
+Use the Modal-hosted controller, not the failing direct-laptop execution path.
+
+Primary capability outcome: full G3 passes per eight sampled programs.
+Secondary: all-input valid-output rate, exceptions, unwanted demonstrations,
+token-cap hits, and group-level binary reward variation. Supervised loss alone
+does not establish free-generation correctness. Case pass fractions remain
+diagnostics, not a replacement reward. Report the small sample size explicitly.
+
+If SFT produces some full passes and mixed-reward groups, propose bounded GRPO
+from the verified SFT checkpoint followed by independent correctness evaluation.
+If format improves but full correctness stays zero, do not claim RL readiness.
+If neither improves, inspect dataset coverage and generations before another
+training run. Do not silently train on the cache answer, weaken G3, or report
+synthetic-control weight changes as cache learning.
+
+IMPLEMENTATION UPDATE (2026-09-27, BEFORE LAUNCH)
+------------------------------------------------
+The user approved the SFT-then-partial-reward sequence. sft_partial_protocol.txt
+now supplies the current launch/readiness rules and supersedes the binary-only
+readiness paragraph above. Complete-suite passes remain correctness metrics,
+but are not necessary for a partial-reward update. Require a varied reward group
+with positive behavior beyond the .05 edge-case ceiling before the RL pilot.
+
+Dataset and training path are implemented in verifier_rl/sft_data.py,
+verifier_rl/sft_trial.py and modal_sft_pilot.py. All 40 fixed target checks pass;
+the functions are project-authored/assistant-written, not an external corpus.
+Manifest hash: bb975612d72160367c1b892cdfbbc7220f7562aaf0c1e796093ffd0378386f22.
+Tests cover family separation, prompt/padding masks, real EOS retention,
+string/token-prefix mismatches, no truncation, and the partial-reward gate.
+Actual tokenizer alignment is also checked remotely before model training.
+The one L4 job is capped at 900 seconds; CPU evaluation uses 54 distinct inputs
+per candidate (G3 plus the new balanced suite), at most 864 invocations for 16
+before/after samples. The existing development audit is not used at this stage.
+No SFT outcome is assumed here; append actual run results after completion.
+
+COMPLETED FIRST PILOT
+---------------------
+Run qwen-sft-pilot-20260927T230314-ac2f8eeb completed the 16 SFT steps and all
+16 before/after evaluations. Parameters changed and checkpoint reload matched.
+Training loss .5364 -> .0123; held-out-family loss .3734 -> .3780. Outputs became
+short raw functions, but every after program used undefined key/value variables
+and failed all nonempty inputs. Full G3 and balanced success both remained 0/8.
+Every after partial reward was .0125 for the empty-input probe alone. The RL
+readiness gate failed, so neither the binary/partial comparison nor its strict
+development audit was launched. No second SFT run or automatic sweep occurred.
+Research notes Section 27 contains the complete result, hashes and limitations.
+Next work requires a separately specified revision to the warm-start dataset/
+curriculum, not a claim that this checkpoint is ready for useful cache RL.

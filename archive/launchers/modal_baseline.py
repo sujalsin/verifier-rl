@@ -12,10 +12,11 @@ import modal
 from verifier_rl.baseline import (BASELINE_VERSION, MODEL_REVISION, SEEDS, inspect_completion,
                                  summarize, validate_recovered_report)
 from verifier_rl.cli import create_run_directory, save_suites, write_private
-from verifier_rl.grading import evaluate_candidate
+from verifier_rl.grading import evaluate_candidate, rejected_extraction_report
 from verifier_rl.modal_backend import ModalBackend
 from verifier_rl.model_trial import (EXTRACTION_VERSION, MAX_COMPLETION_TOKENS, MODEL_ID,
                                     canonical_prompt, validate_run_id)
+from verifier_rl.smoke import require_current_conformance
 from verifier_rl.suites import build_suites, canonical_json, digest
 
 app = modal.App("verifier-rl-cache-baseline")
@@ -127,7 +128,11 @@ def grade_candidates(setup: dict, run_id: str, batch_index: int, samples: list[d
         for sample in samples:
             write_private(directory / f"{sample['seed']}-started.json", canonical_json(sample))
             await artifacts.commit.aio()
-            report = await evaluate_candidate(sample["source"], suites, backend, concurrency=8, max_retries=0)
+            if sample["extraction_status"].startswith("rejected_"):
+                report = rejected_extraction_report(sample["source"], sample["extraction_status"], suites)
+            else:
+                report = await evaluate_candidate(sample["source"], suites, backend,
+                                                  concurrency=8, max_retries=0)
             report["sample_seed"] = sample["seed"]
             write_private(directory / f"{sample['seed']}-result.json", canonical_json(report))
             await artifacts.commit.aio()
@@ -148,12 +153,7 @@ def main(setup_file: str, cpu_report: str, previous_trial: str, resume_generatio
     setup = json.loads(Path(setup_file).read_text())
     conformance = json.loads(Path(cpu_report).read_text())
     previous = json.loads(Path(previous_trial).read_text())
-    if not conformance.get("passed") or conformance.get("completed_checks") != 15:
-        raise ValueError("passing CPU conformance report required")
-    tested_images = {a["metadata"]["image_id"] for c in conformance["checks"]
-                     for s in c["report"]["suites"] for o in s["outcomes"] for a in o["attempts"]}
-    if tested_images != {setup["sandbox_image_id"]}:
-        raise ValueError("sandbox image has not passed conformance")
+    require_current_conformance(conformance, setup["sandbox_image_id"])
     prompt = canonical_prompt(Path("task_001_expiring_cache.txt").read_text())
     if (previous["config"]["model_revision"] != MODEL_REVISION or
             previous["config"]["prompt_hash"] != digest(prompt)):

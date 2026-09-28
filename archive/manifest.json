@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "policy": "Byte-preserving relocation, not deletion. Historical import/snapshot paths may require restoration before rerunning.",
+  "files": [
+    {
+      "original": "modal_baseline.py",
+      "archived": "archive/launchers/modal_baseline.py",
+      "sha256": "90f8796ad58f2e33c326e7f9273d9631846bdba5a4c663e39ca0879cd97ea781"
+    },
+    {
+      "original": "modal_model_trial.py",
+      "archived": "archive/launchers/modal_model_trial.py",
+      "sha256": "72ca622afe6a4e39f9a98f6509966f89a3c8d275107054c059ab2c194a4c9a1f"
+    },
+    {
+      "original": "modal_finish_baseline.py",
+      "archived": "archive/launchers/modal_finish_baseline.py",
+      "sha256": "18043d9342a9d9970e4e7171e200475812b99f51262a3fccd6425c651e23252a"
+    },
+    {
+      "original": "modal_recheck_baseline.py",
+      "archived": "archive/launchers/modal_recheck_baseline.py",
+      "sha256": "414164a6dc8152f79e962e931d12f902b7584b05539317d667d483ea89f37e56"
+    },
+    {
+      "original": "modal_diagnostic_replay.py",
+      "archived": "archive/launchers/modal_diagnostic_replay.py",
+      "sha256": "2a6ef5c1f2a4dcc697da1bef6f950e037d370d5e097a2fe8b9bc97280bdeec68"
+    },
+    {
+      "original": "modal_prompt_pilot.py",
+      "archived": "archive/launchers/modal_prompt_pilot.py",
+      "sha256": "65e02b3a0ceb16ed247727a75a72deb16f7c0ec88927b096c10a852b63789cd3"
+    },
+    {
+      "original": "modal_finish_prompt_pilot.py",
+      "archived": "archive/launchers/modal_finish_prompt_pilot.py",
+      "sha256": "3f8e524e74c1f5e95f7d4075f27e2cc640f8e75466010d99fea619f3f15c3e56"
+    },
+    {
+      "original": "modal_sft_pilot.py",
+      "archived": "archive/launchers/modal_sft_pilot.py",
+      "sha256": "ebb30cd0abd207cf558065f91847a68b74690be2cdd27bca89dee81cb2a528d1"
+    },
+    {
+      "original": "modal_checkpoint_pilot.py",
+      "archived": "archive/launchers/modal_checkpoint_pilot.py",
+      "sha256": "9acfd933bd2a10ef65f8d540c3dd2ab7f070c24cb7cb06be43aed6e3615100c2"
+    },
+    {
+      "original": "modal_finish_checkpoint_pilot.py",
+      "archived": "archive/launchers/modal_finish_checkpoint_pilot.py",
+      "sha256": "8de8eea46522e0568cc6056fffca5dfb4e83202b0ef80d6c0da2b4566d49567f"
+    },
+    {
+      "original": "modal_measure_v2.py",
+      "archived": "archive/launchers/modal_measure_v2.py",
+      "sha256": "07b3afed116df04e723b5d76beeb43cd2e797195727168769daea49cedf83400"
+    },
+    {
+      "original": "modal_grading.py",
+      "archived": "archive/launchers/modal_grading.py",
+      "sha256": "8a8b05897cae2acec484e942a71849109f6bd484c292a380e121dede77e66287"
+    },
+    {
+      "original": "checkpoint_1_5b_protocol.txt",
+      "archived": "archive/protocols/checkpoint_1_5b_protocol.txt",
+      "sha256": "ae7965dd87441d927bf220dbf86a35a2476edece8a425034c9f6fccd914b681e"
+    },
+    {
+      "original": "measurement_v2_protocol.txt",
+      "archived": "archive/protocols/measurement_v2_protocol.txt",
+      "sha256": "7cb6e84127fccd97a435d034d300d0bd4e515e914cd0c4fffbc80693c7f292bf"
+    },
+    {
+      "original": "prompt_interface_pilot.txt",
+      "archived": "archive/protocols/prompt_interface_pilot.txt",
+      "sha256": "7e0b7fa2f4fc7535fdda95c12014f13180c52314f9b6b7511b65ec0eed4e0cdb"
+    },
+    {
+      "original": "sft_partial_protocol.txt",
+      "archived": "archive/protocols/sft_partial_protocol.txt",
+      "sha256": "d5e3df88e025090d1bdfb1256e245b9023ee66a84881879edfdd6b152541804d"
+    },
+    {
+      "original": "sft_warmstart_plan.txt",
+      "archived": "archive/protocols/sft_warmstart_plan.txt",
+      "sha256": "ea19f87c6736d28abc23232dcc620426a84a6227c6c4211489de39987fe1c330"
+    },
+    {
+      "original": "training_validation_protocol.txt",
+      "archived": "archive/protocols/training_validation_protocol.txt",
+      "sha256": "857f6aa6f7809e6b24ed2b5788b61c11df2ed0cc8d23df629b349a2421df8367"
+    },
+    {
+      "original": "task_catalog.txt",
+      "archived": "docs/tasks/task_catalog.txt",
+      "sha256": "92643ee24294f68e0cf35fb6c41ed814b6f7a3d873f551f207dc4ca877c9de00"
+    },
+    {
+      "original": "task_002_session_grouping.txt",
+      "archived": "docs/tasks/task_002_session_grouping.txt",
+      "sha256": "ac8f84b49c2f896f25095713d2c21ed16070346b8cf209779bef772d7d5ce2cf"
+    },
+    {
+      "original": "task_003_booking_capacity.txt",
+      "archived": "docs/tasks/task_003_booking_capacity.txt",
+      "sha256": "89af3ae3b771e266d21e9a051772dba40a467df722504733f393aa75af9eb083"
+    },
+    {
+      "original": "task_004_revised_transaction_ledger.txt",
+      "archived": "docs/tasks/task_004_revised_transaction_ledger.txt",
+      "sha256": "2e26a7ba1cc6f1abfa2627ff8a18ba0aa8209253182188c6b59ccd09f3929711"
+    },
+    {
+      "original": "task_005_per_user_rate_limiter.txt",
+      "archived": "docs/tasks/task_005_per_user_rate_limiter.txt",
+      "sha256": "e53208fad796d5b6b7e02d0fc37c490f750e998c5ffbef3b539beb9a5df2c93b"
+    },
+    {
+      "original": "task_006_cheapest_valid_route.txt",
+      "archived": "docs/tasks/task_006_cheapest_valid_route.txt",
+      "sha256": "fc796183518df9064016989132d3525a13e68ce540abed3447d3530173764b8f"
+    },
+    {
+      "original": "README.md",
+      "archived": "docs/experiment_history.md",
+      "sha256": "5c6f6842d669c7243fbe6e319f15fff37d6dd25c4d59ef46f40642b3426b2eaf"
+    }
+  ]
+}

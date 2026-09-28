@@ -1,0 +1,82 @@
+UNTOUCHED QWEN 1.5B CHECKPOINT PILOT
+===================================
+2026-09-27. The user requested a 1.5B trial after the unsuccessful small SFT
+warm-start. This is a generation-only diagnostic before deciding on more training.
+Do NOT apply the narrow 0.5B SFT dataset/checkpoint to the new model first.
+
+Model: Qwen/Qwen2.5-Coder-1.5B-Instruct, public revision
+2e1fd397ee46e1388853d2af2c993145b0f1098a, resolved via the official model API.
+Reference: original 0.5B samples (before SFT), seeds4000..4007, preserved in
+qwen-sft-pilot-20260927T230314-ac2f8eeb. Reuse their existing results; no new
+0.5B generation. Do not compare only against the failed SFT checkpoint.
+
+Keep the cache task, reminder prompt, eight seeds, temperature .8/top_p .95/
+top_k0, 512-token generation cap, float32 weights/bf16 inference, extraction
+policy, sandbox image/limits, G3 and balanced suite unchanged. Check chat-template
+identity, compare effective generation defaults across the pinned checkpoints,
+and record actual runtime versions. Do not silently change dtype or quantize.
+Require unchanged parameter hashes before/after generation. No SFT, GRPO,
+candidate repair, seed selection, extra samples, or automatic training follow-up.
+
+One L4 GPU function capped at 600 seconds; CPU controller capped at 1200 seconds.
+Eight programs x 54 distinct inputs = at most 432 new sandbox invocations.
+Four workers, creation pacing .26 seconds, zero retries. Infrastructure errors
+stop grading unscored; persist partial evidence instead of treating them as zero.
+Keep all raw completions, extraction status, syntax diagnostics, EOS/cap status,
+full execution reports, source/plan snapshots and exact model metadata.
+
+Primary outcome: full G3 passes / 8. Also report full balanced passes, weighted
+partial reward, valid-output rate, sampled source diversity, cap hits, and reward
+groups of four. No model ranking or parameter-count causal claim from one tiny
+checkpoint comparison. Reused 0.5B samples are not additional independent draws.
+
+Decision rules:
+  - Meaningful mixed partial rewards (one score > .05) or mixed binary rewards:
+    propose a bounded real-reward RL comparison from the untouched 1.5B policy.
+  - Uniform full success: this sampled task is too easy for an RL comparison;
+    specify a broader/harder task distribution rather than weakening scoring.
+  - Uniform failure or only trivial-edge credit: inspect actual programs/errors
+    and task granularity before new training; do not launch longer blind RL.
+The existing 388-case development audit is reserved for the subsequent selected
+policy/RL experiment; no audit answers enter training. This pilot is not a new
+untouched final evaluation. Do not claim reward hacking from baseline mistakes.
+
+Current budget: about $10 TOTAL for trials, including earlier work and billing
+lag. Latest available report before launch is $0.56307005 through 22:00 UTC;
+the 23:00 SFT charges are not yet visible. Resource caps are not an account-wide
+spend limit. Preserve all older artifacts; no Git commit or push in this task.
+
+Sources:
+https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-Instruct
+https://huggingface.co/api/models/Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+PRE-OUTCOME AMENDMENT, protocol cache-checkpoint-comparison-0.2
+The first attempt, qwen-checkpoint-pilot-20260927T233944-27c83c11, stopped at
+the effective-generation-config comparison, before loading model weights or
+generating/evaluating any code. Saved different-generation-defaults.json shows
+one difference: the pinned 0.5B default repetition_penalty is 1.05, versus 1.1
+for 1.5B. This setting discourages repeated tokens and can change completions.
+To preserve the already-generated 0.5B baseline, explicitly set the larger
+model's repetition_penalty to 1.05. Validate that this matches the pinned 0.5B
+native value and that all other effective defaults agree; retain both native
+values in runtime metadata. No prompt, seed, budget, scoring or outcome-dependent
+selection changes. One corrected attempt is authorized as an implementation
+fix within the same requested pilot. Preserve the failed preflight evidence.
+
+RECOVERY AMENDMENT (no new generation or training)
+Corrected generation run qwen-checkpoint-pilot-20260927T234301-fc4ee586 produced
+and persisted all eight samples. Modal preempted the CPU controller after seven
+complete reports (4000..4006). Its platform restart hit the existing-run guard
+before another GPU call; retries=0 does not disable platform preemption restarts.
+There is no saved report for 4007. Keep all seven reports, including failures.
+Permit one CPU-only recovery of that saved candidate, max 54 extra sandbox calls,
+300-second controller limit, same four-worker pacing and zero application retries.
+No new source, prompt, suite, decoding, score selection, or model training.
+The missing candidate may already have executed up to 54 inputs without a
+persisted report, so total actual attempts can exceed 432 (upper bound 486 after
+recovery). Do not claim those unrecorded attempts have confirmed cleanup. Their
+original sandbox lifetime cap is 120 seconds; more than that elapsed before
+recovery. Recovery must validate all completed reports and reject more than one
+missing candidate. Save the combined summary in a new run directory, retaining
+the original generation ID and explicit interruption metadata.
+Modal's preemption behavior: https://modal.com/docs/guide/preemption

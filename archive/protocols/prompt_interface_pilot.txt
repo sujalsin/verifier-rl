@@ -1,0 +1,112 @@
+INTERFACE-PROMPT PILOT: FROZEN BEFORE GENERATION
+===============================================
+Protocol: cache-interface-prompt-pilot-0.1
+Date: 2026-09-27 UTC
+
+Question
+--------
+Do explicit interface reminders increase valid outputs and complete-suite
+success for the existing Qwen2.5-Coder-0.5B-Instruct checkpoint on the cache task?
+
+Why run this
+------------
+The previous baseline had no complete-suite passes. Saved-program replay
+confirmed missing get fields, demonstration calls that crash during module
+execution, a missing function, wrong return types, and a semantic wrong answer.
+The instrumented runner passed its live controls. This pilot tests whether
+emphasizing the already specified interface helps before changing the model.
+
+Conditions
+----------
+Original: exact canonical prompt from task_001_expiring_cache.txt.
+Interface reminders: that prompt followed by the frozen REMINDERS text in
+verifier_rl/prompt_pilot.py. It restates the required function name, operation
+fields, result-list contract, and prohibition on demonstrations and printing.
+It supplies no reference implementation or hidden tests. These reminders form
+one combined intervention; this pilot cannot attribute an effect to one reminder.
+
+Generate eight programs for each condition, using paired seeds 4000..4007.
+Alternate the order of the two conditions for successive seeds. Reset the RNG
+before each generation. Both conditions are generated fresh in the same model
+process; historical outputs are not the control group.
+
+Fixed settings
+--------------
+Model: Qwen/Qwen2.5-Coder-0.5B-Instruct.
+Revision: ea3f2471cf1b1f0db85067f1ef93848e38e88c25.
+One L4, float32 weights, bfloat16 inference autocast, evaluation mode, no optimizer.
+Temperature 0.8, top_p 0.95, top_k 0, max_new_tokens 512 for both conditions.
+Extraction: single-python-block-or-raw-0.2; preserve all code inside the block.
+Image: use the existing approved sandbox image and current conformance-tested
+runner. Record both identities and the runner hash. Network disabled, fresh
+sandbox per candidate/input, same CPU/memory/wall/output limits for both arms.
+
+The treatment has more prompt tokens; record their counts. This is part of the
+prompt intervention. Do not change the completion-token budget or model size.
+
+Evaluation and budget
+---------------------
+Evaluate every program on the fixed G1 (5 cases) and G3 (32 cases) suites at
+seed 20260924. There are 37 assigned cases and 36 distinct inputs per program
+after deduplication: at most 576 sandbox executions for 16 generated programs.
+Extraction rejections use no sandbox.
+Audit tests and additional tasks are not run in this screening pilot.
+One controller, four sandbox workers, 0.26-second create pacing, zero retries.
+Stop on unresolved infrastructure failure after recording its candidate report.
+GPU function limit 600 seconds, controller function limit 1,500 seconds.
+Persist the plan, exact prompts, source snapshot, package versions, completions,
+per-program scores and parameter hashes. Check weights before and after inference.
+
+Reported project billing before the pilot: $0.39397451 for available intervals
+starting 2026-09-25. Reporting can lag. The user's approximate $10 trial budget
+still applies; resource/time caps are not an account-wide billing limit.
+
+Outcomes and decision rules
+---------------------------
+Primary: number of programs passing all of G3, out of eight per condition.
+Also report G1 full passes, programs with valid JSON results on every assigned
+input, any valid output, extraction/syntax success, truncation, unique source
+hashes, and failure-stage hints. Input-level pass counts are diagnostics only.
+Inspect reward variation in the two consecutive seed groups of four per arm;
+no policy optimization is performed in this experiment.
+
+If interface reminders produce valid programs and some G3 full passes, plan a
+larger baseline with independent correctness evaluation before starting RL.
+If interface handling improves but G3 stays at zero, investigate capability with
+a separately controlled checkpoint comparison. If neither improves, do not claim
+the model can never solve the task; the result is limited to this small pilot.
+If all programs pass, investigate task difficulty before RL because a uniform
+reward also lacks a group-relative learning signal. Do not automatically expand
+this run or tune the prompt after inspecting its results.
+
+Interpretation limits
+---------------------
+There are eight paired generation seeds per condition, not hundreds of
+independent model samples. Repeated test execution does not increase that count.
+One task, two prompts, and development suites cannot establish task
+generalization, reward hacking, RL improvement, or an algorithm comparison.
+The prompt was designed after inspecting development failures; this is an
+exploratory intervention, not a previously untouched final evaluation.
+
+Operational recovery amendment (2026-09-27, before resuming CPU grading)
+----------------------------------------------------------------------
+Run qwen-prompt-pilot-20260927T210942-6a293d9f generated all 16 programs.
+Grading stopped on original seed 4001, G3 target/extend: trusted preflight
+returned provider deadline code -1 before candidate execution began. Empty
+preflight output then caused a secondary JSONDecodeError. Cleanup succeeded.
+Three earlier candidate reports are complete; the fourth retains 35 resolved
+inputs and one unresolved input. Original artifacts remain unchanged.
+
+Resume using the saved programs, with no GPU generation or weight updates.
+Allow at most three extra sandbox attempts across the pilot and at most one
+replacement per candidate/input. Only infrastructure errors at preflight with
+return code -1, no candidate return code, and confirmed cleanup qualify.
+Do not retry candidate errors, wrong answers, candidate timeouts, or other
+infrastructure failures. Keep every failed attempt in the recovered records.
+Reuse resolved outcomes without re-execution. Keep prompts, inputs, comparison,
+images, runner, concurrency, pacing, and resource limits unchanged. The CPU-only
+recovery controller has a 900-second cap and stops on unresolved infrastructure
+errors. Maximum combined executions are now 579 rather than 576. This is an
+explicit operational amendment, not completion under the original zero-retry
+protocol. Adapter error labeling now identifies preflight deadline errors
+directly instead of presenting the secondary JSON parsing failure.
