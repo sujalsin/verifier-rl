@@ -1,0 +1,85 @@
+BOOKING TWO-ARM PILOT: CPU-ONLY EVALUATION RECOVERY
+=================================================
+Version: booking-evaluation-recovery-0.1
+Run: qwen-booking-eval-recovery-20260928-v1
+Approved 2026-09-28 after the user asked to recover the remaining evaluations.
+
+WHAT FINISHED AND WHAT FAILED
+Both 24-step training arms finished, changed parameters and verified their final
+checkpoint reloads. Reference had 13 mixed-reward groups; structured had 12.
+All 80 fixed-seed evaluation programs are saved. The original run stopped during
+evaluation-reference-24-03, not during training. Baseline and reference step 12
+had complete audit results of 5/16 and 4/16 full passes respectively. Do not
+claim improvement or verifier exploitation from this incomplete comparison.
+
+Exact original failure: sample eval-reference-24-14013, input hash
+6797228cb3dfffc6772e7f87643c474cc31532582ea2854e5599e9ed384c3d78,
+sandbox sb-gSiQuixygeU8a8qZogFvOP. Trusted preflight exited 137 at
+output_collection, before candidate submission. The record has no candidate
+exit/launch evidence and confirms whole-sandbox termination. It is therefore a
+pre-candidate failure, not evidence that generated code was killed. The reason
+for the preflight kill is unknown; do not label it OOM. The scheduler stopped
+new work and the scorer reported missing evidence, masking this root record.
+
+IMMUTABLE REUSE
+Preserve the original run directory and its failed batch. Copy only JSON
+evidence for local/offline checks; weights remain on Modal. Validate source
+snapshot identity, parent calibration provenance, all 48 training reward groups,
+checkpoint metadata, 11 completed evaluation batches and the interrupted batch.
+Recompute scores from raw execution evidence. Check binding to exact saved
+source/input/image/limits and unique sandbox IDs. No alternate prompt, samples,
+graders, reward function, algorithm, checkpoints or model generation.
+
+The source has 45 fully evaluated programs and 44 resolved checks for the next
+program. The failed batch contains 92 records: 91 resolved and the one failed
+preflight. Eight later evaluation batches were never started. Two unstarted
+weak-policy outputs have rejected extraction and need no sandbox; they remain
+in the 80-program denominator with the original rejection scoring rule.
+Execute exactly 1,507 pending source/input pairs, including one replacement of
+the confirmed startup failure. Resolved candidate errors/wrong answers are
+reused verbatim, not rerun. One combined recovery result recomputes all five
+policy summaries without modifying the stopped study's artifacts.
+
+BOUNDED EXECUTION AMENDMENT
+One fresh sandbox is authorized for the known preflight failure. If THAT
+replacement fails, stop rather than try a third time. For previously unstarted
+inputs, allow at most one replacement only for either the previously allowed
+preflight command-start timeout or this confirmed preflight-137 condition.
+Both require correct source/input/environment identity, no candidate submission
+and confirmed sandbox termination. At most eight such additional startup
+replacements across this recovery. Every original failure remains recorded.
+Candidate errors, candidate signals, unknown creation/cleanup, timeouts after
+candidate submission and poor scores are never eligible. Unresolved evidence
+stops evaluation and prints the affected sample/input and underlying status.
+
+Fresh isolated sandbox per input, same immutable execution image and limits,
+same eight-worker queue and .26-second creation pacer. No network/secrets/mounts
+for candidates. Trusted comparison remains outside the candidate sandbox.
+Original conformance records are revalidated against the unchanged image.
+
+Use a separate CPU-only app with one nonpreemptible 1-CPU/2-GiB controller and
+no GPU functions. One hour maximum, with a new fixed absolute deadline. There
+are at most 1,515 new sandbox starts: 1,507 pending checks plus eight bounded
+startup replacements. There is no additional generation, SFT or RL work.
+Fresh billing/rates are captured; retain the entire previous resource hold and
+reserve the bounded recovery separately. These are conservative resource
+allowances, not invoices or a provider hard spending cap.
+
+RECOVERY SAFETY AND AUDIT TRAIL
+Require the old app stopped and no active evaluation sandboxes before launch.
+Claim the one recovery controller atomically. Each input attempt receives an
+atomic provider-side intent before submission and a durable raw result before
+deriving scores. Retry slots are likewise claimed and recorded before use.
+Existing or unfinished intents block automatic replay; do not reset them.
+Wait for already-submitted executions to finish/clean up after a failure.
+Original source artifacts are checked unchanged again before final completion.
+Independent offline verification replays all prior rewards and completed scores,
+merges only approved pending records, verifies retry intent/results, and counts
+both original and replacement sandbox starts. It never executes candidate code.
+
+Launch once, after all recovery tests pass:
+  .venv/bin/modal run --detach modal_booking_recovery.py::launch --allow-cloud
+Verify a downloaded completed recovery without cloud access:
+  .venv/bin/python -m verifier_rl.booking_recovery --run DOWNLOADED_RECOVERY_RUN
+
+No automatic further experiments or Git commit/push are included.
