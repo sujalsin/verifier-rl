@@ -1,0 +1,96 @@
+BOOKING MATCHED STUDY: CLEANUP-001 OPERATIONAL AMENDMENT (2026-09-30)
+
+Scope: continue qwen-booking-matched-training-20260929-v1, not a new experiment.
+The user approved reconciling the two failed sandboxes, fixing the execution
+recovery path, and continuing from full-state checkpoint 19. All original run
+artifacts remain immutable. Both policies still start from the original pinned
+Qwen; resuming the reference arm does not reset or change that starting point.
+
+WHAT FAILED
+Update 19 completed and its full state was committed. The four programs for
+update 20 were generated and saved. Two of their input executions failed during
+trusted preflight, before the candidate-launch RPC. terminate(wait=True) then
+timed out. The old cleanup handler overwrote the original startup exception,
+so its precise type is unknown. No reward was consumed for update 20.
+
+Affected original attempts (each has an allowlisted canonical-record hash):
+  train-reference-19-2 / c301873e984583c0975fcdbdcb8d36f7869c478cf8777b18936856ed6cd09f76
+  sb-HEeYfyxpUntm9xvfVAkfte
+  train-reference-19-1 / 843bcdb72aacf5362b6daa863b81e7773f2713d69d5974f9f71756fb46c44de0
+  sb-1DNrkh0Pef9YliSju0J9nS
+
+RECONCILIATION EVIDENCE
+Repeated public poll calls returned None. Termination requests were acknowledged
+and the active list was empty; neither fact alone was treated as terminal proof.
+Read-only SandboxGetTaskId task_result records reported GENERIC_STATUS_TERMINATED
+(enum 3) for both exact sandbox IDs. Their task IDs were respectively
+ta-01M3RK8MKYRJ0PH2HASGAEV3WS and ta-01M3RK8HAZQYK4RDYH69WYATBS.
+This establishes a discrepancy between task-terminal and sandbox-poll reporting,
+not a cause for the original preflight error and not a candidate timeout.
+
+The pinned Modal 1.5.5 protobuf contract says task_result is present if the task
+has exited. The fallback is deliberately limited to this SDK and v1 sandbox ID
+format. Unsupported versions, unknown enum values, missing task results and
+failed reads remain unresolved. Never treat the task's exitcode=0 field as a
+candidate pass; its terminal status is used solely for lifecycle cleanup.
+Public API reference: https://modal.com/docs/sdk/py/latest/Sandbox
+
+CHANGES
+1. Mark candidate_submission_attempted BEFORE submitting its launch RPC.
+2. Preserve the pre-cleanup status, detail and bounded stdout separately from
+   cleanup_wait_error. This does not create a score from incomplete evidence.
+3. After a failed cleanup wait, make one bounded poll and one bounded task-result
+   lookup. Only explicit terminal evidence can mark cleanup confirmed. No SDK
+   upgrade, new execution runtime, sandbox reuse, altered resource limits, or
+   retry of candidate execution is introduced by this fallback.
+4. Attach cleanup-reconciliation.json to the two reviewed historical attempts,
+   binding their exact original record hash, sandbox ID and source snapshot.
+   These records establish that replacement is PRE-candidate and cleanup is
+   confirmed. The old attempt-1.json and selected.json are preserved byte-for-byte.
+   A replacement writes attempt-2.json and selected-after-reconciliation.json.
+   There is no third attempt. Use the existing global 16-startup-retry budget.
+5. CPU preparation reconciles and completes the saved pending group before any
+   resumed training GPU starts. All completed per-input executions are reused.
+   Any unresolved reward still blocks the entire optimizer update.
+
+RESEARCH INVARIANTS
+No change to GRPO, model/revision, parameter initialization, optimizer state,
+RNG restoration, trainer construction, reward formula, task, test suites,
+decoding, number of updates, audit policy, or checkpoint/sample selection.
+The original source snapshot stays at its original path. The new snapshot and
+this operational amendment have separate provenance under amendments/cleanup-001.
+The live full-state control still gates the unchanged trainer/recovery code.
+Both arms use the same patched lifecycle handling for subsequent executions;
+the reference arm's first 19 updates used the earlier cleanup implementation.
+Disclose that operational difference; do not describe all runtime code as
+identical for the whole study. Scoring and candidate-runner bytes are unchanged.
+
+BOUNDS / LAUNCH
+Original absolute deadline and per-arm/per-batch/controller invocation limits
+are retained. CPU preparation is a single <=1800-second invocation. It launches
+no extra samples or optimizer updates. The resumed reference invocation is the
+second (and final allowed) training start for that arm. No baseline is regenerated.
+The existing compute envelope includes the two failed attempts and bounded
+startup replacements; the small preparation-controller cost is additional to
+the original quote. That quote was a resource envelope, not an invoice/hard cap.
+
+Only after regression checks and explicit cleanup evidence:
+  .venv/bin/modal run --detach modal_booking_matched_training.py::resume --allow-cloud
+The launcher has a one-shot local intent. Do not rerun this command if interrupted;
+inspect its saved launch/preparation state instead of creating another run.
+Completion of this amendment is not a research finding. The independent audit
+comparison is still needed, and a null result remains valid.
+
+LIVE FOLLOW-UP
+The 116 focused tests passed before launch. App ap-I3H8dy8IdlgnvItfooQtFO and
+controller fc-01M3RN5P8YZBG2Y7HF29KKGXSY performed the amendment. CPU preparation
+resolved the pending group before GPU restoration; both old failure records and
+selections were preserved. Public poll had terminal status by preparation time.
+The GPU restored checkpoint 19 and logged reuse of pending group 19/update 20.
+Update 20 completed, and full checkpoint 20 was committed at 01:02:23 PDT.
+The remaining matched comparison continues; this does not yet answer its
+research question. See verifier_rl_research_notes.txt for the measured counts.
+
+The full local suite subsequently passed 479 tests in 912.086 seconds. By
+01:12 PDT, reference update 23/24 had completed and entered checkpoint saving;
+checkpoint 22 had already committed. No runtime source changed after launch.

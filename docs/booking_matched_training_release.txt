@@ -1,0 +1,120 @@
+BOOKING MATCHED TRAINING: IMPLEMENTATION RELEASE 0.3 (2026-09-29)
+
+Implements, without replacing, booking-baseline-comparison-0.1. The completed
+32-program original-policy baseline is reused by its recorded SHA-256. No new
+baseline draws, different optimizer, logarithmic reward, or changed test suite.
+
+GATE: LIVE FULL-STATE RECOVERY CONTROL
+Three bounded L40S calls, each <=1800 seconds, under a separate control run ID:
+  1. Original Qwen, fresh optimizer, three uninterrupted GRPO updates.
+  2. Original Qwen, fresh optimizer, one update; generate and persist the second
+     group's token IDs, post-generation RNG, completions and synthetic rewards;
+     deliberately interrupt before that group's optimizer update.
+  3. New Trainer invocation restoring the interrupted full-state checkpoint;
+     reuse the pending group, then generate the next group normally.
+The control uses the frozen research configuration except max_steps=3. Reward
+is the explicit synthetic group [0,1/3,2/3,1], not coding correctness. No candidate
+is executed and these samples/weights never enter the research experiment.
+
+Compare all three optimizer boundaries: model parameters, full AdamW state,
+scheduler, RNG and TRL step. Compare all group tokens, rewards and post-generation
+RNG, including the newly generated third group. Require exact content hashes,
+not merely similar reported scores or checkpoint-file presence. A failed control
+blocks release; tolerance is not widened after observing a mismatch.
+
+RECOVERY IMPLEMENTATION
+The pinned TRL generation and checkpoint hooks are wrapped; its loss, reward
+normalization and training_step are not replaced. Original generation runs once,
+then its four-part result and RNG are durably saved. On restoration the same
+pending group is returned, with its post-generation RNG restored. An intent
+without saved tokens blocks resampling. Full Trainer save/resume restores
+weights, optimizer, scheduler, RNG and trainer state, plus the TRL step counter.
+Unknown coding rewards still block the whole pending group, never become zero.
+Latest two full states are retained; separate step-12/24 model snapshots persist.
+Only newly created checkpoints in this release are eligible for Trainer rotation.
+
+RESEARCH PHASE (ONLY AFTER GATE)
+Two fresh-original-policy arms: reference and endpoint_omission. Each has exactly
+24 updates with groups of four. The first rollout token group must match between
+arms. The fixed step-12/24 checkpoints each produce 32 evaluation programs using
+the declared seeds. Their training/audit execution records are retained and
+recomputed by the same frozen score functions. A saved baseline report is joined
+with these four policy measurements; it is not regenerated or retroactively
+selected. Source review follows the fixed final comparison, not reward retuning.
+
+Only the durable supervised sandbox worker executes candidates. Controller/GPU
+processes hold no candidate execution API calls. Grading is serialized at the
+batch level with eight sandbox executions and .26-second start pacing per batch.
+All 96 training inputs run for both arms; only the selected score becomes reward.
+Evaluation uses 287 distinct training+audit inputs per program. Historical
+unknown outcomes remain unknown. Controls are separate from sampled-model data.
+
+RESOURCE BOUNDS AND OBSERVABILITY
+Research GPU function <=9000 s per call, at most two starts per arm; grading
+function <=1800 s and at most two starts per batch; controller <=43200 s, at most
+two starts, preserving its original absolute deadline. At most 55,484 sandbox
+starts including controls, training, four evaluations and 16 startup replacements.
+No automatic longer training, replacement sample draws, or seed expansion.
+These maxima define a conservative resource envelope, not expected spending,
+an invoice, or a provider hard cap. Storage and unrelated account work are extra.
+Provider prices and billing-before snapshots accompany each explicit release.
+Non-preemptible CPU Functions are priced at the provider's 3x CPU/RAM multiplier.
+
+Generation, checkpoint publication and final verification emit phase transitions
+and 30-second heartbeats with counters/time since progress. Final completion is
+logged only after durable report commit. No candidate code or expected answers
+are printed by progress instrumentation.
+
+Baseline is already complete. Control launch:
+  .venv/bin/modal run --detach modal_booking_matched_training.py::control --allow-cloud
+Matched launch is a separate entrypoint, released only after a passing control
+and its implementation/tests are complete. The user authorized both in order;
+failure of the control never silently launches the research arms.
+
+Upstream implementation inspected at pinned versions:
+  https://github.com/huggingface/trl/blob/v0.28.0/trl/trainer/grpo_trainer.py
+  https://github.com/huggingface/transformers/blob/v4.57.1/src/transformers/trainer.py
+
+First live control attempt (ap-eKngWAFeQORhwBYuIfonVa) stopped during Trainer
+construction, before any sampled group or weight update. The new wrapper had
+incorrectly required batch_size=4/accumulation=1. The frozen configuration is
+batch_size=1/accumulation=4/steps_per_generation=4; it was NOT changed. Release
+0.2 fixes only that wrapper guard, requires checkpoints at four-microbatch
+boundaries, and adds an offline test against the actual frozen configuration.
+The failed control-v1 artifacts remain preserved. The rerun uses control-v2;
+control invocation claims now use the control namespace instead of research ID.
+
+Second live control (ap-LA1pxB2ge85WAeNLkyH5hZ) completed the uninterrupted
+three updates and the interrupted first update, then failed before restoration:
+HF's automatically timestamped logging_dir differed from the saved configuration.
+The saved first-update token/reward/RNG hashes matched, but model and optimizer
+hashes differed between the two fresh starts. Seeding alone did not make these
+GPU updates bitwise deterministic; this is not evidence about verifier quality.
+
+Release 0.3 explicitly adds deterministic CUDA training to BOTH arms and the
+control: CUBLAS_WORKSPACE_CONFIG=:4096:8 at process startup, deterministic Torch
+algorithms, deterministic cuDNN, no cuDNN benchmarking. Unsupported deterministic
+operations must error rather than silently fall back. This is a documented
+runtime amendment, not a change to GRPO's loss, accumulated batch, rewards or
+optimizer. A fixed logging_dir replaces HF's timestamped default. Control-v3
+must meet the same exact content-hash criteria; no tolerance is widened.
+Evaluation restores the baseline's deterministic-algorithm/cuDNN flags, then
+restores training flags and RNG. Its decoding, seeds and precision remain fixed;
+the CUDA workspace setting is still new, so cross-run bitwise inference identity
+with the historical baseline is not asserted. Both training arms use one image.
+The main causal comparison remains between these matched arms. Historical v1/v2
+control artifacts are preserved, not rewritten or used as research observations.
+Reference: https://docs.pytorch.org/docs/2.8/notes/randomness.html
+
+LIVE RELEASE RESULT
+Control-v3 (ap-IVhmSUz4blDylf5XblEpx0) passed at approximately 23:06 PDT.
+Exact weights/optimizer/scheduler/RNG/TRL-step equality holds at all three
+boundaries. The pending second group was replayed, and the freshly generated
+third group also matched. The original-policy research release was subsequently
+launched as ap-pS3qaJ6emNqnupnxxRxAyi, call fc-01M3RERP0ZQ7RK5797K28NV6MW.
+Control success is not evidence of coding improvement; comparison is pending.
+The test restores a new Trainer after a controlled application exception.
+Modal may reuse a worker between Function calls; this does not by itself test
+every process-death, GPU-replacement or provider-preemption scenario.
+
+  .venv/bin/modal app logs ap-pS3qaJ6emNqnupnxxRxAyi --follow --timestamps
