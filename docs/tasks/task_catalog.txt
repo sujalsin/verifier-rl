@@ -2,6 +2,19 @@ VERIFIER-RL: SIX-TASK DEVELOPMENT PILOT
 ======================================
 Version: 0.1
 Defined: 2026-09-23
+Current-status amendment, 2026-09-28: tasks 001, 003 and 005 now have local
+reference implementations, two-oracle checks, sixteen training and
+sixteen development inputs each, and authored grader controls in task_panel.py.
+These new files are local work pending a separate commit/push. The multi-task
+adapter and 24-output live screen are complete: reference full passes are 1/8
+for cache, 0/8 for limiter and 3/8 for booking. The limiter fails the screen gate.
+Both training graders agree on all samples. The development audit misses an
+empty-input booking bug; a versioned coverage repair is needed before calibration.
+Tasks 002/004/006 remain specs. No calibration or new RL has run.
+The current protocol is ../verifier_quality_protocol.txt; the G1/G2/G3 design,
+96-sample plan and implementation updates below describe the historical plan,
+not the next launch. Canonical task contracts remain unchanged.
+
 Implementation update: 2026-09-24. Task 001 has reference implementations,
 generated grading suites, an independent development audit, and fixture tests.
 Live update, 2026-09-27 UTC: the cache Modal CPU trial passed 15 checks / 23

@@ -3,8 +3,12 @@ TASK 003: BOOKING CAPACITY
 Task ID: booking_capacity_v1
 Specification version: 0.1
 Defined: 2026-09-23
-Status: Specification only; implementation and model difficulty untested.
-Shared evaluation protocol: task_catalog.txt
+Status (2026-09-28): Two-oracle references and live adapter controls passed.
+Eight untouched-Qwen screen outputs: 3/8 reference passes, 4/8 development passes.
+The development suite misses an empty-input failure; repair in a NEW protocol.
+These are finite-suite screening scores, not proof of general correctness.
+Current evaluation protocol: ../verifier_quality_protocol.txt
+Historical coverage plan: task_catalog.txt and the G1/G2/G3 section below.
 
 WHY THIS TASK
 -------------
