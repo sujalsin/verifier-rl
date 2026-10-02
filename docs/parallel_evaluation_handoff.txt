@@ -1,0 +1,141 @@
+Parallel evaluation amendment (2026-10-01)
+
+Scope: evaluation only. Preserve all 12 completed policies, 288 update
+boundaries, generated samples, rewards, reference/weak/repaired verifiers,
+GRPO settings, and existing evaluation evidence. No new training or draws.
+
+Stage 1: locally test a separate module with authored protected-result fixtures.
+No generated candidate code runs locally. Check four-program worker bounds,
+global start permits, duplicate ownership, evidence-first storage, bounded
+publication retries, no-execution recovery, and unknown/cleanup circuit.
+
+Stage 2: run a separately named cloud canary using authored control programs
+and the exact frozen sandbox runner. The existing app remains untouched.
+Reserve at most $5 from the SAME serialized $250 ledger before allocating
+test workers. Compare serial and parallel semantic results; test at least
+two overlapping batches; inject a failed final publication and require exact
+recovery with zero additional sandbox starts. Do not interpret this as a
+training result. A successful preflight is not proof of unlimited reliability.
+
+Proposed deployment: four non-concurrent grading containers, each with four
+restricted program sandboxes (up to 16 candidate sandboxes). A single
+coordinator owns job claims, start permits, unknown accounting and budget
+transitions. Each worker owns separate immutable Volume paths. Evidence is
+committed in 16-input chunks, backed up in a separate archive, then indexed
+in Dict. No per-test Dict publication and no automatic code retries.
+
+Starts are conservatively paced at 2 seconds, with 5-second expiring permits,
+only after the old app is stopped. Canary starts are spaced at 7 seconds to
+coexist with the original 0.30-second gate. Expired/lost start acknowledgments
+never authorize a repeat candidate execution. A storage acknowledgment may
+be retried only for an idempotent immutable result publication.
+
+Stage 3 (conditional, NOT performed by a canary): after tests pass, record an
+administrative drain request to stop new old submissions. Wait for all
+in-flight program cleanups and completed batch receipts. Positively confirm
+the old app is stopped before transferring budget-writer ownership or
+starting research jobs. Reconcile queued/lost calls without releasing their
+budget holds absent trusted receipts. Fresh snapshot must partition all 480
+post-training batches into validated completed versus never-started work.
+Partial execution cannot be treated as never started. Do not rerun it.
+
+Stage 4: schedule only that fixed missing set, maintaining original sample
+IDs and full denominators. Aggregate old and new evidence with separate
+execution provenance but unchanged scoring. Confirm no cross-program reuse
+of sandbox IDs. Emit per-batch heartbeats/progress and final four-seed paired
+contrasts. Unknown infrastructure outcomes remain uncertainty, never zero.
+
+User approved evaluation-only extension up to 12 hours after the original
+2026-10-01T23:02:50.905631Z deadline, if needed. The $250 ceiling is unchanged,
+including existing holds; this is not an additional $250. Reserve before
+new work and leave results intact if budget/deadline is reached.
+
+Keep the current serial grader running until the local AND cloud gates pass.
+If a gate fails, report it and preserve both the old run and test evidence.
+
+Validation record
+-----------------
+Local suite: 76 tests passed (parallel workers, handoff, protected execution,
+storage, legacy grading and cumulative budget). Handoff-only tests passed
+again after the SDK lifecycle bridge correction.
+
+Cloud canary: ap-8vnW9dMIcLVxJZRQ4J8jkB, call
+fc-01M3WFEFE632EATCHC1D6BE10D; passed at 2026-10-01T19:48:54Z.
+Twenty authored programs, 287 input cases each (5740 control executions).
+Four overlapping grading batches; serial and parallel semantic outcomes
+identical; 20 permits for 20 executions, zero unknowns. Injected three final
+publication failures; recovery reused four program records, started zero
+sandboxes, executed zero inputs, and preserved exact evidence hashes.
+One real Volume commit timeout recovered with the bounded storage retry.
+Serial batch: 155.25s. Four parallel batches: 254.79s (about 2.44x throughput
+on these controls, not a guaranteed production speedup). Cold evidence
+recovery took about six minutes. This is a reliability/control result, not
+evidence of better model weights or a research conclusion.
+
+An earlier launcher failed before executing controls because Function.from_id
+is not exposed in SDK 1.5.5. The tested pinned adapter resolves the existing
+budget handle from AppGetLayout instead; no second live budget writer.
+
+First read-only handoff inspection (ap-DQKk75T7epRQNgSRrkXpEI) received a
+provider cancellation signal before returning an inventory. Old grader was
+not stopped. Lifecycle RPCs and admin reservation calls now use the SDK's
+persistent-loop bridge; inspection calls use spawn/get with recorded call
+IDs. The original $5 admin hold is retained and reused, not reset. The canary
+has a separate $5 hold. Both are INCLUDED in the original $250 total ceiling;
+holds are conservative reservations, not measured invoices.
+
+Explicit next phases (only after successful inspection):
+  .venv/bin/modal run --detach modal_parallel_handoff.py::handoff_main --phase inspect
+  .venv/bin/modal run --detach modal_parallel_handoff.py::handoff_main --phase drain
+  .venv/bin/modal run --detach modal_parallel_handoff.py::handoff_main --phase run
+
+The drain phase only blocks new original submissions and waits for a positive
+APP_STATE_STOPPED observation. It never kills a live candidate. A drain timeout
+or partially submitted batch blocks launch and preserves its evidence. The
+run phase transfers the cumulative budget to a single successor writer only
+after this check. Failed/lost original-call reservations remain held.
+
+Read-only inventory passed at 2026-10-01T20:03:12Z, app
+ap-maCxxxOJPBbxK13xJ9xFRV, call fc-01M3WGVZ38WVKV33BHRVRWHFXX:
+44 completed batches, 435 never-started batches, and one actively executing
+batch correctly classified as unresolved rather than eligible for replay.
+This was a live snapshot, not the final handoff manifest.
+
+Reviewed drain requested at 2026-10-01T20:06:54Z, app
+ap-8yK6OhCMhHploByqksvD9N, call fc-01M3WH74NJ2Y7F4XZ9E7K3FZAR.
+The old scheduling flag is set; active programs finish naturally. Replacement
+launch remains gated on positive stopped-state evidence and a fresh complete
+partition with no partial legacy batches.
+
+The last active legacy batch completed naturally. The original controller
+then reported "incomplete" because the intentional handoff flag rejected its
+queued, never-started work. Its CLI exited normally. The drain controller
+positively observed APP_STATE_STOPPED at 2026-10-01T20:17:59Z. No live
+candidate was killed. The final stopped-state inventory is checked afresh;
+the original "incomplete" record is retained as provenance, not overwritten.
+
+Final drain inventory passed at 2026-10-01T20:21Z: 47 completed batches,
+433 never-started batches, zero unresolved batches, APP_STATE_STOPPED.
+The immutable inventory and configuration were saved to both Volumes before
+the ready marker was published. Only those 433 fixed batches are authorized
+for the replacement scheduler. Original model training and generated samples
+are unchanged.
+
+Replacement launched at 2026-10-01T20:23:35Z:
+app ap-mDjiaxflNVbgsxtuzGoo4X, call fc-01M3WJ5PPSF4F3K1W7MAJQPSJ3.
+Four grading workers, at most sixteen restricted program sandboxes. At
+controller reservation, cumulative committed/held compute was $179.620622
+of $250 (not a provider invoice). Evaluation-only deadline remains
+2026-10-02T11:02:50.905631Z, the approved twelve-hour extension.
+
+Live logs:
+  .venv/bin/modal app logs ap-mDjiaxflNVbgsxtuzGoo4X --follow --timestamps
+
+Production handoff verified: four distinct research batches made simultaneous
+input progress. At 2026-10-01T20:25:39Z the first new batch,
+eval-s20261011-endpoint_omission-12-03, completed all 1148 input slots with
+four program executions and zero unknown outcomes. Accounting settled, the
+controller accepted its receipt, and the free worker started batch 12-04
+while the other three batches continued. This brings the verified count to
+at least 48/480 post-training batches; evaluation is still running. There is
+not yet a complete paired research conclusion.
