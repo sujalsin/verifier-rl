@@ -1,0 +1,501 @@
+{
+  "candidate_execution": false,
+  "counts": {
+    "checkpoint_receipts": 288,
+    "evaluation_cohorts": 25,
+    "evaluation_responses": 2048,
+    "false_acceptance_documents": 38,
+    "logical_test_cases": 288,
+    "new_candidate_executions": 0,
+    "new_cloud_calls": 0,
+    "new_downloads": 0,
+    "pilot_evaluation_cohorts": 5,
+    "post_training_batches": 480,
+    "protected_input_records": 10906,
+    "training_policies": 12,
+    "training_updates": 288,
+    "unique_test_inputs": 287
+  },
+  "primary_result_hash": "513a5e658e0a67375b7212cbb68a79f792fc2ffd2244025445e4d07e11dbd338",
+  "report": "docs/booking_complete_study_record.md",
+  "report_bytes": 39565089,
+  "report_sha256": "deff92ce68edfb264247c315c092cc7ca32168bec1c9d0669a638fe6968f06c4",
+  "sources": {
+    "docs/booking_behavior_findings.md": {
+      "bytes": 10624,
+      "sha256": "b13ffdf8dbd36ff5c7af2ceb4e03de2786a98f9f6ddf53bcd776d7efe6a233ac"
+    },
+    "docs/booking_failure_analysis.md": {
+      "bytes": 10676,
+      "sha256": "bdea8554a486c69b5094001a2c52cd7307ca3a8a57123533d93ca5db11504c21"
+    },
+    "docs/booking_replication_analysis.md": {
+      "bytes": 21083,
+      "sha256": "853e65b8aea19bda6de90baf27dfc105d899034c6c20e6dd575fb34325fc4da3"
+    },
+    "docs/booking_replication_repair_protocol.txt": {
+      "bytes": 15651,
+      "sha256": "29511096263b54ac52f458f933525aca69c84127d1d931072ac08ef8e576f4a5"
+    },
+    "docs/budget_reconciliation.txt": {
+      "bytes": 9782,
+      "sha256": "0cfdba9bb633abccd7fca7e1b2692ce812f3a746a1912c147dc49606eaaeb289"
+    },
+    "docs/frontier_evals_project_brief.md": {
+      "bytes": 10636,
+      "sha256": "59ace0639e4b55258d39da5244e4c7fc527bb40e356dde65e3da57fda2970a7c"
+    },
+    "docs/parallel_evaluation_handoff.txt": {
+      "bytes": 8355,
+      "sha256": "a474e525c50821603167a8549d30825576b8592fd3e63e3975eff9debc3fec4c"
+    },
+    "docs/permit_clock_recovery.txt": {
+      "bytes": 7046,
+      "sha256": "dc51ac96cce5acc0ffed15e8a32c9659ee076be108df4735dc27cc20502e48ce"
+    },
+    "docs/program_sandbox_benchmark.txt": {
+      "bytes": 8615,
+      "sha256": "2a4f8b82b9d1c1ee18e8573b6ac6490c43b375c6f3e086cda4ea741c6e2d0e59"
+    },
+    "docs/program_sandbox_integration.txt": {
+      "bytes": 11351,
+      "sha256": "404c1441e05cd0c56530b121357010ebf6b344a5712ceb38d4dba99aabaae63c"
+    },
+    "docs/program_spend_recovery.txt": {
+      "bytes": 8408,
+      "sha256": "6e277d3692d46dda621349a997cfbad88e87695a8da05e608cb53d5726765f2a"
+    },
+    "docs/program_storage_recovery.txt": {
+      "bytes": 11127,
+      "sha256": "eb975c8dde85ed3313df35248fec98c86a0bd2ff53af24ca616d27ed05cf64a5"
+    },
+    "modal_booking_replication.py": {
+      "bytes": 68226,
+      "sha256": "419ca7752eaa9e1a15352bcc1136ff21170f174d65ec2a796da01fc442d1e9ee"
+    },
+    "reports/booking-behavior/audit_score_histogram.csv": {
+      "bytes": 3497,
+      "sha256": "335845838feb4e8fa45af42f686208319182b254d005c86ed35aed908cfc3ab4"
+    },
+    "reports/booking-behavior/capped_correct_programs.csv": {
+      "bytes": 3633,
+      "sha256": "2531b643e5a2d33670c0ac002d4dcec694aeeac045f6dc21105ab1e1c80da797"
+    },
+    "reports/booking-behavior/findings.json": {
+      "bytes": 66257,
+      "sha256": "5d34b49d635db4295b67cd1801f754faa51b72fb77653545106cd62dcda5af47"
+    },
+    "reports/booking-behavior/length_bins.csv": {
+      "bytes": 1655,
+      "sha256": "d9b55386aeeb76b8004df967f94a381727b7620ffbdb1125c2cd65234697e612"
+    },
+    "reports/booking-behavior/outcome_distributions.csv": {
+      "bytes": 1825,
+      "sha256": "58300100173c205fe1f02274cbde492ef0d7f774e1315a164d70c918cb58bb7a"
+    },
+    "reports/booking-behavior/output_manifest.json": {
+      "bytes": 895,
+      "sha256": "d892ea7626b3270ca3b82fea07268ecfb1c3fe1ab670a00eda397dcf79464518"
+    },
+    "reports/booking-behavior/ranking_disagreement.csv": {
+      "bytes": 1820,
+      "sha256": "9eba8602f383aff892a07d5e9d3809b7c0c2e6863f27f0889baa83ba7ae3d337"
+    },
+    "reports/booking-behavior/repaired_weak_pairs.csv": {
+      "bytes": 480,
+      "sha256": "e70b414caa43497f63399deedfa1db7acaf18b57e854fe148d0bdadb92675cf7"
+    },
+    "reports/booking-replication/analysis.json": {
+      "bytes": 1606340,
+      "sha256": "8cf9cf18b9f1cc2e71f776ccb97eb1014ee0b2146ab88c9687db767893df112b"
+    },
+    "reports/booking-replication/common_draw_trajectories.csv": {
+      "bytes": 2550,
+      "sha256": "6f922f0728293e450bac11afee91f5a9f2ec62dd2784b8876cf054938ae0d0f3"
+    },
+    "reports/booking-replication/output_manifest.json": {
+      "bytes": 1248,
+      "sha256": "fc64f06d8adc6d92774376a4b75f3e078e7003674ca44b190e817b1cd1c44783"
+    },
+    "reports/booking-replication/paired_effects.svg": {
+      "bytes": 4940,
+      "sha256": "ef6656ec2ad7894dfe88557c38f2340a2682175f3193b34a44da7c43b4e691a2"
+    },
+    "reports/booking-replication/policy_metrics.csv": {
+      "bytes": 3205,
+      "sha256": "a901da64911d27a3a06fd3049ce83a5c1004e5f8544f04ad9cda7b26c57c5061"
+    },
+    "reports/booking-replication/policy_outcomes.svg": {
+      "bytes": 9187,
+      "sha256": "81a273c57b0a961dbd4d7430370b8c6525b72c81e1ad6e8bad6d54eddc678f08"
+    },
+    "reports/booking-replication/program_metrics.csv": {
+      "bytes": 368076,
+      "sha256": "4a9063c420370307608deddb17f3d001bc456885412624af23a8f025dfc3bd1d"
+    },
+    "reports/booking-replication/seed_pairs.csv": {
+      "bytes": 3916,
+      "sha256": "782c4966bdf27bce9789b9d06c59ad00620daf96bad91f3794d28962bf714203"
+    },
+    "reports/booking-replication/training_rewards.svg": {
+      "bytes": 19913,
+      "sha256": "bc69fe6a73260bb2ed9ec16fc6db5052dc0a78ea46392eeed74706ab0e49ee54"
+    },
+    "reports/booking-replication/training_summary.csv": {
+      "bytes": 2150,
+      "sha256": "ec06eb50d3919307425ab71a6bd5540dacec2fdfbad65d30d96ac71261b36a6d"
+    },
+    "reports/booking-replication/training_updates.csv": {
+      "bytes": 42131,
+      "sha256": "914d189c812ad8cdfa0c1c99d6cd75088c56070b3e45e7c28631b8c081f221c1"
+    },
+    "reports/booking-replication/verifier_confusion.csv": {
+      "bytes": 512,
+      "sha256": "1528490f717e4cb966185de00780955cc21c274d7457a8fbb02ea21436866ff7"
+    },
+    "runs/booking-program-sandbox-benchmark-20260930-v1/result.json": {
+      "bytes": 25888,
+      "sha256": "29c39b8952d9ea2ea33a4e23971b5fbf5d66c01121acaa82940293c2f7512af5"
+    },
+    "runs/qwen-booking-full-state-control-20260929-v3/result.json": {
+      "bytes": 214,
+      "sha256": "2ef1b274e244fd56cb6619a9c4e203c38684c9d367aa2269721776dfbd9894e1"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/download_manifest.json": {
+      "bytes": 2612,
+      "sha256": "20aac0b5591332b1b78510a7305573213375f32e42fb4038990ab3f799069b34"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-baseline-comparison-20260929-v1/generation/result.json": {
+      "bytes": 82862,
+      "sha256": "e07731ad6bec89a5c0d0afeedfac667f860097728261ac158a5119d7ff1f4848"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/amendments/cleanup-001/source_snapshot.json": {
+      "bytes": 709390,
+      "sha256": "04a62c10a735168fedc7c9796ab6f97e44fb39ae8be7e3f6eb8ab03d47041b0f"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/arms/endpoint_omission/evaluation-12/result.json": {
+      "bytes": 81374,
+      "sha256": "69c1a6e4160c5f098119300861b4ea67a95a5fc3d91efe6697b1a9f489fc8f3a"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/arms/endpoint_omission/evaluation-24/result.json": {
+      "bytes": 70701,
+      "sha256": "933fcf51c308a204012f989159150fb3232321d7072ac2f3e742e1c0bc117eaf"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/arms/reference/evaluation-24/result.json": {
+      "bytes": 82879,
+      "sha256": "37363867f9ee1af77efa64421384f64643caf83e005b666766b0b4e1fbfb73b4"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/baseline.json": {
+      "bytes": 27747,
+      "sha256": "990f7bd577b07959859974ff311a56e721361acf93ba864eea05bfee30d3e8b8"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/grading/eval-endpoint_omission-12-00/raw.json": {
+      "bytes": 5601336,
+      "sha256": "29ff429af1b4119b63edc13fbf2a31b66faf3bb9e5a442b9d5b3ff015888684b"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/grading/eval-endpoint_omission-24-00/raw.json": {
+      "bytes": 5598372,
+      "sha256": "d421ba5d87fa534e95bdf0f930b56f7deeab7dbaa45c62803610e3669d7f141c"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/grading/eval-endpoint_omission-24-06/raw.json": {
+      "bytes": 5680070,
+      "sha256": "d63f5b0e342e084df0b86623315b3c0e502a5921d378bc40814cb350ada161fb"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/grading/eval-reference-24-07/raw.json": {
+      "bytes": 5590434,
+      "sha256": "b4da75f42d028f3d2809857812e79c7fa80dad8580870b830b605316b39f9288"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/plan.json": {
+      "bytes": 6742,
+      "sha256": "86ae718881cdc3d8acb7f07300c1cb6ce244bdebb94758d892b601f338cd87ee"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/evidence/qwen-booking-matched-training-20260929-v1/setup.json": {
+      "bytes": 348,
+      "sha256": "acb521808a820cd07c42b70d2cf5b72794d9a8eb82fa7bbc5e22ce95d756051e"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/verification_receipt.json": {
+      "bytes": 16592,
+      "sha256": "fe028832bb90f9f7f7ac0beb8a27dd0b5be0cabdd829eeb09503e43e50f01ffe"
+    },
+    "runs/qwen-booking-matched-training-20260929-v1/analysis/weak-only-001/verified_final_result.json": {
+      "bytes": 112002,
+      "sha256": "72099d3252197fd2d79fbb22c51fce4b9e94aecc4ca5a50a9928d4bb4202198a"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/parallel-evaluation-001/canary-001/result.json": {
+      "bytes": 532,
+      "sha256": "b64cfe3a6f5ff1cebf8766cbc3031bd731b567131b10b80edd3ecc744ead97c0"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/parallel-evaluation-001/research-003/identity-control.json": {
+      "bytes": 745,
+      "sha256": "3bfe33004bebd867b968b0fc9116af3a14584e745dd357476d131f83a109f183"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/parallel-evaluation-001/research-004/control.json": {
+      "bytes": 318,
+      "sha256": "dfc859d9d39d2037c3e2f7fad4158305cea343676f8ea06a2d62f3f3e0587b1b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/parallel-evaluation-001/research-004/prepare.json": {
+      "bytes": 282,
+      "sha256": "d338e8adc5856dd6625b617ebb2cd81beb9312f27e06119a1783234ff732ba30"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/recoveries/spend-limit-20261001-001/result.json": {
+      "bytes": 2582,
+      "sha256": "5c936411d76e5d88319099449bb248db8bed4b3bce262bdf1d298f7d019acb6e"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/storage-amendments/evidence-storage-001/control-source-001/result.json": {
+      "bytes": 2789,
+      "sha256": "cb2cc91ef057bbe49ce53a39fc7ff2317c54ae18a9ecbc2164339489e2db4d00"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/storage-amendments/evidence-storage-001/result.json": {
+      "bytes": 1867,
+      "sha256": "bca1635228e6f8b203a8d3464e77add9173e12a0bd555bf23d19c5c066f4e295"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261001T212501793362Z/report.json": {
+      "bytes": 1674,
+      "sha256": "4885abb04bd69c2cf80d6893c171647d3e6166ff24291b4961de71654fe7a0df"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261001T215206585577Z/report.json": {
+      "bytes": 2127,
+      "sha256": "36bfd395fd68774fdc50bcf7016b67e9dc44ca4ce8025714eba5c03306c17af7"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261001T223347183860Z/report.json": {
+      "bytes": 2127,
+      "sha256": "487996b40a4ce6c9f5c11dd2e56122c0be838efb79f01c53748e1873a0bf65f3"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T004737819931Z/report.json": {
+      "bytes": 2126,
+      "sha256": "92193bb02dbd1e4cdc17580f301e1463690633a2acc47cdc65a5aad21fde701a"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T005228311971Z/report.json": {
+      "bytes": 2127,
+      "sha256": "2918a8e68a46b02b0da4dcd00228e7558fc661357cef0cbcfe3110b12f9420ff"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T010842350957Z/report.json": {
+      "bytes": 2128,
+      "sha256": "4adc977d1ff1302789dca5b6d9f9b88c7f831cc72d47ef268375541e4914ebc7"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T012902806784Z/report.json": {
+      "bytes": 2127,
+      "sha256": "9c0efc956ef52eb171cd3d94a46c03fd91c0d198a58993b9fef1b76496799e2a"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T015343748445Z/report.json": {
+      "bytes": 2128,
+      "sha256": "32814d503ce18a6b058ba48e57cacb554e1f7a5baeaa0099c03ed0849d160927"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T020631840500Z/report.json": {
+      "bytes": 2130,
+      "sha256": "ba21306f955e7580897355f59e61b37f93b98c084217384dfab8bbffd3e9a158"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T020956588081Z/report.json": {
+      "bytes": 2130,
+      "sha256": "251737250d7843e589bc01e59c3515712e7a80a5fe814518ec057aa5a8bb5fbb"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T021613777305Z/report.json": {
+      "bytes": 2129,
+      "sha256": "954fed8720a3e79343617455d792ecb5fbc73cf60bd66ab95d621b76dd512025"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/20261002T022032862936Z/report.json": {
+      "bytes": 2129,
+      "sha256": "1c70d2bbb00cdb1c10148726a3a75620623b86a7b4cef7fe3720d843abb4f4b3"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/download-manifest.json": {
+      "bytes": 2685,
+      "sha256": "484038bb2710dd06a329974d170edc123dbff0beba53f4cbd216150f375fd551"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/baseline-generation.json": {
+      "bytes": 332019,
+      "sha256": "f66f442d2bc64b44db5b8ebb0fc23f1495232897df0278ed8c6b66b4eba224c3"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-baseline-00-19080.json": {
+      "bytes": 520760,
+      "sha256": "f9bc767b368717ed9372aaca4a8faab458b187bf5ab6a43b51b3301c5ccd37c9"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-endpoint_omission-12-19010.json": {
+      "bytes": 520991,
+      "sha256": "d1f05d3f9e81c59f7f9a78556edfc6ac1130996521af79757883b606da006424"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-endpoint_omission-24-19051.json": {
+      "bytes": 520900,
+      "sha256": "fc22f568160adefdb48f8f51b723c01423bdf96d355b3c1958f604584e89c3d9"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-endpoint_omission-24-19110.json": {
+      "bytes": 520956,
+      "sha256": "81bab6d000656e21f354feb3c5cf3f13bc98a600371efeba9477473e2e8a2952"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-reference-24-19000.json": {
+      "bytes": 520992,
+      "sha256": "70df9c5ed107074cd80cab3cf8aef574dfdfde825cdfaf7dee1dc491d935b65d"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-reference-24-19080.json": {
+      "bytes": 520752,
+      "sha256": "92da58240972d0bd18d2bdc4b8df462b7e11a12884f25d71099e63b9a6530e08"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-repaired-12-19001.json": {
+      "bytes": 520794,
+      "sha256": "ff7a6a19d81dedf2137eb50148d15635c04fdb2b1ad05c336b8101a30656b945"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-repaired-24-19036.json": {
+      "bytes": 520800,
+      "sha256": "ddfd19b71d8001fba897d9b260ebefb2b934fa6fee3d8a4da58ccaff08f6dabb"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-repaired-24-19044.json": {
+      "bytes": 520973,
+      "sha256": "6bcb87c5f3baa58c62aa956b2353bf86e39230c452329e3169eb3da0e58250f9"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261011-repaired-24-19064.json": {
+      "bytes": 520846,
+      "sha256": "f75c163b9a9568cc73be5d1e37946fb1a9949f7f7d1db0bc559d92a62afa37ad"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-endpoint_omission-12-19010.json": {
+      "bytes": 520886,
+      "sha256": "205a4e33e4021f236eb34e7b0afd78fbefce15bcbea0c5befb3632d8b57dd371"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-endpoint_omission-24-19064.json": {
+      "bytes": 524487,
+      "sha256": "7180e9046ad510558c7f1ff5e3be6a8a7a0dce55b21218354c8cd8cfb7a441d4"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-reference-12-19010.json": {
+      "bytes": 520914,
+      "sha256": "24f2d6a6e6a9410f6ae2b4c4bfbd801ff890eb477b143bc0189efccab7f66f25"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-reference-24-19010.json": {
+      "bytes": 520957,
+      "sha256": "cbc94cbdf065e094e742fecbaa85b491066fdad800cc712ecd864e20eb9ae8d8"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-reference-24-19068.json": {
+      "bytes": 520941,
+      "sha256": "1caaaa1217f7b8f715e824f558909fb9c5f40ce40b0fcd242de158a030e34efb"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-reference-24-19077.json": {
+      "bytes": 520944,
+      "sha256": "95001c1b003576cbcb49ec78c5a55cb6fc99337ace0616e1edaf881bfb7bb2fe"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-repaired-12-19010.json": {
+      "bytes": 524321,
+      "sha256": "e85f1697bdb245fd7e67335a31815035bda2a15186691280f3407feb89235cef"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261012-repaired-24-19062.json": {
+      "bytes": 520821,
+      "sha256": "b5a707b22416e8fd20d2c4de4da9d9162115bcfb0649da2dd0e50dd771ceb328"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-endpoint_omission-24-19031.json": {
+      "bytes": 520937,
+      "sha256": "fdb666f49a6c16cc9e80c6d03b4e2792be03eabdd8210ec85d499ae009035044"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-endpoint_omission-24-19080.json": {
+      "bytes": 520884,
+      "sha256": "55c88cbc614ffcdfce46f79001b64106ff9fcbcf90bf339ed3e5627962101eeb"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-endpoint_omission-24-19083.json": {
+      "bytes": 520763,
+      "sha256": "c04c0029f31ac6d0628813b2fa98e37626c45278f7171bb4ab9326dbcf4be69b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-endpoint_omission-24-19087.json": {
+      "bytes": 520875,
+      "sha256": "6bff1f10470e19e0b15f84c7aedbd9b219f31be976eab3d97e4d3a98462f19f3"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-reference-24-19042.json": {
+      "bytes": 520927,
+      "sha256": "547641d42fbb3274e07f8650817a7fd9d0f6ec0234df9ba7ce5516f3781b306b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-reference-24-19121.json": {
+      "bytes": 520865,
+      "sha256": "26e140a42da2e82d0319e8f92fcf10732ea3c3f41aed43b1d0b95d13b91591d4"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-repaired-24-19052.json": {
+      "bytes": 520807,
+      "sha256": "05ec6a90cb709e0a7c04ab2e9385fe754ac3425513794af959ba6695b86bf398"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-repaired-24-19075.json": {
+      "bytes": 520865,
+      "sha256": "7233c710d11a08cfd4620260168ad791c70a8be9dd8fd9379409c16c71245dfe"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-repaired-24-19087.json": {
+      "bytes": 520788,
+      "sha256": "1df34a3641c72213507b12f3a40e2b3a600a10c8157c5f669f9028def352a49d"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-repaired-24-19106.json": {
+      "bytes": 520850,
+      "sha256": "1d354b23e5051e75ea7dd9cafdc8a6b00f70ddba73bba14dc34d77fb03e5ef6c"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261013-repaired-24-19121.json": {
+      "bytes": 520840,
+      "sha256": "e819d265587881172c76e59b06e91328fd38a5e240290ca8fa11da8ad3bf17f5"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-endpoint_omission-24-19099.json": {
+      "bytes": 520928,
+      "sha256": "2a1046ff46d1b276bd6b86aab1f3368e9ee692c37b3666eabeb21623daaa7360"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-reference-12-19010.json": {
+      "bytes": 520890,
+      "sha256": "e98ecb7d7b858c36fe8bd6d66371c3591668b8db7d8e1cc5e64597f9482b6300"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-reference-24-19058.json": {
+      "bytes": 520907,
+      "sha256": "32f66817ffed7bd070dca1a07a2a3d08759ee1c72e05e4406f7b387257ab64ca"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-12-19010.json": {
+      "bytes": 520951,
+      "sha256": "aff37db82b3184c022cca8b5c7f57d41cd5156c0a9a66abb39111a4ba886ea97"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-12-19012.json": {
+      "bytes": 520741,
+      "sha256": "21e645d9125f9b8121ed40c01376d734913eec147d8ddfd08ca7a880fa54165b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-24-19053.json": {
+      "bytes": 520924,
+      "sha256": "3c6d956134c9cf211ddbf0840295047aaf4c24b8ce766b53f56923afd9da8d21"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-24-19067.json": {
+      "bytes": 520617,
+      "sha256": "92c1a85ba537ae594f201fcf15a4fcd0a22722ff637cf2d33ed96f291933e365"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-24-19106.json": {
+      "bytes": 520907,
+      "sha256": "daf9270dd93b3813aa538c50de2d7fc11c2ac37e40c1f47b266070aa9a387113"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/eval-s20261014-repaired-24-19123.json": {
+      "bytes": 520999,
+      "sha256": "4880ec5f10e8d8cfd9b281989bac1ab332501ce8bbbb9a7316846ad13b54acdf"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/failure-evidence/manifest.json": {
+      "bytes": 17604,
+      "sha256": "ca71e40997d6beb9606a119052fc3923f66c2877cd1259031f7005a569ad7b64"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/config.json": {
+      "bytes": 150400,
+      "sha256": "78c41ce9611bf652aa372b60b0bc6dc4ba31fe77a529b11fd276908e547205c4"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/inventory.json": {
+      "bytes": 11106673,
+      "sha256": "73acca826548915842ee254ccb54df8a4e76c45dc745a0b29062b9853af1a86b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/permit-control.json": {
+      "bytes": 318,
+      "sha256": "dfc859d9d39d2037c3e2f7fad4158305cea343676f8ea06a2d62f3f3e0587b1b"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/predecessor-state.json": {
+      "bytes": 651322,
+      "sha256": "341a0dce8778e88eba61cd22a8f9a0f8fb7dea23bd762e715e4089265ec90f28"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/recovery.json": {
+      "bytes": 233339,
+      "sha256": "98bbf47dfb5b82ffde79eefd2355aaebfa4d383fae1c3fc278d0e839ffab984f"
+    },
+    "runs/qwen-booking-replication-repair-20260930-v1/local-analysis/modal-results/result.json": {
+      "bytes": 2198146,
+      "sha256": "f930d95798236cbcfbd3417897ec57e6f228e7b702341756aa6c72fcdcd05a5a"
+    },
+    "verifier_rl/booking_behavior_analysis.py": {
+      "bytes": 13659,
+      "sha256": "908914556f0cc241695db6196d61a8051b0346eb77d9c30cd5e55b3c09a0c605"
+    },
+    "verifier_rl/booking_complete_report.py": {
+      "bytes": 47171,
+      "sha256": "d2f8efa10c507150fcfb3f8066d438201f412dc847bdc0f82285cd4880c3b24e"
+    },
+    "verifier_rl/booking_replication_analysis.py": {
+      "bytes": 28460,
+      "sha256": "9fbb9d1edf0ba82ab0d7cd7b5180d539aed1fba61f7daf070f8ea933883b3599"
+    }
+  }
+}
