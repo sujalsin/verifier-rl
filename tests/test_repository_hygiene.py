@@ -8,6 +8,9 @@ from scripts import check_repository as checks
 
 
 class RepositoryChecksTests(unittest.TestCase):
+    def test_public_reports_match_original_manifests(self):
+        self.assertEqual(checks.public_report_issues(checks.ROOT), [])
+
     def test_runtime_data_and_credentials_are_not_source(self):
         for name in ("runs/result.json", ".aws/config", ".env", "model.safetensors",
                      ".venv-tools/bin/python", "cache/__pycache__/x.pyc", "../outside.txt"):

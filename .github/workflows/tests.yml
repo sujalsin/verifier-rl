@@ -25,11 +25,13 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
           cache-dependency-path: pyproject.toml
+      - name: Reproduce public results without installed packages
+        run: python -I -S scripts/reproduce.py
       - name: Install the package and mocked-provider test dependency
         run: python -m pip install -e '.[test]'
       - name: Repository checks
         run: make check
       - name: Offline demo and regression suite
         run: make demo test
-      - name: Portable publication arithmetic
-        run: make publication
+      - name: Confirm checks did not change tracked evidence
+        run: git diff --exit-code

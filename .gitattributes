@@ -1,2 +1,5 @@
-# Preserve the published score table's byte-level evidence checksum.
-reports/booking-blog/program_scores.csv -text
+# Keep source and archived text hashes stable across operating systems.
+* text=auto eol=lf
+
+# Published CSVs were exported with CRLF; preserve their exact evidence hashes.
+*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
