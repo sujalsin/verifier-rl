@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" role="img">
+<title>Final policy outcomes across four training seeds</title><desc>All seed triplets; full audit passes and target error rates. Baseline is one shared 128 draw sample.</desc>
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#172033} .small{font-size:12px} .label{font-size:14px} .title{font-size:19px;font-weight:bold}</style>
+<text x="25" y="30" class="title" text-anchor="start">Final policies across all four training seeds</text>
+<text x="170" y="65" class="label" text-anchor="middle">Audit full pass</text>
+<line x1="65" y1="340.0" x2="275" y2="340.0" stroke="#e2e8f0"/>
+<text x="57" y="344.0" class="small" text-anchor="end">0%</text>
+<line x1="65" y1="278.75" x2="275" y2="278.75" stroke="#e2e8f0"/>
+<text x="57" y="282.75" class="small" text-anchor="end">10%</text>
+<line x1="65" y1="217.5" x2="275" y2="217.5" stroke="#e2e8f0"/>
+<text x="57" y="221.5" class="small" text-anchor="end">20%</text>
+<line x1="65" y1="156.25" x2="275" y2="156.25" stroke="#e2e8f0"/>
+<text x="57" y="160.25" class="small" text-anchor="end">30%</text>
+<line x1="65" y1="95.0" x2="275" y2="95.0" stroke="#e2e8f0"/>
+<text x="57" y="99.0" class="small" text-anchor="end">40%</text>
+<line x1="65" y1="253.8671875" x2="275" y2="253.8671875" stroke="#64748b" stroke-dasharray="5 4"/>
+<polyline points="85,201.23046875 170,239.51171875 255,225.15625" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.75"/>
+<circle cx="85" cy="201.23046875" r="4" fill="#2563eb"/>
+<circle cx="170" cy="239.51171875" r="4" fill="#2563eb"/>
+<circle cx="255" cy="225.15625" r="4" fill="#2563eb"/>
+<polyline points="85,186.875 170,124.66796875 255,182.08984375" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.75"/>
+<circle cx="85" cy="186.875" r="4" fill="#d97706"/>
+<circle cx="170" cy="124.66796875" r="4" fill="#d97706"/>
+<circle cx="255" cy="182.08984375" r="4" fill="#d97706"/>
+<polyline points="85,210.80078125 170,191.66015625 255,234.7265625" fill="none" stroke="#15803d" stroke-width="1.5" opacity="0.75"/>
+<circle cx="85" cy="210.80078125" r="4" fill="#15803d"/>
+<circle cx="170" cy="191.66015625" r="4" fill="#15803d"/>
+<circle cx="255" cy="234.7265625" r="4" fill="#15803d"/>
+<polyline points="85,186.875 170,182.08984375 255,177.3046875" fill="none" stroke="#9333ea" stroke-width="1.5" opacity="0.75"/>
+<circle cx="85" cy="186.875" r="4" fill="#9333ea"/>
+<circle cx="170" cy="182.08984375" r="4" fill="#9333ea"/>
+<circle cx="255" cy="177.3046875" r="4" fill="#9333ea"/>
+<rect x="79" y="193.4453125" width="12" height="6" fill="#111827"/>
+<text x="85" y="365" class="small" text-anchor="middle">Reference</text>
+<text x="85" y="383" class="small" text-anchor="middle">23.44%</text>
+<rect x="164" y="181.482421875" width="12" height="6" fill="#111827"/>
+<text x="170" y="365" class="small" text-anchor="middle">Weak</text>
+<text x="170" y="383" class="small" text-anchor="middle">25.39%</text>
+<rect x="249" y="201.8193359375" width="12" height="6" fill="#111827"/>
+<text x="255" y="365" class="small" text-anchor="middle">Repaired</text>
+<text x="255" y="383" class="small" text-anchor="middle">22.07%</text>
+<text x="470" y="65" class="label" text-anchor="middle">Inclusive endpoint signature</text>
+<line x1="365" y1="340.0" x2="575" y2="340.0" stroke="#e2e8f0"/>
+<text x="357" y="344.0" class="small" text-anchor="end">0%</text>
+<line x1="365" y1="278.75" x2="575" y2="278.75" stroke="#e2e8f0"/>
+<text x="357" y="282.75" class="small" text-anchor="end">1.25%</text>
+<line x1="365" y1="217.5" x2="575" y2="217.5" stroke="#e2e8f0"/>
+<text x="357" y="221.5" class="small" text-anchor="end">2.5%</text>
+<line x1="365" y1="156.25" x2="575" y2="156.25" stroke="#e2e8f0"/>
+<text x="357" y="160.25" class="small" text-anchor="end">3.75%</text>
+<line x1="365" y1="95.0" x2="575" y2="95.0" stroke="#e2e8f0"/>
+<text x="357" y="99.0" class="small" text-anchor="end">5%</text>
+<line x1="365" y1="301.71875" x2="575" y2="301.71875" stroke="#64748b" stroke-dasharray="5 4"/>
+<polyline points="385,263.4375 470,263.4375 555,263.4375" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.75"/>
+<circle cx="385" cy="263.4375" r="4" fill="#2563eb"/>
+<circle cx="470" cy="263.4375" r="4" fill="#2563eb"/>
+<circle cx="555" cy="263.4375" r="4" fill="#2563eb"/>
+<polyline points="385,225.15625 470,340.0 555,301.71875" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.75"/>
+<circle cx="385" cy="225.15625" r="4" fill="#d97706"/>
+<circle cx="470" cy="340.0" r="4" fill="#d97706"/>
+<circle cx="555" cy="301.71875" r="4" fill="#d97706"/>
+<polyline points="385,301.71875 470,186.875 555,148.59375" fill="none" stroke="#15803d" stroke-width="1.5" opacity="0.75"/>
+<circle cx="385" cy="301.71875" r="4" fill="#15803d"/>
+<circle cx="470" cy="186.875" r="4" fill="#15803d"/>
+<circle cx="555" cy="148.59375" r="4" fill="#15803d"/>
+<polyline points="385,301.71875 470,301.71875 555,225.15625" fill="none" stroke="#9333ea" stroke-width="1.5" opacity="0.75"/>
+<circle cx="385" cy="301.71875" r="4" fill="#9333ea"/>
+<circle cx="470" cy="301.71875" r="4" fill="#9333ea"/>
+<circle cx="555" cy="225.15625" r="4" fill="#9333ea"/>
+<rect x="379" y="270.0078125" width="12" height="6" fill="#111827"/>
+<text x="385" y="365" class="small" text-anchor="middle">Reference</text>
+<text x="385" y="383" class="small" text-anchor="middle">1.37%</text>
+<rect x="464" y="270.0078125" width="12" height="6" fill="#111827"/>
+<text x="470" y="365" class="small" text-anchor="middle">Weak</text>
+<text x="470" y="383" class="small" text-anchor="middle">1.37%</text>
+<rect x="549" y="231.7265625" width="12" height="6" fill="#111827"/>
+<text x="555" y="365" class="small" text-anchor="middle">Repaired</text>
+<text x="555" y="383" class="small" text-anchor="middle">2.15%</text>
+<text x="770" y="65" class="label" text-anchor="middle">Weak only acceptance</text>
+<line x1="665" y1="340.0" x2="875" y2="340.0" stroke="#e2e8f0"/>
+<text x="657" y="344.0" class="small" text-anchor="end">0%</text>
+<line x1="665" y1="278.75" x2="875" y2="278.75" stroke="#e2e8f0"/>
+<text x="657" y="282.75" class="small" text-anchor="end">1.25%</text>
+<line x1="665" y1="217.5" x2="875" y2="217.5" stroke="#e2e8f0"/>
+<text x="657" y="221.5" class="small" text-anchor="end">2.5%</text>
+<line x1="665" y1="156.25" x2="875" y2="156.25" stroke="#e2e8f0"/>
+<text x="657" y="160.25" class="small" text-anchor="end">3.75%</text>
+<line x1="665" y1="95.0" x2="875" y2="95.0" stroke="#e2e8f0"/>
+<text x="657" y="99.0" class="small" text-anchor="end">5%</text>
+<line x1="665" y1="301.71875" x2="875" y2="301.71875" stroke="#64748b" stroke-dasharray="5 4"/>
+<polyline points="685,263.4375 770,263.4375 855,225.15625" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.75"/>
+<circle cx="685" cy="263.4375" r="4" fill="#2563eb"/>
+<circle cx="770" cy="263.4375" r="4" fill="#2563eb"/>
+<circle cx="855" cy="225.15625" r="4" fill="#2563eb"/>
+<polyline points="685,225.15625 770,301.71875 855,301.71875" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.75"/>
+<circle cx="685" cy="225.15625" r="4" fill="#d97706"/>
+<circle cx="770" cy="301.71875" r="4" fill="#d97706"/>
+<circle cx="855" cy="301.71875" r="4" fill="#d97706"/>
+<polyline points="685,263.4375 770,186.875 855,148.59375" fill="none" stroke="#15803d" stroke-width="1.5" opacity="0.75"/>
+<circle cx="685" cy="263.4375" r="4" fill="#15803d"/>
+<circle cx="770" cy="186.875" r="4" fill="#15803d"/>
+<circle cx="855" cy="148.59375" r="4" fill="#15803d"/>
+<polyline points="685,301.71875 770,301.71875 855,186.875" fill="none" stroke="#9333ea" stroke-width="1.5" opacity="0.75"/>
+<circle cx="685" cy="301.71875" r="4" fill="#9333ea"/>
+<circle cx="770" cy="301.71875" r="4" fill="#9333ea"/>
+<circle cx="855" cy="186.875" r="4" fill="#9333ea"/>
+<rect x="679" y="260.4375" width="12" height="6" fill="#111827"/>
+<text x="685" y="365" class="small" text-anchor="middle">Reference</text>
+<text x="685" y="383" class="small" text-anchor="middle">1.56%</text>
+<rect x="764" y="260.4375" width="12" height="6" fill="#111827"/>
+<text x="770" y="365" class="small" text-anchor="middle">Weak</text>
+<text x="770" y="383" class="small" text-anchor="middle">1.56%</text>
+<rect x="849" y="212.5859375" width="12" height="6" fill="#111827"/>
+<text x="855" y="365" class="small" text-anchor="middle">Repaired</text>
+<text x="855" y="383" class="small" text-anchor="middle">2.54%</text>
+<circle cx="70" cy="413" r="4" fill="#2563eb"/>
+<text x="80" y="417" class="small" text-anchor="start">Seed 20261011</text>
+<circle cx="250" cy="413" r="4" fill="#d97706"/>
+<text x="260" y="417" class="small" text-anchor="start">Seed 20261012</text>
+<circle cx="430" cy="413" r="4" fill="#15803d"/>
+<text x="440" y="417" class="small" text-anchor="start">Seed 20261013</text>
+<circle cx="610" cy="413" r="4" fill="#9333ea"/>
+<text x="620" y="417" class="small" text-anchor="start">Seed 20261014</text>
+<text x="25" y="448" class="small" text-anchor="start">128 draws per final policy. Black marks = seed means. Dashed lines = shared baseline, not four baseline replicas.</text>
+</svg>

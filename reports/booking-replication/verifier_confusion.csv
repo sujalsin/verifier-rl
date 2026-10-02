@@ -1,0 +1,4 @@
+suite,programs,true_accept,false_accept,true_reject,false_reject,acceptance_precision,false_accept_rate_among_audit_failures,interpretation
+reference,2048,440,0,1608,0,1.0,0.0,descriptive fixed mixed-policy cohort; audit is not universal correctness
+endpoint_omission,2048,440,38,1570,0,0.9205020920502092,0.0236318407960199,descriptive fixed mixed-policy cohort; audit is not universal correctness
+repaired,2048,440,0,1608,0,1.0,0.0,descriptive fixed mixed-policy cohort; audit is not universal correctness
