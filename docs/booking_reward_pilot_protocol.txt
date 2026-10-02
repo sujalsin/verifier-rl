@@ -1,0 +1,106 @@
+MATCHED BOOKING REWARD-SHAPE PILOT
+================================
+Version: booking-reward-shape-0.1
+Run: qwen-booking-reward-shape-20260928-v1
+User authorization: use per-test information, compare it with logarithmic
+shaping, and run to check for progress. Prior budget concern was relaxed by the
+user; this is one bounded pilot, not permission for automatic follow-up runs.
+
+QUESTION
+With model, expanded reference verifier and GRPO fixed, does partial-credit RL
+improve independent correctness, and does logarithmic shaping change the result?
+Do not add the weak verifier in the same comparison. No new SFT or model change.
+This is not yet the broad verifier-error/optimizer comparison. There is no binary
+arm on v2, so differences against the old binary pilot cannot isolate reward
+shape from changed coverage. The untouched policy is the no-RL baseline.
+
+FROZEN SETTINGS
+Reuse booking-coverage-reward-0.2: 96 training and 192 development audit cases,
+both covering up to 200 bookings. Only mandatory empty input overlaps. During
+training all 96 reference cases count equally; no formatting/length/speed bonus.
+For p=passed/96, linear reward=p, logarithmic reward=log(1+9p)/log(10).
+Retain raw case passes, per-family outcomes and both untransformed audit metrics.
+Larger numeric log rewards do not establish useful learning.
+
+Qwen/Qwen2.5-Coder-1.5B-Instruct, revision
+2e1fd397ee46e1388853d2af2c993145b0f1098a; initial parameter hash
+0e7b709defb712125da1ce7b7e307b56bd00bd889074107f0aa6c56184a7e8ac.
+Same canonical prompt and pinned packages as the completed booking pilot.
+24 optimizer steps per arm; 4 on-policy completions/group; training seed 20261001.
+Linear first, logarithmic second; reload untouched model for each and verify
+identical raw first groups. Matching seeds alone do not guarantee identical later
+trajectories. Full FP32 weights/bfloat16 autocast, L40S, AdamW foreach=False,
+LR=1e-6 constant, group-scaled GRPO, beta=0, clipping .2, max grad norm 1,
+one update iteration, non-reentrant gradient checkpointing. No hyperparameter search.
+Generation 512 tokens, temperature .8, top_p .95, top_k 0, repetition penalty 1.05.
+
+LIVE GATE BEFORE GPU WORK
+Execute four fixed programs on all 96 training inputs in isolated sandboxes:
+  authored correct: 96 passes
+  authored inclusive-end defect: 64 passes
+  authored constant-zero answer: 1 pass
+  previously false-accepted program eval-structured-12-14002: fewer than 96 passes
+The last program's source hash is pinned to
+d424bdf53f68104a58c0ecb0b95aa4f4b5a6062a8e34f82c3cd61961cd6dc2b1.
+Its inclusion is an explicit post-hoc development regression, not new independent
+research evidence. Its new pass count is not assumed in advance. Stop before
+GPU work if controls fail or the known coverage regression still passes fully.
+This gate uses no new audit cases and does not select a reward shape or checkpoint.
+
+EVALUATION
+Generate 16 baseline programs from the untouched model, and 16 after each arm:
+48 total probes with fixed decoding seeds 15000..15015. Save checkpoints at
+12 and 24, but evaluate only final policies; no best-checkpoint selection.
+Preserve Python, NumPy, Torch CPU and CUDA RNG states around baseline/probe
+generation. Verify weights do not change during probes and checkpoint reloads
+match final weights. Probe code is saved before any audit is scored.
+Only after both arms finish, evaluate all three populations against the SAME
+training and audit suites: 287 distinct executions/program (empty shared once).
+Primary descriptive outcomes: full audit passes/16 and audit cases passed/3072.
+Also retain training-suite correctness, invalid/truncated outputs, unique source
+counts, mixed-reward groups, gradients and token/resource accounting.
+Sixteen generated programs are sixteen samples, not 3072 independent samples.
+No repeated-seed confidence/general task capability/hacking claim from this pilot.
+
+ISOLATION, FAILURE AND RESOURCE ENVELOPE
+Reuse the established Modal CPU image/runner: fresh sandbox per source/input,
+network/secrets/mounts/OIDC disabled, privilege drop, CPU/memory/output/wall limits,
+expected answers and scoring outside candidate control. Never run candidate code
+on laptop, trusted controller or training worker. Eight concurrent workers,
+.26-second creation pacing. Per-attempt intent and raw result are durably journaled
+before derived scoring. A partial batch never grants permission to replay it.
+
+At most one startup replacement per source/input, sixteen globally, only for
+previously reviewed confirmed pre-candidate failures with cleanup: preflight RPC
+command-start timeout or trusted preflight SIGKILL with no candidate submission.
+Keep both attempts; unknown cleanup, candidate signals/timeouts and ordinary bad
+answers are not retryable. Other unresolved results stop scoring, never become zero.
+Whole-sandbox cleanup completes for in-flight workers after another worker fails.
+Nonpreemptible CPU controller/grading functions, provider retries=0, atomic claims
+prevent controller/training replay. GPU interruption stops; no automatic retraining.
+
+Max starts: 384 controls + 18,432 training + 13,776 evaluation + 16 startup
+replacements = 32,608. Rejected extraction can reduce actual execution count.
+Two GPU calls at most, 7,200 seconds each; one CPU controller at most, 21,600
+seconds; each of 61 grading calls at most 1,800 seconds; shared absolute deadline.
+Request/limit: GPU 2 CPU/32 GiB, CPU functions 1 CPU/2 GiB, candidate sandbox
+1 CPU/.25 GiB with 120-second maximum lifetime. Preserve existing per-process
+128-MiB, 2-CPU-second, 5-wall-second limits and 45-second transport limit.
+Fresh rates/account billing and prior reservations are saved before launch.
+The all-resources-at-timeout reservation is conservative, not an invoice or
+provider hard spending cap. Do not expand after failures or inconclusive results.
+
+REPRODUCIBILITY
+Separate run directory/claim namespace. Preserve original experiments unchanged.
+Save plan, protocol/source snapshot, pinned model/runtime identities, generated
+programs, raw per-input results, retry receipts, consumed reward vectors, trainer
+logs, checkpoints, final policy metrics and standalone offline replay.
+Candidate errors/extraction failures stay in denominators; unresolved infrastructure
+prevents a complete comparative result. Report incomplete outcomes transparently.
+
+Launch (user authorized after local validation):
+  .venv/bin/modal run --detach modal_booking_reward_pilot.py::launch --allow-cloud
+Offline verification of downloaded evidence:
+  .venv/bin/python -m verifier_rl.booking_reward_pilot --run DOWNLOADED_RUN
+No Git commit/push, new optimizer, weak-verifier arm, adaptive reward selection,
+extra seed or automatic second pilot is included.

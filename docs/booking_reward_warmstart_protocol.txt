@@ -1,0 +1,136 @@
+BOOKING REWARD WARM-START AFTER SUPERVISED-RUNNER FIX
+==================================================
+Version: booking-reward-warmstart-0.3
+Run: qwen-booking-reward-warmstart-20260929-v3
+Execution: root-supervised-panel-0.3
+
+DECISION AND SCOPE
+The user explicitly chose to start BOTH arms from the saved step-12 model,
+not to restart from the vendor checkpoint. Keep GRPO and the reward formulas.
+This is a NEW experiment, not an exact resume. The interrupted run completed
+14 updates, but its last saved checkpoint is at step 12 and contains no optimizer,
+scheduler or RNG state. Both new arms initialize fresh identical AdamW optimizers
+from exactly the same saved weights. Each gets 24 ADDITIONAL optimizer updates.
+Do not mix the original baseline with this experiment's new baseline.
+
+The starting policy already received 12 linear-reward updates. The question is
+whether subsequent linear or logarithmic partial-credit training improves on
+THAT policy. This is not a comparison from a reward-neutral initialization.
+No algorithm, model-size, SFT, task, verifier-coverage or weak-verifier change.
+No checkpoint selection, new hyperparameter search or automatic extra pilot.
+
+INITIAL POLICY
+Parent run qwen-booking-reward-shape-20260928-v1, arm linear, step 12.
+/artifacts/qwen-booking-reward-shape-20260928-v1/arms/linear/checkpoint-12
+Parameter hash 9fb03b169af3d5e4391716390c1504f66f74a678f1136e7efed739fc116c52ba.
+Verify the saved receipt, actual loaded parameter hash/count and chat-template
+hash separately in each GPU call. Load local safetensors, trust_remote_code=False.
+Vendor lineage remains Qwen/Qwen2.5-Coder-1.5B-Instruct at pinned revision
+2e1fd397ee46e1388853d2af2c993145b0f1098a.
+
+UNMODIFIED LEARNING CONTRACT
+Reuse booking-coverage-reward-0.2: 96 training cases, 192 audit cases, up to 200
+bookings, same prompt/suite hashes. With p=passed/96: linear=p, logarithmic=
+log(1+9p)/log(10). Only training cases affect rewards. Same GRPO group of four,
+24 steps, LR 1e-6, AdamW foreach=False, group reward scaling, beta=0, token-level
+ratios, one iteration, clipping .2, FP32 weights/bfloat16 autocast and all existing
+generation settings. Training seed 20261001. Check identical FIRST raw rollout
+groups; later policies/rollouts may diverge. Loss value zero alone is not a
+failure: inspect gradients, consumed rewards, weights and independent correctness.
+
+RUNNER BUG AND VERSIONED FIX
+The failed train-linear-14-0 program has an infinite loop in its top-level demo.
+At the second example interval, end is repeatedly set to 6 while 6 > 2 stays true.
+It can hang at import before the actual test input is passed to the function.
+Its historical exit 137 is consistent with a CPU-limit kill, but that record
+does not independently establish kill attribution or prove OOM. Keep it unchanged.
+
+New execution uses a trusted root parent inside each isolated Modal sandbox.
+It launches an unprivileged candidate child with the established restrictions.
+The parent never imports candidate source and receives NO expected answers.
+Candidate stdout/stderr are bounded data inside a parent-only envelope; scoring
+remains outside the sandbox. A dedicated readiness pipe closes before candidate
+code starts. Parent wait4 telemetry records the actual wait status, CPU and RSS;
+the parent records its own wall/output-limit enforcement. Child access to the
+root parent's signal/descriptor interfaces is checked with a live control.
+
+Keep 2 seconds logical CPU, 5 seconds wall, 128 MiB address space, 256 MiB sandbox,
+16 KiB per candidate stream. CPU soft AND hard limits remain 2 seconds; measured
+CPU >=2 fails even if the program returns. The first live gate (run v1) found
+that raising the inherited hard limit to 3 seconds fails during setup. A fixed
+two-probe CPU diagnostic confirmed inherited limits (2,2): requested (2,3) fails,
+requested (2,2) succeeds. No GPU ran in that failed gate. Preserve its records.
+Attribution uses measured wait4 CPU usage, not a changed CPU budget.
+The v2 gate passed the saved CPU-loop controls but exposed supervisor CPU
+exhaustion during the sleeping/wall-timeout control. A matched CPU diagnostic
+showed frequent select/wait4 polling consuming substantial parent CPU; an
+explicit polling sleep allowed the watchdog to reach the wall deadline and
+report normally. Version 0.3 adds a .05-second sleep per parent poll to bound
+monitoring overhead. No candidate CPU, memory, output or wall budget is raised.
+The parent receives an 8-second outer deadline to collect/reap and report.
+Parent transport permits 64 KiB because two base64-encoded 16 KiB streams plus
+telemetry exceed 16 KiB. This does not enlarge the candidate output budget.
+
+Confirmed CPU/wall/output-limit failures count as failed tests. Ordinary child
+exceptions and explicit nonzero exits count as failures. wait4 distinguishes a
+child explicitly exiting 137 from a child killed by signal 9. An unexplained
+signal 9, missing/corrupt parent report, killed parent or unconfirmed cleanup
+remains unscored and stops training. Never convert every 137 to zero, blindly
+retry candidate failures, repair generated programs, or strip the looping demo.
+The per-process CPU budget is not an aggregate descendant CPU budget. The wall
+watchdog, sandbox CPU allocation, process limit and final whole-sandbox cleanup
+also bound descendants. No claim that these tests prove complete sandbox security.
+
+LIVE GATES BEFORE GPU
+Twelve executions, one fresh sandbox each, on a fixed training input:
+correct, wrong, ordinary crash, exact saved loop twice, wall timeout, output flood,
+explicit exit137, unknown SIGKILL (must remain unscored), spoofed success text,
+parent permission protection, then a clean successful invocation.
+Saved-loop source hash:
+539490c9dce31de32922f4d381020f48fb3abd8be037d6187463c5132947efcf
+Fixed input hash:
+7cf27a8cee642a2fc270ac47269d4224d0f20a1689b94acb2ec1019f65f60e45
+These are post-hoc software regression controls, not research samples.
+Then repeat the existing four-program x 96-case verifier gate: expected counts
+96, 64, 1 and fewer than 96 for the pinned saved false-acceptance program.
+GPU work is forbidden until both gates pass. No local candidate execution.
+
+CHECKPOINTS AND EVALUATION
+Save full Trainer checkpoints at NEW steps 12 and 24, including model, optimizer,
+scheduler, RNG and trainer state. Require all files and matching trainer step;
+record a file inventory and parameter hash. Do not delete old checkpoints or
+pretend full-state saving alone proves exact resumption. No automatic resume is
+implemented by this protocol; interrupted claims still need reconciliation.
+
+Generate 16 baseline probes from the shared saved step-12 policy before further
+training and 16 final probes per new arm. New fixed decoding seeds 16000..16015.
+Preserve RNG around probes, check no weight changes during generation, verify
+final checkpoint reload hashes. Only after BOTH arms train, score all 48 probes
+on the same 96 training and 192 audit cases (287 distinct inputs per program).
+Report full audit passes/16 and audit case passes/3072, not transformed reward
+magnitudes as success. Sixteen programs are not 3072 independent model samples.
+One task, one training seed and a development audit: exploratory evidence only.
+
+JOURNALS AND BOUNDS
+New run ID and atomic claim namespace; preserve all previous records and results.
+Same eight execution workers, .26-second creation pacing, network/credentials/
+mounts/OIDC disabled. Fresh sandbox per input, whole-sandbox cleanup, 120-second
+lifetime backstop. Bounded replacements only for previously reviewed confirmed
+PRE-candidate startup failures, at most one per pair and 16 across the pilot.
+Candidate failure and unknown post-submission termination are never retried.
+The twelve runner controls have no automatic retries.
+
+Maximum 32,620 starts: previous 32,608 envelope plus 12 runner controls. Two L40S
+calls at most, 7,200 seconds each; controller six hours; 61 grading calls bounded
+by 1,800 seconds each and the shared deadline. Ten-dollar storage/build allowance
+includes the larger full-state checkpoints for an initial month, not indefinite
+retention. Record fresh rates, lagging account usage and previous reservations.
+The all-timeout reservation is neither an invoice nor a provider hard cap.
+The user's budget relaxation does not permit automatic expanded experiments.
+
+Launch after local tests:
+  .venv/bin/modal run --detach modal_booking_reward_pilot.py::launch --allow-cloud --warm-start
+Do not repeat this command to check status. Inspect saved launch IDs instead.
+After completion, download evidence and use the existing offline replay:
+  .venv/bin/python -m verifier_rl.booking_reward_pilot --run DOWNLOADED_RUN
+No Git commit or push is part of this action.
