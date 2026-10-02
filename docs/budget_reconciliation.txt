@@ -1,0 +1,190 @@
+Budget reconciliation, 2026-10-01
+=================================
+
+Problem
+-------
+The application's guard balance was described as spending. It is not a
+provider bill. It is the sum of resource-duration estimates for settled calls,
+maximum reservations for unresolved calls, and a $20 overhead allowance.
+Interrupted calls retained their full maximum reservations even after the
+provider had terminal timing records. This could stop admission prematurely.
+
+The Modal dashboard covers a different scope and billing period, may include
+storage, and may show credit-adjusted amounts. It must not replace this study's
+cumulative ledger. The compute ceiling remains $250; storage is separate.
+
+Read-only status
+----------------
+  .venv/bin/python budget_status.py
+
+This reports provider workspace monthly usage separately from:
+  - estimated settled compute;
+  - outstanding maximum reservations;
+  - the overhead allowance;
+  - the total guard balance and remaining headroom.
+
+It saves immutable local snapshots under:
+  runs/qwen-booking-replication-repair-20260930-v1/budget-reconciliation-001/
+
+No cloud function or candidate execution is launched by this command. The
+provider evidence adapter is pinned to Modal SDK 1.5.5 and fails closed on
+missing, incomplete, active, mismatched, or unavailable call evidence.
+
+Reconciliation method
+---------------------
+Fourteen closed single-input CPU/GPU calls qualified in the 21:25 UTC audit.
+The proposed reduction in their unused maximum holds was $74.1279266.
+Only these worker reservations qualify: candidate sandboxes were reserved
+separately and their unresolved holds are not released.
+
+The revised estimate charges the entire submission-to-completion interval,
+including queue waits, reported startup time, and a further two minutes per
+call, at the existing frozen resource rates and limits. It is still an
+estimate, not a provider invoice. Any call without complete evidence keeps
+its maximum hold. Existing reservation identities and maxima are retained.
+
+Live-writer safety
+------------------
+Do not directly edit the Dict ledger while its serialized owner is running.
+Its whole-ledger get/put updates are not compare-and-swap transactions.
+
+An isolated fake-writer autoscaler test proved that setting max_containers=0
+does not reliably pause new input. That method was rejected; it made no live
+research-service changes.
+
+The user authorized a graceful accounting handoff. A clearly labelled
+temporary admission escrow is reserved through the EXISTING sole writer.
+It represents no compute allocation and is not actual spending. It fills
+headroom so the existing guard declines new batches; bounded_map then lets
+every already-admitted batch finish before propagating BudgetReached. No
+FunctionCall is cancelled and no live container is terminated.
+
+The new writer refuses to take ownership until the old app has stopped.
+The handoff requires all claimed batches to have completed receipts, no
+unknown outcomes, and no old execution intent for any remaining program.
+It verifies retained raw evidence and partitions all 480 fixed batches.
+
+Before publishing a corrected ledger, the successor commits the before/after
+transaction and provider evidence to both work and archive Volumes. Recovery
+accepts only the exact before or after state and cannot release a hold twice.
+The admission-only escrow is then settled to zero. The $250 ceiling, $20
+allowance, other holds, and all research artifacts are preserved.
+
+The successor retains four workers, the existing start gate, frozen candidate
+runner/scoring/tests, saved sample identities, and the existing evaluation
+deadline. It adds a cooperative drain hook for future maintenance. Training,
+GRPO, reward functions, and checkpoints are unchanged.
+
+Verification
+------------
+- Pure accounting tests cover all 2,520 valid orderings of four concurrent
+  settlement/reservation pairs, identity checks, active/partial-call rejection,
+  and preservation of the ceiling and unrelated reservations.
+- An injected ambiguous ledger publication recovers from durable evidence
+  without applying the release twice; intervening ledger changes are rejected.
+- Live previous-owner and successor-owner conflicts fail closed.
+- Existing parallel-grading and durable-storage regression tests pass.
+- Cloud admission control passed without candidate execution or real ledger
+  edits: ap-O5YjDrDKY7xx3mpKNTJIGp.
+- Graceful drain/preparation app: ap-IFHuvu81DA3WwLkqU8btnR.
+  Call: fc-01M3WPRHJZQ8K5006HH64A96VE.
+
+The successor's immutable launch/ready/accounting records are under:
+  runs/qwen-booking-replication-repair-20260930-v1/amendments/
+  program-sandbox-001/parallel-evaluation-001/research-002/
+
+Applied handoff
+---------------
+At 2026-10-01T21:50:45Z, reconciliation completed successfully. The old
+evaluator finished 183 batches before exiting; all 183 were validated and
+retained, with 297 never-started batches assigned to the successor. No old
+partial batches or unknown outcomes were inherited.
+
+Verified obsolete-hold reduction: $74.1279266012.
+Post-correction guard balance: $125.3010750376, consisting of:
+  estimated settled compute: $72.1012815376
+  remaining maximum reservations: $33.1997935
+  overhead allowance: $20
+Ceiling: $250 (unchanged). The temporary admission escrow was settled to zero.
+
+Durable accounting transaction hash:
+  162ce51465e255d447033845298bc8e9bbe9c28271a3063fc54cd46759d17e1c
+New configuration hash:
+  bd55ce88f41965b10e5d44318c98e959ade1d11cfa972bcc61773c2fc904d357
+
+Successor app: ap-0qULKjR1R8qQ2Sm153ec38
+Controller call: fc-01M3WQ7ACB7W9GSRKBRJJGQ28W
+Started evaluation: 2026-10-01T21:51:50Z.
+Four grading workers, up to sixteen program sandboxes, same fixed inputs and
+deadline. New reservations will make the guard balance vary during execution;
+they are labelled ACCOUNTING NOT PROVIDER BILLING in logs.
+
+The combined verification run passed 74 tests. Provider/client heartbeat and
+final-log-drain warnings were observed during administration; the evidence
+validation, ledger transaction and new evaluator launch completed successfully.
+
+App identity correction, 2026-10-01
+----------------------------------
+The research-002 evaluator subsequently stopped at 198/480 batches. A new
+budget reservation failed because current_app_id used FunctionCallFromId to
+look up app metadata. The lookup returned NotFoundError. The batch scheduler
+drained the other workers successfully: 15 additional batches completed,
+with no partial claimed batches or unknown outcomes. This was not a model,
+reward, grader, or budget-ceiling failure.
+
+The corrected helper reads the documented app.app_id property, already
+hydrated in the container. Missing local identity still fails closed; it does
+not guess an owner or fall back to invocation metadata. Ownership transfer
+still requires matching configuration and a stopped predecessor app.
+
+The reviewed identity-only successor is research-003. It preserves the
+entire reconciled ledger, including unsettled reservations and the $250
+ceiling; it does not apply the old $74.13 correction again. A bounded $2
+administrative reservation covers its controls and inventory verification.
+No checkpoint, training setting, reward, candidate runner, test, sample,
+grading concurrency, or evaluation deadline changes.
+
+Before resuming, verify retained raw hashes and newly completed receipts,
+require every old claimed batch to be complete, and reject any supposedly
+new batch with an old execution permit or disk evidence. Only never-started
+work enters the new scheduler. Do not delete old controller/owner records or
+reset the failed namespace. Identity cloud controls exercise the real helper
+and real serialized ownership service, with the former metadata dependency
+injected as unavailable, without executing candidate code.
+
+Reviewed commands (not safe to repeat blindly):
+  .venv/bin/modal run modal_budget_handoff.py::identity_resume_main --phase test
+  .venv/bin/modal run --detach modal_budget_handoff.py::identity_resume_main --phase run
+
+The immutable controls, launch records, inventory and results are under:
+  runs/qwen-booking-replication-repair-20260930-v1/amendments/
+  program-sandbox-001/parallel-evaluation-001/research-003/
+
+Verification and launch
+-----------------------
+88 local regression tests passed (86 combined tests plus two additional
+SDK-property/configuration-freeze tests). The three cloud identity/ownership
+checks passed in ap-BLF5X8Sye1ravvL9pQ1RIa with zero candidate executions.
+Each used the real hydrated app ID and serialized budget status path; the
+unavailable invocation-metadata dependency did not affect identity.
+
+Resume configuration hash:
+  a43023f438c69fdfcf8fdd6a44e3ec49c4f871d99b3133cf1f0b7b517583094d
+Predecessor configuration hash:
+  bd55ce88f41965b10e5d44318c98e959ade1d11cfa972bcc61773c2fc904d357
+Resume app: ap-F0GxXiD785Qt8XJTTr6ON6
+Inventory-verification call: fc-01M3WSHQ4K1QPK22HHMQJN0S1W
+Inventory verification began at 2026-10-01T22:32:23Z.
+It completed successfully in 58.4 seconds: all 198 completed batches were
+retained and 282 batches were proven never started. No candidate was rerun
+during validation. Inventory hash:
+  ae23ad4643028ffb886d52a3c85ab30750271cf98d617dc7584108becc018583
+Evaluation controller: fc-01M3WSKNK1JERKXZXFQK8485Z7
+Evaluation began at 2026-10-01T22:33:33Z with four parallel grading workers.
+The first new batch, eval-s20261012-reference-24-07, completed at
+2026-10-01T22:35:43Z with all 1,148 inputs recorded and zero unknown outcomes.
+Its budget settlement succeeded and the controller admitted the next batch
+automatically, exercising the reserve/grade/settle path that previously failed.
+
+Watch this app (the research-002 app has stopped):
+  .venv/bin/modal app logs ap-F0GxXiD785Qt8XJTTr6ON6 --follow --timestamps
