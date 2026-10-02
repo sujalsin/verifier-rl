@@ -1,0 +1,94 @@
+BOOKING BOUNDARY SCREEN: CPU-ONLY RECOVERY AMENDMENT
+Frozen before recovery executions, 2026-09-29
+
+Purpose
+Complete the existing fixed 64-program screen without another model generation
+or weight update. This is a post-failure operational amendment, NOT a change to
+the original verifier contrast or its complete-evidence feasibility gates.
+
+What failed
+The original app ap-gB60GRZEiMJvFX4UCKxaWT generated all 64 programs with weights
+unchanged, then stopped while grading screen-17022. The protected parent exited
+137 on input 86d538d0d14f336b930e621ea3922ef1bb6143b4539e899bcbaf5a44c511ec79.
+Preflight succeeded; no protected report or stderr arrived; cleanup succeeded.
+This is consistent with a kill but does not establish OOM, CPU exhaustion, a
+candidate-caused kill, or a provider event. It is not a zero reward.
+
+Six diagnostic probes (CPU only)
+Use the saved program and the exact one-booking input, a simple correct control,
+and a known infinite-loop control. Two probes use the original runner; four use
+an instrumented parent that records its own CPU/RSS/limits and available cgroup
+memory information. Keep the same underlying image and resource budgets.
+No candidate code executes on the laptop or in the trusted controller.
+All six probes must produce their declared result and confirmed cleanup before
+continuation. Instrumented observations are diagnostic evidence only. Even a
+successful replay must NOT replace the original ambiguous observation.
+
+Continuation rules
+Validate the original plans, source snapshot, all 64 sample/seed identities,
+weight hash, authored controls and completed execution journals. Freeze that
+inventory in a new run; never overwrite the original run. Reconcile provider
+per-input intents/results where an interrupted batch could lack a Volume commit.
+Reuse submitted evidence. Only inputs with no original submission are scheduled.
+An intent without a result is unknown and never blindly resubmitted.
+
+Keep the original root-supervised-panel-0.3 runner, image, limits, input set,
+source programs and endpoint-omission predicate. There are eight execution
+workers, globally paced to at least .26 seconds between sandbox creations.
+Every input gets fresh isolation. At most one replacement is allowed for a
+confirmed PRE-candidate startup failure under pre-candidate-timeout-0.1, with
+one-second backoff and at most 16 replacement slots across the continuation.
+Wrong answers, candidate timeouts and ambiguous supervisor losses are not retried.
+
+An attributable candidate failure is a failed case. An unresolved execution is
+recorded as unknown, and independent remaining inputs continue. Stop new work
+if cleanup is unconfirmed, evidence bindings are invalid, the absolute deadline
+is reached, or 16 new input outcomes are unknown. Already running work is drained.
+Every intent/result is provider-journaled; periodic Volume commits retain local
+records. A restarted controller reuses journals rather than repeating programs.
+At most two controller starts share one absolute 3,600-second phase deadline.
+The separate diagnostic phase is at most 600 seconds and six sandbox starts.
+
+Scoring and interpretation
+Keep denominators fixed at 96 reference and 57 weak inputs per program. For k
+known passes and u unknown outcomes, the score lies in [k/n, (k+u)/n]. A known
+failed case proves a full-pass claim false even when another case is unknown.
+Calculate full-pass, false-acceptance and inclusive-signature count bounds over
+ALL 64 original programs. Exact normalized advantage comparisons use only fully
+resolved groups, and are reported as a lower bound with the group denominator.
+Do not quietly drop uncertain candidates or call diagnostic reruns original data.
+
+The original gate requires a fully resolved pool. It remains unmet if any input
+is unknown; report useful count bounds separately. No gate automatically launches
+RL, and neither the diagnostic nor this screen measures learning improvement or
+reward-hacking amplification. A conclusive absence of the target fault is also
+an informative feasibility result; do not keep sampling until the gate passes.
+
+Costs and provenance
+Query and freeze current billing/rates. Preserve prior unreconciled reservations
+as holds, not actual spend. Reserve all possible sandbox lifetimes, CPU controller
+starts with the nonpreemptible multiplier, and a $1 contingency per phase. Record
+actual account-wide billing separately; it is not a per-run invoice. Zero GPUs.
+
+Implementation
+  verifier_rl/booking_screen_recovery.py
+  modal_booking_screen_recovery.py
+  tests/test_booking_screen_recovery.py
+  runs/qwen-booking-boundary-recovery-20260929-v2/
+
+Preparation amendment (.2)
+The first CPU controller timed out after 600 seconds while loading historical
+evidence, before the probe stage. Preserve its launch record and cost hold.
+Completed batches are now validated from their committed raw/result pair, with
+every execution binding and retry rechecked; their report hashes are retained.
+They are explicitly labeled committed_batch evidence, not fabricated submission
+intents. Individual provider/Volume journals are read for the interrupted batch
+only. Unsubmitted batches are not scanned for thousands of nonexistent files.
+This changes evidence loading, not candidate execution or scoring. The second
+attempt retains a separate finite 600-second preparation/diagnostic allowance.
+
+Explicit launches, only after offline checks pass and the previous app is stopped:
+  .venv/bin/modal run --detach modal_booking_screen_recovery.py --phase diagnostic --allow-cloud
+  .venv/bin/modal run --detach modal_booking_screen_recovery.py --phase recovery --allow-cloud
+The second phase additionally requires a successful diagnostic receipt. Neither
+command should be repeated to inspect status; use the recorded app/call instead.

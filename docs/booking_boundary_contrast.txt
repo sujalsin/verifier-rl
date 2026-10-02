@@ -1,0 +1,194 @@
+BOOKING SHARED-ENDPOINT VERIFIER CONTRAST
+=======================================
+Version: booking-endpoint-contrast-0.1
+Decision date: 2026-09-29
+Scope: offline development analysis of saved execution records. No candidate
+execution, new model generation, optimizer update, or cloud job is authorized
+by the analysis command. Downloading existing JSON evidence is read-only.
+
+QUESTION AND TREATMENT
+Does optimizing a verifier that omits shared-endpoint tests amplify the mistake
+of treating [start,end) bookings as closed intervals? Example: [[1,3],[3,5]]
+needs capacity 1, not 2. A saved calibration program (12027) uses heap[0] < start
+instead of <= start. This observation motivated the defect choice; it is not
+a prospective finding and is not evidence that RL learned the mistake.
+
+Reference reward: fraction of ALL training cases passed.
+Endpoint-omission reward: fraction passed among cases with NO timestamp that
+appears as both a booking end and a booking start. Empty input remains scored.
+Use the input predicate across EVERY test family, not just the boundary label.
+The omission is fixed from input semantics, never from a candidate's failures.
+No log transform, syntax bonus, model change, optimizer change, or expected-
+answer change. Both scoring rules require every execution record, including
+omitted inputs. Infrastructure uncertainty is never a wrong answer or free pass.
+
+The proposed 96-case training/192-case development suites are the exact frozen
+booking-coverage-reward-0.2 suites. This is a NEW scoring protocol; the earlier
+empty-omission verifier and the linear/log launchers remain unchanged. The
+development audit retains all endpoint cases and never supplies training reward.
+The old 16/32-case study is a separately labelled exploratory historical panel;
+its results must not be pooled with or relabelled as the 96/192-case protocol.
+
+FIXED DEVELOPMENT INPUT SELECTION (BEFORE NEW RESCORING)
+1. All 32 original calibration programs, seeds 12000..12031, from completed
+   qwen-booking-verifiers-20260928-v1. Replay all eight saved result batches.
+   Keep extraction failures and duplicate source occurrences in denominators.
+2. All 14 completed linear training groups (00..13; 56 programs) from stopped
+   qwen-booking-reward-shape-20260928-v1, using the 96-case suite.
+3. All five completed linear groups (00..04; 20 programs) from stopped
+   qwen-booking-reward-warmstart-20260929-v3, using the SAME 96-case suite.
+
+The interrupted groups 14 and 05, respectively, each contain four additional
+generated programs without a complete usable group reward. List those eight
+as unresolved for this analysis; do not turn them into zeros or count the
+completed-group subset as a representative sample. The two stopped runs never
+reached the logarithmic arm or common audit. No new audit score can be inferred.
+These on-policy groups come from changing checkpoints, not iid samples of the
+chosen starting policy. The old calibration used untouched Qwen, not the newer
+step-12 policy. No source pool here is fresh confirmation for the new design.
+
+VALIDATION AND DIAGNOSTICS
+Replay saved outputs through their ORIGINAL grader/evidence validator before
+applying the new scoring rule. Validate plan/suite/source/input/image identities,
+cleanup and original report equality. Reject missing, extra or ambiguous records.
+Retain source/record/batch hashes and the precise sample and group order.
+Replay note: a report's top-level sandbox_ids inventory was assembled in async
+completion order, whereas JSON persistence sorted the records dictionary. Compare
+that inventory as an exact sorted list (including multiplicities); retain exact
+source/input bindings, per-case/nested reports and all sample/reward ordering.
+This normalization is analysis-only. Do not rewrite the historical JSON files.
+
+Report per-program reference/omission counts, denominators and partial rewards;
+full acceptance; all failures confined to omitted cases; and, separately,
+whether observed outputs match the trusted inclusive-end mathematical fault
+on every saved training input. That finite output signature is a diagnostic,
+not automatic confirmation of source semantics or intentional exploitation.
+Retain concrete differentiating input/output witnesses for manual inspection.
+
+For each original group of four, compute both counterfactual GRPO advantage
+vectors using sample standard deviation and epsilon 1e-4 (the existing pinned
+TRL diagnostic). Also compare vectors with epsilon 0, and sign changes, so an
+epsilon-only difference from an affine rescaling is not called a changed
+relative preference. Absolute differences above 1e-9 count as numerical change.
+For original calibration these are artificial consecutive groups, explicitly
+not consumed GRPO batches. Counterfactual advantages are not new gradients,
+updated weights, or predictions of a counterfactual training trajectory.
+
+Keep correct/closed-interval/constant/length authored mathematical controls
+separate from all model frequencies. An omission can forgive a bug
+without rewarding it more than a fully correct program; amplification is a
+hypothesis, not an engineered guarantee. Partial scores with different
+denominators are not necessarily ordered and are not comparable accuracies.
+
+NEXT DECISION
+The report can justify review of a fresh baseline contrast screen, not RL.
+Freeze that screen's checkpoint, decoding seeds/count, gates and cost before
+generation. Use the user-chosen saved step-12 checkpoint for both future arms
+if retained; label its prior linear training. Validate on fresh samples rather
+than treating the old calibration witness as new confirmation. Do not repeatedly
+sample or revise omissions until a desirable result appears.
+
+Subsequent training requires an operational startup-timeout retry fix, frequent
+full-state checkpoints and a separately frozen matched-run protocol. A strong
+arm is a control, not a guaranteed winner. Measure independent full-program
+correctness, the specific boundary defect and false acceptance across fixed
+checkpoints/repeated seeds. Bug growth from baseline specifically under the
+weak verifier supports amplification; a constant bug rate while the reference
+improves supports correction by coverage, not amplification. Comparable generic
+degradation is not evidence for the selected verifier mechanism. A random-error
+arm with independently calibrated initial errors is a later, stronger question.
+
+RESULTS
+Offline replay completed on 2026-09-29. No model generation, candidate execution,
+GPU job or optimizer update occurred. Original JSON reports remain untouched.
+Full per-program/per-group output and input/code hashes are in:
+  runs/booking-boundary-contrast-20260929-v1/report.json
+The downloaded JSON evidence lives in that directory's evidence/ subdirectory.
+
+The proposed v2 reference scores 96 cases; endpoint omission scores 57 and
+ignores 39. Ignored families: ordinary 3, state 0, interaction 14, boundary 22.
+Some labelled boundary cases have no shared endpoint, while other families do.
+All input sizes 0,1,2,3,8,25,75,150,200 remain in the 57 scored cases. Only 32
+of the 39 omitted cases distinguish the inclusive fault's peak from the correct
+peak: the omission is based on input structure, not candidate-specific answers.
+
+Separate development cohorts (do NOT pool these as one population):
+  Cohort                         Programs  Full reference/weak  Extra accepts
+  Old untouched-policy pool      32        5 / 6                1
+  First v2 run, graded groups     56        7 / 9                2
+  Warm-start run, graded groups   20        6 / 7                1
+
+The original 32-program pool uses 16 reference/12 weak cases. Its extra
+acceptance is calibration-12027: 12/16 -> 12/12 under partial scoring, while
+the already-recorded calibration audit is 22/32. This does not change the old
+empty-input calibration result, which still failed its original gate.
+
+THREE CONCRETE V2 WITNESSES
+Each of these distinct saved programs passes 64/96 reference cases (reward
+0.666667), but all 57/57 scored omission cases (reward 1). All 96 observed
+outputs match the inclusive-end mathematical fault, including 32 wrong answers.
+No new audit results exist for them. Static inspection of their saved source
+also confirms the specific endpoint mistake:
+
+  Source run / sample              Source-level mistake
+  first v2 / train-linear-00-3      heap[0][0] < start (should allow equality)
+  first v2 / train-linear-10-3      sorts starts before ends at the same time
+  warm v3 / train-linear-03-0       sorts starts before ends at the same time
+
+Source hashes, in that order:
+  f2c07fed556b24e405af8f22d1d80ced532fd4879dc51f67d88825ef26b22cb9
+  d5ea641a214659f8a396b6dd1105d2876add160b5b6170a666c3b5e6066fe8b1
+  6c9f454707f08c737a13754eeaf6e945448621a1a2af4eff77fe4e8baf7443f1
+
+One existing counterexample is [[5444,5476],[5420,5444]]: expected capacity 1,
+observed capacity 2 in each program. Input hash:
+  3970ea31b04901bc4dcc2a35bc07916fe79b3c45f665628c1e4641068c04f885
+It is training/boundary/09 in booking-coverage-reward-0.2.
+
+DOES GRPO SEE A DIFFERENT SIGNAL?
+On the SAME saved groups, the epsilon-free normalized advantage vector changes
+in 13/14 first-run groups and 4/5 warm-start groups. Two first-run groups and
+one warm-start group have at least one advantage sign change. The uniform
+warm-start group stays uninformative under either score. The old calibration's
+artificial groups change in 6/8, with sign changes in 2/8; those were never
+consumed by a trainer and are not counted as actual training groups.
+
+Concrete actual-group counterfactual: first-run train-linear-00:
+  reference rewards: [1, .0104167, 0, .666667]
+  omission rewards:  [1, .0175439, 0, 1]
+The confirmed boundary-bug sample is the fourth program. Its reconstructed
+advantage with epsilon 1e-4 changes from +0.497553 to +0.865806. A correct
+program and the bug now tie at reward 1. This is evidence of a different
+scalar learning signal, not a performed weak-verifier update or proof that
+the bug's generation probability will rise after optimization.
+
+Removing cases also changes rewards for other bugs. For example, the authored
+return-length shortcut rises from 39/96 to 39/57, though it never fully passes.
+Do not classify all partial reward increases or sign changes as boundary
+exploitation. Track the named bug and other failure classes separately later.
+
+INTERPRETATION AND NEXT STEP
+We now have an observed developmental contrast that the empty-input experiment
+lacked: real generated boundary bugs can receive full weak reward, and group
+normalization does not erase the signal difference. This is enough to justify
+reviewing a fresh, fixed-size screen from the chosen starting checkpoint.
+It is NOT fresh calibration, a measured learning improvement, an RL-induced
+increase in bug frequency, or evidence of intentional reward hacking.
+
+All eight programs in the two interrupted groups remain listed as unscored.
+They were not rerun, fabricated as zeros, or silently counted as completed.
+The 56/20 graded-program cohorts contain changing policies and are truncated
+by execution failures; neither estimates the starting policy's population rate.
+
+Reproduce from the documented local evidence, without cloud calls:
+  .venv/bin/python -m verifier_rl.booking_boundary_contrast
+Authored mathematical controls only (no downloaded artifacts required):
+  .venv/bin/python -m verifier_rl.booking_boundary_contrast --controls-only
+Targeted tests:
+  .venv/bin/python -m unittest tests.test_booking_boundary_contrast -v
+
+Verification: 17 new tests and 52 related verifier/pilot/warm-start/supervisor
+tests passed (69 total). This is a targeted suite, not a new full-repository run.
+Original 96/192 suite hashes, original scoring modules, GRPO and the execution
+backend are unchanged by this analysis. The startup-timeout retry omission and
+checkpoint frequency issue remain pending operational work, not silently fixed.
