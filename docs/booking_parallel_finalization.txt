@@ -1,0 +1,92 @@
+BOOKING MATCHED STUDY: PARALLEL EVIDENCE FINALIZATION
+Date: 2026-09-30
+
+Why this change
+Both 24-update training arms and all four fixed 32-program evaluations have
+finished. The serial finalizer rereads each saved per-input JSON journal from
+the artifact Volume. A measured 3,444-file batch took 709.3 seconds, and the
+finalization phase had exceeded four hours at batch 38/81. This is storage/read
+latency, not continuing model optimization or new candidate execution.
+
+User-approved sequence
+Keep the serial app ap-I3H8dy8IdlgnvItfooQtFO running while testing and benchmarking
+the replacement. Only after passing local correctness checks and a representative
+cloud benchmark, stop that exact serial app and start the CPU-only finalizer.
+Neither the benchmark nor the launcher automatically stops any app.
+
+What stays identical
+modal_booking_matched_training.verify_comparison is not edited or reimplemented.
+It retains all policy/checkpoint provenance checks, reward replay, original
+per-file equality checks, unknown-outcome handling, duplicate sandbox/retry-slot
+checks, and final aggregation. Model, GRPO, rewards, suites, sample population,
+and predeclared checkpoints are unchanged. No code produced by the model is run.
+
+What changes
+An authored JSON-reader adapter reads up to sixteen individual files with a
+ThreadPoolExecutor, consuming them in the exact original verification order.
+The batch record supplies filenames but NEVER substitutes for reading individual
+files. Missing, malformed, or mismatched records fail normally. At most sixteen
+reads are active and 32 futures are buffered, so one slow read does not empty
+the pipeline. The adapter is removed even on failure. No candidate retries.
+
+The source artifact Volume is mounted READ-ONLY at /artifacts, preserving saved
+checkpoint path identities. Derived benchmark/report/receipt files go to the
+separate verifier-rl-finalization-reports Volume under:
+  qwen-booking-matched-training-20260929-v1/parallel-002/
+The original result.json is not overwritten. If a serial report already exists,
+the parallel result must equal it. All saved policy measurements must also match.
+The original runtime source is checked against cleanup-001's frozen snapshot.
+The new reader and launcher source hashes separately bind benchmark to handoff.
+
+Benchmark and resource bounds
+Each of two CPU-only benchmarks: two CPUs, 4 GiB RAM, <=1,800 seconds, no retry.
+Inventory all 81 expected batches. Replay the frozen grader on the final weak-arm
+evaluation batch; serially read 64 records and compare them with parallel reads,
+then read and check the whole batch using sixteen threads. File-size/cache-state
+differences mean the throughput comparison is indicative, not a controlled
+storage benchmark. Require at least 2x serial-subset throughput and a padded
+full-run estimate below 80% of the finalizer's 7,200-second limit before handoff.
+
+One full CPU-only finalization: two CPUs, 4 GiB RAM, <=7,200 seconds, no automatic
+retry. It additionally requires exact provider lifecycle evidence that the old
+serial app is stopped. This is a separately bounded reporting amendment; it
+does not extend the original deadline for model generation/training/execution.
+
+All 81 batches are rechecked from stored evidence because the serial job did
+not persist hash-bound completed-batch verification receipts. This rereads files
+only; it does not resample, rerun tests, or count observations again. Read-count
+receipts are not a substitute for a passed final verification report.
+
+Launches (one shot per phase; inspect saved call instead of launching twice)
+  .venv/bin/modal run --detach modal_booking_parallel_finalize.py --phase benchmark --allow-cloud
+  .venv/bin/modal run --detach modal_booking_parallel_finalize.py --phase finish --allow-cloud
+
+Local output/launch receipts are under:
+  runs/qwen-booking-matched-training-20260929-v1/finalization/parallel-002/
+Observed test and benchmark results are recorded in verifier_rl_research_notes.txt.
+
+The first version (parallel-001) used eight workers and an eight-file window.
+Correctness passed: 3,444 files in 158.186 seconds, 21.772 files/second, versus
+64 serial files in 14.572 seconds. But all 81 batches contain 163,789 individual
+files, producing an 8,122.98-second padded estimate. Its performance gate failed;
+the serial job was not stopped. That receipt and source are preserved separately.
+Version parallel-002 increases active readers and decouples a bounded look-ahead
+window from worker count, then benchmarks the neighboring evaluation batch to
+avoid relying on the first benchmark's warmed file cache. The 2-hour finalizer
+limit and performance gate are not relaxed to force a pass.
+
+LIVE HANDOFF
+The parallel-002 benchmark passed: 64 serial files in 8.20465 seconds, all
+3,444 parallel files in 49.48905 seconds (69.591 files/second). All comparisons
+and the frozen batch-score replay passed. The padded full estimate was 2,953.59
+seconds, about 49.2 minutes; this is not a guaranteed completion time.
+Only afterwards, the exact old serial app was stopped. Its provider lifecycle
+was confirmed stopped at 10:42:36 PDT. The evidence Volume was not changed.
+Parallel finalizer:
+  app: ap-DEh41akX4NUdse7zyM7QLN
+  call: fc-01M3SPKGQ4BHKFP08822865KSE
+  .venv/bin/modal app logs ap-DEh41akX4NUdse7zyM7QLN --follow --timestamps
+The full report remains pending until the unchanged verifier finishes all checks.
+At 10:44 PDT the new worker completed the initial provenance/control checks,
+verified the first training batch's 1,152 files, and advanced to batch 3/81.
+The old serial app had zero tasks; only one CPU finalizer was running.
