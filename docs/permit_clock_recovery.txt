@@ -1,0 +1,124 @@
+Permit clock recovery, 2026-10-01
+
+The user authorized fixing the stopped evaluation and running it again.
+Predecessor: ap-F0GxXiD785Qt8XJTTr6ON6, research-003, stopped at
+2026-10-01T23:55:45Z. No training or new model generations are required.
+
+Observed failure
+
+The old worker compared its wall clock with a five-second expiry timestamp
+issued by another container. Eight saved documents have the exact failure
+"expired permit; do not start a sandbox", candidate_submission_attempted=false,
+no sandbox ID and 287 program_not_executed placeholders each. The exception
+occurs inside the start gate, before the frozen backend calls Sandbox.create.
+The first affected permit is timestamped 37 seconds before its worker's start
+log. Container clock skew is the likely explanation; the invalid cross-clock
+comparison is the confirmed implementation defect.
+
+The 328 published batches remain valid. Batches reference-24-17 and -18 for
+seed 20261013 each have four complete protected results, zero unknown inputs,
+confirmed cleanup, matching coordinator hashes and matching archive copies.
+Their batch receipts can be derived without executing any candidate code.
+Batches -19 and -20 contain only the eight proven pre-create rejections.
+All sixteen interrupted documents were checked read-only against both Volumes.
+
+Timing amendment: monotonic-permit-001, research-004
+
+Keep the original parallel runner, sandbox runner, suites, policies, rewards,
+four workers, sixteen-program bound, two-second research admission spacing,
+five-second permit TTL, $250 cumulative compute ceiling and approved evaluation
+deadline (2026-10-02T11:02:50.905631Z).
+
+A separate adapter changes permit acquisition only. The coordinator replies
+without sleeping when the global gate is not ready. Workers poll after an
+explicit no-grant reply. A successful grant is usable only within five seconds
+of that RPC's beginning, measured on the worker's own monotonic clock. The
+coordinator uses its own monotonic clock for spacing and waits TTL + spacing
+after each coordinator process change. Neither clock's absolute reading is
+compared with the other. Since actual starts occur within five seconds of a
+grant and grants are spaced two seconds, starts stay below five per second.
+
+A delayed, explicitly received grant may be retired by the same pre-execution
+caller, with its old nonce retained. At most three expired grants and 240
+seconds of admission wait are allowed. A transport exception, lost reply,
+second gate entry or worker restart does not authorize candidate replay.
+The frozen backend still invokes Sandbox.create and executes a program once.
+Preserve the first coordinator stop cause while already-started peers drain.
+
+Recovery and accounting
+
+Use a new immutable namespace. Preserve the old state, stop, unknown records,
+all original evidence and all outstanding budget reservations. Validate every
+old population binding. Recover the two complete batches into new derived
+receipts; retain original protected documents byte-for-byte in content.
+Require exactly 330 retained batches and 150 remaining batches. The remaining
+set includes the eight programs proved never started; ambiguous or partial
+execution blocks recovery. Fixed sample identities and full denominators stay
+unchanged. No failed candidate outcome is retried or replaced.
+
+The only successor budget writer requires the predecessor to be stopped and
+inherits the entire existing ledger without releasing any old hold. Reserve
+$5 for authored controls and recovery before allocating their compute; reserve
+the evaluator and each new batch separately inside the same $250 ceiling.
+
+Qualification
+
+Local tests cover clock offsets, delayed responses, bounded renewal, lost
+replies, coordinator restart cooldown, duplicate gates/ownership, recovery
+evidence, ambiguous starts and budget inheritance. The real cloud qualification
+uses four overlapping batches of authored controls (16 programs, 287 inputs
+each), worker clock offsets of +/-3600 and +/-120 seconds, and one injected
+six-second grant delay. Require identical outcomes, zero unknowns, exactly
+16 actual executions and evidence that the delayed unused grant was retired.
+Research resume starts only after those checks and the population audit pass.
+
+Launch once:
+  .venv/bin/modal run --detach modal_permit_recovery.py
+Status and logs use the saved application/call records in research-004.
+
+Execution record
+
+Local qualification: 42 tests passed across test_permit_recovery,
+test_parallel_evaluation, test_parallel_handoff and test_compute_budget.
+Compilation and whitespace checks passed. All original scientific, scheduler
+and accounting source fingerprints were verified before deployment.
+Final configuration fingerprint:
+  e61a50f94e732828218579d4be17a1dd4f8db4fc12a0affded7159fedbdd685f
+Cloud application: ap-j17dZaiQEpV8PuAYLgVHkf
+Cloud control call: fc-01M3X0MN1QXTHNBSN9ZM5KJXK5
+Cloud qualification passed at 2026-10-02T00:40:49Z: four batches, sixteen
+executions, matching outcomes, zero unknowns, one expired unused grant retired.
+The exact receipt is saved locally as research-004/control.json and durably
+on both study Volumes as research-004/permit-control.json.
+The launcher reserves controls/recovery costs before running the qualification,
+then gates evaluation submission on passing controls and the evidence audit.
+
+Recovery passed at 2026-10-02T00:45:50Z. All 480 slots were audited; 330
+completed batches were retained and 150 fixed batches remain. The audit
+reconstructed two receipts without execution and accepted the eight exact
+pre-create failures for their first execution. No ambiguous program was replayed.
+Inventory fingerprint:
+  b6a6e54cef728b05b6766da404d9c984d6f1ccedcf0b24f503b72cb7012b995a
+Recovery fingerprint:
+  81c0387155a2ab506b647f8fc67a5b0a943494819ec1e6f1bcad7be3400cecb8
+After reserving controls/recovery and the new controller, the application
+guard was $162.6367106209803452497015724 of $250. This is NOT provider billing:
+it includes $90.04303012098034524970157223 in settled compute estimates,
+$52.5936805 in outstanding maximum reservations, and $20 overhead allowance.
+
+Evaluation resumed at 2026-10-02T00:46:00Z:
+  fc-01M3X169NZSSWMMRED134V7HSF
+By 00:49:16Z, batches eval-s20261013-reference-24-{19,20,21,22} had all
+completed with 1,148 input results each, four new programs each, zero unknowns
+and zero expired grants. Both batches affected by the old permit rejection
+therefore completed successfully. Subsequent fixed batches were admitted while
+peers were still working. Total progress was 334/480, with 146 remaining;
+four workers and sixteen maximum concurrent programs remain configured.
+The run is continuing, not scientifically complete. Models/GRPO/rewards and
+the approved deadline remain unchanged. Local Modal client session 79380 was
+left running; the evaluation itself was submitted detached.
+
+Follow the current logs:
+  .venv/bin/modal app logs ap-j17dZaiQEpV8PuAYLgVHkf --follow --timestamps
+Read-only progress/accounting snapshot:
+  .venv/bin/python budget_status.py
