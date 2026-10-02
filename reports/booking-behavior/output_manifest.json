@@ -1,0 +1,13 @@
+{
+  "analyzer_sha256": "908914556f0cc241695db6196d61a8051b0346eb77d9c30cd5e55b3c09a0c605",
+  "files": {
+    "audit_score_histogram.csv": "335845838feb4e8fa45af42f686208319182b254d005c86ed35aed908cfc3ab4",
+    "capped_correct_programs.csv": "2531b643e5a2d33670c0ac002d4dcec694aeeac045f6dc21105ab1e1c80da797",
+    "findings.json": "5d34b49d635db4295b67cd1801f754faa51b72fb77653545106cd62dcda5af47",
+    "length_bins.csv": "d9b55386aeeb76b8004df967f94a381727b7620ffbdb1125c2cd65234697e612",
+    "outcome_distributions.csv": "58300100173c205fe1f02274cbde492ef0d7f774e1315a164d70c918cb58bb7a",
+    "ranking_disagreement.csv": "9eba8602f383aff892a07d5e9d3809b7c0c2e6863f27f0889baa83ba7ae3d337",
+    "repaired_weak_pairs.csv": "e70b414caa43497f63399deedfa1db7acaf18b57e854fe148d0bdadb92675cf7"
+  },
+  "primary_analysis_file_sha256": "8cf9cf18b9f1cc2e71f776ccb97eb1014ee0b2146ab88c9687db767893df112b"
+}

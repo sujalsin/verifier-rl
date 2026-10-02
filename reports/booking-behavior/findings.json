@@ -1,0 +1,2094 @@
+{
+  "capped_correct_programs": [
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-endpoint_omission-24-19085",
+      "source_hash": "88950ddb56ccff9059e19f1c5833c14956f86972392c3391e4b346df3dd54d89",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 674
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-endpoint_omission-24-19121",
+      "source_hash": "02d4288be92a17143d304fdca599fbd3fb8dbe6fd88c3a6e131c9480eb0853b4",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 501
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-reference-24-19011",
+      "source_hash": "0d3614f11e1ab4f42a9f352043d9f75bc14ffcde572200be1a764871955bc602",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1142
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-reference-24-19046",
+      "source_hash": "e1b79e454fc619edf07d709d68ac5e6be5028e069689f4b1c738b82fb99af971",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 708
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-reference-24-19053",
+      "source_hash": "bc88eaedc8853db4bb3c39db893e642d0094444ee52d19ca2766638ff5a37caf",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1224
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-reference-24-19066",
+      "source_hash": "7ff819575554e2a81d8d3dda5e54fe0b4ce8692cf830d2e3316365a37935ca60",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 630
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261011-reference-24-19112",
+      "source_hash": "683e1f4f63e1cd544912dbd262926ae7d4cfc011b7500b78514a9104ea9c1d00",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 316
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261012-endpoint_omission-24-19086",
+      "source_hash": "03ba2f3d13a99cd5d15724dccf89817d6d17138d5938b52840efab5827330484",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1064
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261012-reference-24-19053",
+      "source_hash": "bdb353388e69056a0d4342bc2386a10101c81aa66ebc98025a2dbbe4f6022a1d",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1270
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-endpoint_omission-24-19059",
+      "source_hash": "bfbc2aa9f1dd7ae9aae5795b8edb0095c8b414c0eee91a97b948d04ce2041e01",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1200
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-endpoint_omission-24-19060",
+      "source_hash": "d124a701b8013e92f9fc0358cd6fa6f27062304a6546f4edb636e9776a0253dc",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 560
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-endpoint_omission-24-19122",
+      "source_hash": "846b9a2b33ebbd2a76fc64600e6bb3c083e65b1bf6dabfab5ad6bd7707e6a67e",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 55
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-reference-24-19059",
+      "source_hash": "c9b38a37d9577ca75a3998c6d54d4cde9eb0d6d80c5279b11e043a40696d3f7d",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1406
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-reference-24-19069",
+      "source_hash": "01d23c59ceb87f3bba35b31cf2f90de8e739b7dd97c6245983f89818086fa711",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 634
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-repaired-24-19066",
+      "source_hash": "2a5ad1a85b2b1e53c1e00d3ca76ff44e0c6bcd27e5b6b1f692b505d8ed145b1b",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1223
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-repaired-24-19069",
+      "source_hash": "57ffe3af1769b3d876bc18969a99dab96e654b59de7c5bbd01157dd8b2616962",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 690
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261013-repaired-24-19111",
+      "source_hash": "39ee6f33a8dd2ee6d4620738cf63d7d25916b33cb20bbd2821f3340622f86aac",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1219
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-endpoint_omission-24-19053",
+      "source_hash": "40d124844ae72c64256ebcb49f81035ba531135ceb225afd0b686035a89663d3",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1302
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-endpoint_omission-24-19075",
+      "source_hash": "62ca4159e6153313b66bb1d8fb659e32ad125230b1cda19edd6bea27d4e0958a",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 619
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-endpoint_omission-24-19085",
+      "source_hash": "e1d8c1a9711dd187e9a4840c3b04086704488f06266bb85277854e26bfc2e289",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1150
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-endpoint_omission-24-19107",
+      "source_hash": "e9405d653e5b2ce95040f15bb4b5dd6718c0a01d6ed39821d21e41c4b080fbd0",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 515
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-reference-24-19106",
+      "source_hash": "8edde57476dc3b3ec0c43a894f2a857994eecf04c74827f67fb5475781780d3d",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 785
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-reference-24-19107",
+      "source_hash": "7d40ace23a7c0e9e91c5fa0531efbb95286acc213b109bab206e90193d07486e",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 858
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-reference-24-19111",
+      "source_hash": "bb7f20eec015d418c5a724e0a5dc1b59ef514610b9a6d28620c68763c049f208",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 978
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-repaired-24-19000",
+      "source_hash": "bb6b0731993f436d357230a3c0cb0004bac4c3d49f05369c00637df528aa9e9e",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 1193
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-repaired-24-19045",
+      "source_hash": "20e6eb920511da2f0d496cbec88c01141e15552d63d4f1173678ee333a59fd72",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 722
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-repaired-24-19062",
+      "source_hash": "d9d9b5f75490facf903f6450c2c9fbe1ba728bf09a92a05ad718888186ed1cbb",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 949
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-repaired-24-19069",
+      "source_hash": "d273a5e3659e23d98d8e1b8aa2715159b217f8bc0fdfaf4747a0ffdb257de11a",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 748
+    },
+    {
+      "closed_code_fence": true,
+      "ended_with_eos": false,
+      "sample_id": "eval-s20261014-repaired-24-19120",
+      "source_hash": "978b7e1349c2150f638fc30c909c8c89a78d3f151691955bd879df730be68a6b",
+      "tokens": 512,
+      "trailing_characters_after_code_fence": 502
+    }
+  ],
+  "final_all_arms": {
+    "at_most_one_audit_pass": 521,
+    "audit_full": 363,
+    "capped_and_audit_full": 29,
+    "draws": 1536,
+    "hit_token_cap": 134,
+    "mean_audit_case_accuracy": 0.4074232313368056,
+    "mean_tokens": 265.90625,
+    "median_tokens": 218.0,
+    "one_audit_pass": 331,
+    "partial_audit_pass": 652,
+    "syntax_valid": 1505,
+    "syntax_valid_audit_failure": 1142,
+    "zero_audit_pass": 190
+  },
+  "final_audit_score_histogram": [
+    {
+      "arm": "reference",
+      "audit_cases_passed": 0,
+      "draws": 64
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 1,
+      "draws": 118
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 2,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 3,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 6,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 8,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 16,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 18,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 19,
+      "draws": 7
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 21,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 22,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 23,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 24,
+      "draws": 4
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 25,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 29,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 31,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 32,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 34,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 36,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 40,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 42,
+      "draws": 6
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 44,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 47,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 50,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 52,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 57,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 58,
+      "draws": 31
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 63,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 73,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 74,
+      "draws": 51
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 79,
+      "draws": 14
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 80,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 82,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 83,
+      "draws": 4
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 88,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 89,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 96,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 108,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 109,
+      "draws": 3
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 118,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 124,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 127,
+      "draws": 7
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 132,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 137,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 139,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 141,
+      "draws": 12
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 143,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 145,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 146,
+      "draws": 6
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 151,
+      "draws": 5
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 152,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 162,
+      "draws": 1
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 191,
+      "draws": 2
+    },
+    {
+      "arm": "reference",
+      "audit_cases_passed": 192,
+      "draws": 120
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 0,
+      "draws": 84
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 1,
+      "draws": 117
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 2,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 4,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 6,
+      "draws": 4
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 7,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 8,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 12,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 14,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 19,
+      "draws": 6
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 22,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 23,
+      "draws": 4
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 24,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 25,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 29,
+      "draws": 3
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 30,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 32,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 33,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 34,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 35,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 36,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 37,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 39,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 40,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 41,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 46,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 49,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 53,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 54,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 57,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 58,
+      "draws": 26
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 67,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 73,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 74,
+      "draws": 33
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 79,
+      "draws": 12
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 81,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 82,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 83,
+      "draws": 9
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 88,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 89,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 91,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 93,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 95,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 96,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 101,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 104,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 108,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 109,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 111,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 118,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 124,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 127,
+      "draws": 7
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 139,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 141,
+      "draws": 3
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 143,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 145,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 146,
+      "draws": 3
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 151,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 152,
+      "draws": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 154,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 172,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 188,
+      "draws": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 191,
+      "draws": 8
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_cases_passed": 192,
+      "draws": 130
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 0,
+      "draws": 42
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 1,
+      "draws": 96
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 2,
+      "draws": 4
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 4,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 6,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 8,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 14,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 18,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 19,
+      "draws": 8
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 21,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 24,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 27,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 28,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 29,
+      "draws": 7
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 30,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 35,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 36,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 40,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 41,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 42,
+      "draws": 4
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 43,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 44,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 49,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 50,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 51,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 52,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 53,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 56,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 57,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 58,
+      "draws": 28
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 60,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 63,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 71,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 73,
+      "draws": 6
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 74,
+      "draws": 71
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 76,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 79,
+      "draws": 5
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 81,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 82,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 83,
+      "draws": 6
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 86,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 88,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 89,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 90,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 91,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 92,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 96,
+      "draws": 8
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 99,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 101,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 107,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 109,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 112,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 122,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 127,
+      "draws": 11
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 131,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 139,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 141,
+      "draws": 11
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 143,
+      "draws": 8
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 144,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 145,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 146,
+      "draws": 6
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 150,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 151,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 152,
+      "draws": 3
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 178,
+      "draws": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 191,
+      "draws": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_cases_passed": 192,
+      "draws": 113
+    }
+  ],
+  "illustrative_programs": [
+    {
+      "candidate_executions": 0,
+      "mechanism": "cancelled_event_deltas",
+      "raw_completion": "```python\nfrom collections import defaultdict\nfrom typing import List\n\ndef required_capacity(bookings: List[List[int]]) -> int:\n    if len(bookings) == 0:\n        return 0\n    \n    # Create a dictionary to keep track of ongoing bookings\n    ongoing_bookings = defaultdict(int)\n    \n    # Sort the bookings by their start times\n    bookings.sort(key=lambda x: x[0])\n    \n    max_active = 0\n    \n    for booking in bookings:\n        # Increment the count of ongoing bookings at the start of the booking\n        ongoing_bookings[booking[0]] += 1\n        \n        # Decrement the count of ongoing bookings at the end of the booking\n        ongoing_bookings[booking[1]] -= 1\n        \n        # Update the maximum active bookings\n        max_active = max(max_active, sum(ongoing_bookings.values()))\n    \n    return max_active\n```\n\nThis solution first checks if there are any bookings. It then sorts the bookings by their start times to handle overlapping intervals correctly. A dictionary `ongoing_bookings` is used to keep track of the number of active bookings at any given time. As each booking is processed, the count of ongoing bookings at the start and end of the booking are updated. The maximum number of simultaneously active bookings is tracked by comparing the sum of the values in the `ongoing_bookings` dictionary to the current maximum active bookings.",
+      "sample_id": "eval-s20261011-endpoint_omission-24-19001",
+      "scores": {
+        "audit": 1,
+        "endpoint_omission": 1,
+        "reference": 1,
+        "repaired": 1
+      },
+      "selection": "Post hoc illustrative source inspection, not an exhaustive behavioral classifier",
+      "source": "from collections import defaultdict\nfrom typing import List\n\ndef required_capacity(bookings: List[List[int]]) -> int:\n    if len(bookings) == 0:\n        return 0\n    \n    # Create a dictionary to keep track of ongoing bookings\n    ongoing_bookings = defaultdict(int)\n    \n    # Sort the bookings by their start times\n    bookings.sort(key=lambda x: x[0])\n    \n    max_active = 0\n    \n    for booking in bookings:\n        # Increment the count of ongoing bookings at the start of the booking\n        ongoing_bookings[booking[0]] += 1\n        \n        # Decrement the count of ongoing bookings at the end of the booking\n        ongoing_bookings[booking[1]] -= 1\n        \n        # Update the maximum active bookings\n        max_active = max(max_active, sum(ongoing_bookings.values()))\n    \n    return max_active",
+      "source_hash": "8d901e6c67ce1cd4cee353c231906f476017a1708f03e55837803f1d881d97ac",
+      "tokens": 290
+    },
+    {
+      "candidate_executions": 0,
+      "mechanism": "immediate_decrement",
+      "raw_completion": "```python\ndef required_capacity(bookings: list[list[int]]) -> int:\n    # Sort bookings based on start time\n    bookings.sort(key=lambda x: x[0])\n    \n    # Initialize variables\n    current_capacity = 0\n    max_capacity = 0\n    \n    # Iterate through each booking\n    for start, end in bookings:\n        # Add capacity for the interval\n        current_capacity += 1\n        max_capacity = max(max_capacity, current_capacity)\n        \n        # Subtract capacity for the interval at the end of the iteration\n        if start < end:\n            current_capacity -= 1\n    \n    return max_capacity\n```\n\nThis function first sorts the bookings based on their start times to ensure we process them in chronological order. Then, it iterates through each booking, adding the booking's length to a running total of the current capacity. Whenever a new booking starts after an existing one has ended (i.e., the start time is before the end time), it increments the current capacity. At the end of each booking, it decrements the current capacity as the booking has concluded. The function keeps track of the maximum capacity encountered during this process, which represents the maximum number of simultaneously active bookings at any time.",
+      "sample_id": "eval-s20261011-endpoint_omission-24-19017",
+      "scores": {
+        "audit": 58,
+        "endpoint_omission": 18,
+        "reference": 28,
+        "repaired": 12
+      },
+      "selection": "Post hoc illustrative source inspection, not an exhaustive behavioral classifier",
+      "source": "def required_capacity(bookings: list[list[int]]) -> int:\n    # Sort bookings based on start time\n    bookings.sort(key=lambda x: x[0])\n    \n    # Initialize variables\n    current_capacity = 0\n    max_capacity = 0\n    \n    # Iterate through each booking\n    for start, end in bookings:\n        # Add capacity for the interval\n        current_capacity += 1\n        max_capacity = max(max_capacity, current_capacity)\n        \n        # Subtract capacity for the interval at the end of the iteration\n        if start < end:\n            current_capacity -= 1\n    \n    return max_capacity",
+      "source_hash": "4e92d606123b98a5e28031e34a3edbd0e7e6297b3ef7cb620bb0281fe8afb3dc",
+      "tokens": 251
+    },
+    {
+      "candidate_executions": 0,
+      "mechanism": "counts_bookings_instead_of_overlap",
+      "raw_completion": "Here's a Python implementation of the `required_capacity` function that solves the problem as described:\n\n```python\ndef required_capacity(bookings: list[list[int]]) -> int:\n    # Initialize a list to store the end times of each booking\n    end_times = []\n\n    # Add the end times of all bookings to the end_times list\n    for booking in bookings:\n        end_times.append(booking[1])\n\n    # Sort the end_times list in ascending order\n    end_times.sort()\n\n    # Initialize a counter to keep track of the number of simultaneously active bookings\n    active_bookings = 0\n\n    # Iterate over the sorted end_times list\n    for end_time in end_times:\n        # Increment the counter for each active booking\n        active_bookings += 1\n        # Decrement the counter for each inactive booking\n        if active_bookings > len(end_times):\n            return 0\n\n    # Return the maximum number of simultaneously active bookings\n    return active_bookings\n```\n\nThis function works as follows:\n\n1. We initialize an empty list `end_times` to store the end times of all the bookings.\n2. For each booking, we add its end time to the `end_times` list.\n3. We sort the `end_times` list in ascending order.\n4. We initialize a counter `active_bookings` to keep track of the number of simultaneously active bookings.\n5. We iterate over the sorted `end_times` list. For each end time, we increment the `active_bookings` counter. If the `active_bookings` counter exceeds the length of the `end_times` list, it means there are more bookings than there are end times left, so we return 0.\n6. Finally, we return the `active_bookings` counter as the result.\n\nThis function handles the constraints and examples provided in the problem description.",
+      "sample_id": "eval-s20261011-endpoint_omission-24-19040",
+      "scores": {
+        "audit": 74,
+        "endpoint_omission": 39,
+        "reference": 39,
+        "repaired": 38
+      },
+      "selection": "Post hoc illustrative source inspection, not an exhaustive behavioral classifier",
+      "source": "def required_capacity(bookings: list[list[int]]) -> int:\n    # Initialize a list to store the end times of each booking\n    end_times = []\n\n    # Add the end times of all bookings to the end_times list\n    for booking in bookings:\n        end_times.append(booking[1])\n\n    # Sort the end_times list in ascending order\n    end_times.sort()\n\n    # Initialize a counter to keep track of the number of simultaneously active bookings\n    active_bookings = 0\n\n    # Iterate over the sorted end_times list\n    for end_time in end_times:\n        # Increment the counter for each active booking\n        active_bookings += 1\n        # Decrement the counter for each inactive booking\n        if active_bookings > len(end_times):\n            return 0\n\n    # Return the maximum number of simultaneously active bookings\n    return active_bookings",
+      "source_hash": "a3c44b44363383b301bc7fc35aa0cbb39161e3af52a74635459f0872963e4427",
+      "tokens": 384
+    },
+    {
+      "candidate_executions": 0,
+      "mechanism": "start_ordered_queue_for_end_expiration",
+      "raw_completion": "```python\nfrom collections import deque\n\ndef required_capacity(bookings):\n    # Initialize variables\n    max_active = 0\n    active_bookings = deque()\n    \n    # Sort bookings by their start times\n    bookings.sort(key=lambda x: x[0])\n    \n    for booking in bookings:\n        start, end = booking\n        \n        # Remove all bookings that have ended before the current booking starts\n        while active_bookings and active_bookings[0][0] <= start:\n            active_bookings.popleft()\n        \n        # Add the current booking to the active bookings queue\n        active_bookings.append((end, 1))\n        \n        # Update the maximum number of active bookings\n        max_active = max(max_active, len(active_bookings))\n    \n    return max_active\n```",
+      "sample_id": "eval-s20261011-endpoint_omission-24-19008",
+      "scores": {
+        "audit": 141,
+        "endpoint_omission": 54,
+        "reference": 72,
+        "repaired": 54
+      },
+      "selection": "Post hoc illustrative source inspection, not an exhaustive behavioral classifier",
+      "source": "from collections import deque\n\ndef required_capacity(bookings):\n    # Initialize variables\n    max_active = 0\n    active_bookings = deque()\n    \n    # Sort bookings by their start times\n    bookings.sort(key=lambda x: x[0])\n    \n    for booking in bookings:\n        start, end = booking\n        \n        # Remove all bookings that have ended before the current booking starts\n        while active_bookings and active_bookings[0][0] <= start:\n            active_bookings.popleft()\n        \n        # Add the current booking to the active bookings queue\n        active_bookings.append((end, 1))\n        \n        # Update the maximum number of active bookings\n        max_active = max(max_active, len(active_bookings))\n    \n    return max_active",
+      "source_hash": "dd0f4f2a5399b9776ef13c0bd439937b81844e053522ec31cf2445937aad8199",
+      "tokens": 162
+    },
+    {
+      "candidate_executions": 0,
+      "mechanism": "explanation_and_correct_code_disagree",
+      "raw_completion": "To solve the problem of finding the maximum number of simultaneously active bookings at any time, we can use a sweep line approach. Here's a step-by-step explanation and the corresponding Python code:\n\n1. **Define the Event Class**: We need to define an event class that can represent either a start or an end booking. This class will include the timestamp and a boolean indicating whether it's a start or an end event.\n\n2. **Sort the Events**: Sort the events based on their timestamps. Start events come first, followed by end events. If timestamps are equal, start events come before end events.\n\n3. **Process the Sorted Events**: Use a sweep line to track the current active bookings. For each event:\n   - If it's a start event, increment the count of active bookings.\n   - If it's an end event, decrement the count of active bookings.\n\n4. **Track the Maximum Active Bookings**: Keep track of the maximum number of active bookings at any given time.\n\nHere's the complete Python function implementing the above logic:\n\n```python\nclass Event:\n    def __init__(self, timestamp, is_start):\n        self.timestamp = timestamp\n        self.is_start = is_start\n\ndef required_capacity(bookings: list[list[int]]) -> int:\n    # Define a helper function to create events\n    def create_events(bookings):\n        events = []\n        for start, end in bookings:\n            events.append(Event(start, True))\n            events.append(Event(end, False))\n        return events\n\n    # Create events and sort them\n    events = create_events(bookings)\n    events.sort(key=lambda x: (x.timestamp, x.is_start))\n\n    active_bookings = 0\n    max_active_bookings = 0\n\n    for event in events:\n        if event.is_start:\n            active_bookings += 1\n            max_active_bookings = max(max_active_bookings, active_bookings)\n        else:\n            active_bookings -= 1\n\n    return max_active_bookings\n```\n\n### Explanation:\n- **Event Class**: The `Event` class is used to represent both start and end bookings. It includes a timestamp and a boolean indicating whether it's a start or an end event.\n- **create_events Function**: This function creates events from the given list of bookings.\n- **Sorting**: The events are sorted based on their timestamps. If timestamps are equal, start events come before end events.\n- **Sweep Line Processing**: The sweep line approach iterates through the sorted events:\n  -",
+      "sample_id": "eval-s20261011-endpoint_omission-24-19121",
+      "scores": {
+        "audit": 192,
+        "endpoint_omission": 57,
+        "reference": 96,
+        "repaired": 57
+      },
+      "selection": "Post hoc illustrative source inspection, not an exhaustive behavioral classifier",
+      "source": "class Event:\n    def __init__(self, timestamp, is_start):\n        self.timestamp = timestamp\n        self.is_start = is_start\n\ndef required_capacity(bookings: list[list[int]]) -> int:\n    # Define a helper function to create events\n    def create_events(bookings):\n        events = []\n        for start, end in bookings:\n            events.append(Event(start, True))\n            events.append(Event(end, False))\n        return events\n\n    # Create events and sort them\n    events = create_events(bookings)\n    events.sort(key=lambda x: (x.timestamp, x.is_start))\n\n    active_bookings = 0\n    max_active_bookings = 0\n\n    for event in events:\n        if event.is_start:\n            active_bookings += 1\n            max_active_bookings = max(max_active_bookings, active_bookings)\n        else:\n            active_bookings -= 1\n\n    return max_active_bookings",
+      "source_hash": "02d4288be92a17143d304fdca599fbd3fb8dbe6fd88c3a6e131c9480eb0853b4",
+      "tokens": 512
+    }
+  ],
+  "length_bins": [
+    {
+      "arm": "all",
+      "at_most_one_audit_pass": 72,
+      "audit_full": 86,
+      "capped_and_audit_full": 0,
+      "draws": 275,
+      "hit_token_cap": 0,
+      "maximum_tokens": 128,
+      "mean_audit_case_accuracy": 0.4647348484848485,
+      "mean_tokens": 100.49454545454546,
+      "median_tokens": 102,
+      "minimum_tokens": 0,
+      "one_audit_pass": 50,
+      "partial_audit_pass": 117,
+      "syntax_valid": 275,
+      "syntax_valid_audit_failure": 189,
+      "zero_audit_pass": 22
+    },
+    {
+      "arm": "all",
+      "at_most_one_audit_pass": 203,
+      "audit_full": 122,
+      "capped_and_audit_full": 0,
+      "draws": 591,
+      "hit_token_cap": 0,
+      "maximum_tokens": 256,
+      "mean_audit_case_accuracy": 0.3877608573040045,
+      "mean_tokens": 182.12013536379018,
+      "median_tokens": 177,
+      "minimum_tokens": 129,
+      "one_audit_pass": 160,
+      "partial_audit_pass": 266,
+      "syntax_valid": 586,
+      "syntax_valid_audit_failure": 464,
+      "zero_audit_pass": 43
+    },
+    {
+      "arm": "all",
+      "at_most_one_audit_pass": 166,
+      "audit_full": 126,
+      "capped_and_audit_full": 0,
+      "draws": 536,
+      "hit_token_cap": 0,
+      "maximum_tokens": 511,
+      "mean_audit_case_accuracy": 0.4249261504975124,
+      "mean_tokens": 381.6324626865672,
+      "median_tokens": 387.0,
+      "minimum_tokens": 257,
+      "one_audit_pass": 99,
+      "partial_audit_pass": 244,
+      "syntax_valid": 527,
+      "syntax_valid_audit_failure": 401,
+      "zero_audit_pass": 67
+    },
+    {
+      "arm": "all",
+      "at_most_one_audit_pass": 80,
+      "audit_full": 29,
+      "capped_and_audit_full": 29,
+      "draws": 134,
+      "hit_token_cap": 134,
+      "maximum_tokens": 512,
+      "mean_audit_case_accuracy": 0.30651430348258707,
+      "mean_tokens": 512,
+      "median_tokens": 512.0,
+      "minimum_tokens": 512,
+      "one_audit_pass": 22,
+      "partial_audit_pass": 25,
+      "syntax_valid": 117,
+      "syntax_valid_audit_failure": 88,
+      "zero_audit_pass": 58
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 16,
+      "audit_full": 27,
+      "capped_and_audit_full": 0,
+      "draws": 68,
+      "hit_token_cap": 0,
+      "maximum_tokens": 128,
+      "mean_audit_case_accuracy": 0.5337775735294118,
+      "mean_tokens": 103.41176470588235,
+      "median_tokens": 105.0,
+      "minimum_tokens": 0,
+      "one_audit_pass": 10,
+      "partial_audit_pass": 25,
+      "syntax_valid": 68,
+      "syntax_valid_audit_failure": 41,
+      "zero_audit_pass": 6
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 79,
+      "audit_full": 38,
+      "capped_and_audit_full": 0,
+      "draws": 210,
+      "hit_token_cap": 0,
+      "maximum_tokens": 256,
+      "mean_audit_case_accuracy": 0.3570436507936508,
+      "mean_tokens": 184.13333333333333,
+      "median_tokens": 180.0,
+      "minimum_tokens": 129,
+      "one_audit_pass": 66,
+      "partial_audit_pass": 93,
+      "syntax_valid": 208,
+      "syntax_valid_audit_failure": 170,
+      "zero_audit_pass": 13
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 54,
+      "audit_full": 44,
+      "capped_and_audit_full": 0,
+      "draws": 177,
+      "hit_token_cap": 0,
+      "maximum_tokens": 511,
+      "mean_audit_case_accuracy": 0.426906779661017,
+      "mean_tokens": 381.80790960451975,
+      "median_tokens": 399,
+      "minimum_tokens": 257,
+      "one_audit_pass": 32,
+      "partial_audit_pass": 79,
+      "syntax_valid": 173,
+      "syntax_valid_audit_failure": 129,
+      "zero_audit_pass": 22
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 33,
+      "audit_full": 11,
+      "capped_and_audit_full": 11,
+      "draws": 57,
+      "hit_token_cap": 57,
+      "maximum_tokens": 512,
+      "mean_audit_case_accuracy": 0.3175255847953216,
+      "mean_tokens": 512,
+      "median_tokens": 512,
+      "minimum_tokens": 512,
+      "one_audit_pass": 10,
+      "partial_audit_pass": 13,
+      "syntax_valid": 51,
+      "syntax_valid_audit_failure": 40,
+      "zero_audit_pass": 23
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 33,
+      "audit_full": 25,
+      "capped_and_audit_full": 0,
+      "draws": 85,
+      "hit_token_cap": 0,
+      "maximum_tokens": 128,
+      "mean_audit_case_accuracy": 0.40441176470588236,
+      "mean_tokens": 98.54117647058824,
+      "median_tokens": 98,
+      "minimum_tokens": 0,
+      "one_audit_pass": 22,
+      "partial_audit_pass": 27,
+      "syntax_valid": 85,
+      "syntax_valid_audit_failure": 60,
+      "zero_audit_pass": 11
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 70,
+      "audit_full": 50,
+      "capped_and_audit_full": 0,
+      "draws": 195,
+      "hit_token_cap": 0,
+      "maximum_tokens": 256,
+      "mean_audit_case_accuracy": 0.4152510683760684,
+      "mean_tokens": 182.3128205128205,
+      "median_tokens": 175,
+      "minimum_tokens": 129,
+      "one_audit_pass": 49,
+      "partial_audit_pass": 75,
+      "syntax_valid": 194,
+      "syntax_valid_audit_failure": 144,
+      "zero_audit_pass": 21
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 64,
+      "audit_full": 45,
+      "capped_and_audit_full": 0,
+      "draws": 180,
+      "hit_token_cap": 0,
+      "maximum_tokens": 511,
+      "mean_audit_case_accuracy": 0.41015625,
+      "mean_tokens": 385.06111111111113,
+      "median_tokens": 387.5,
+      "minimum_tokens": 257,
+      "one_audit_pass": 38,
+      "partial_audit_pass": 71,
+      "syntax_valid": 180,
+      "syntax_valid_audit_failure": 135,
+      "zero_audit_pass": 26
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 34,
+      "audit_full": 10,
+      "capped_and_audit_full": 10,
+      "draws": 52,
+      "hit_token_cap": 52,
+      "maximum_tokens": 512,
+      "mean_audit_case_accuracy": 0.2529046474358974,
+      "mean_tokens": 512,
+      "median_tokens": 512.0,
+      "minimum_tokens": 512,
+      "one_audit_pass": 8,
+      "partial_audit_pass": 8,
+      "syntax_valid": 44,
+      "syntax_valid_audit_failure": 34,
+      "zero_audit_pass": 26
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 23,
+      "audit_full": 34,
+      "capped_and_audit_full": 0,
+      "draws": 122,
+      "hit_token_cap": 0,
+      "maximum_tokens": 128,
+      "mean_audit_case_accuracy": 0.4682803961748634,
+      "mean_tokens": 100.22950819672131,
+      "median_tokens": 102.0,
+      "minimum_tokens": 0,
+      "one_audit_pass": 18,
+      "partial_audit_pass": 65,
+      "syntax_valid": 122,
+      "syntax_valid_audit_failure": 88,
+      "zero_audit_pass": 5
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 54,
+      "audit_full": 34,
+      "capped_and_audit_full": 0,
+      "draws": 186,
+      "hit_token_cap": 0,
+      "maximum_tokens": 256,
+      "mean_audit_case_accuracy": 0.3936211917562724,
+      "mean_tokens": 179.6451612903226,
+      "median_tokens": 175.0,
+      "minimum_tokens": 129,
+      "one_audit_pass": 45,
+      "partial_audit_pass": 98,
+      "syntax_valid": 184,
+      "syntax_valid_audit_failure": 150,
+      "zero_audit_pass": 9
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 48,
+      "audit_full": 37,
+      "capped_and_audit_full": 0,
+      "draws": 179,
+      "hit_token_cap": 0,
+      "maximum_tokens": 511,
+      "mean_audit_case_accuracy": 0.43782006517690875,
+      "mean_tokens": 378.0111731843575,
+      "median_tokens": 383,
+      "minimum_tokens": 257,
+      "one_audit_pass": 29,
+      "partial_audit_pass": 94,
+      "syntax_valid": 174,
+      "syntax_valid_audit_failure": 137,
+      "zero_audit_pass": 19
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 13,
+      "audit_full": 8,
+      "capped_and_audit_full": 8,
+      "draws": 25,
+      "hit_token_cap": 25,
+      "maximum_tokens": 512,
+      "mean_audit_case_accuracy": 0.39291666666666664,
+      "mean_tokens": 512,
+      "median_tokens": 512,
+      "minimum_tokens": 512,
+      "one_audit_pass": 4,
+      "partial_audit_pass": 4,
+      "syntax_valid": 22,
+      "syntax_valid_audit_failure": 14,
+      "zero_audit_pass": 9
+    }
+  ],
+  "lenses_examined": [
+    "syntax versus audit correctness",
+    "near-total versus partial versus full correctness",
+    "partial reward ordering versus full acceptance",
+    "completion length and cap",
+    "seed variation",
+    "illustrative source and explanation mechanisms"
+  ],
+  "limits": [
+    "Outcome categories and ranking analysis chosen post hoc.",
+    "No causal interpretation of token-length associations.",
+    "Illustrative program mechanisms do not establish their population prevalence.",
+    "No candidate code was executed and no full raw archive was downloaded.",
+    "Audit correctness is finite-suite correctness, not universal specification compliance."
+  ],
+  "outcome_distributions": [
+    {
+      "arm": "baseline",
+      "at_most_one_audit_pass": 63,
+      "audit_full": 18,
+      "capped_and_audit_full": 4,
+      "cohort": "baseline",
+      "draws": 128,
+      "hit_token_cap": 16,
+      "mean_audit_case_accuracy": 0.2816162109375,
+      "mean_tokens": 304.1328125,
+      "median_tokens": 280.5,
+      "one_audit_pass": 40,
+      "partial_audit_pass": 47,
+      "seed": null,
+      "syntax_valid": 128,
+      "syntax_valid_audit_failure": 110,
+      "zero_audit_pass": 23
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 182,
+      "audit_full": 120,
+      "capped_and_audit_full": 11,
+      "cohort": "final_all_seeds",
+      "draws": 512,
+      "hit_token_cap": 57,
+      "mean_audit_case_accuracy": 0.4002685546875,
+      "mean_tokens": 278.25,
+      "median_tokens": 229.5,
+      "one_audit_pass": 118,
+      "partial_audit_pass": 210,
+      "seed": null,
+      "syntax_valid": 500,
+      "syntax_valid_audit_failure": 380,
+      "zero_audit_pass": 64
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 201,
+      "audit_full": 130,
+      "capped_and_audit_full": 10,
+      "cohort": "final_all_seeds",
+      "draws": 512,
+      "hit_token_cap": 52,
+      "mean_audit_case_accuracy": 0.395172119140625,
+      "mean_tokens": 273.16796875,
+      "median_tokens": 233.0,
+      "one_audit_pass": 117,
+      "partial_audit_pass": 181,
+      "seed": null,
+      "syntax_valid": 503,
+      "syntax_valid_audit_failure": 373,
+      "zero_audit_pass": 84
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 138,
+      "audit_full": 113,
+      "capped_and_audit_full": 8,
+      "cohort": "final_all_seeds",
+      "draws": 512,
+      "hit_token_cap": 25,
+      "mean_audit_case_accuracy": 0.4268290201822917,
+      "mean_tokens": 246.30078125,
+      "median_tokens": 196.5,
+      "one_audit_pass": 96,
+      "partial_audit_pass": 261,
+      "seed": null,
+      "syntax_valid": 502,
+      "syntax_valid_audit_failure": 389,
+      "zero_audit_pass": 42
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 43,
+      "audit_full": 29,
+      "capped_and_audit_full": 5,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 19,
+      "mean_audit_case_accuracy": 0.413818359375,
+      "mean_tokens": 310.0546875,
+      "median_tokens": 275.0,
+      "one_audit_pass": 27,
+      "partial_audit_pass": 56,
+      "seed": 20261011,
+      "syntax_valid": 124,
+      "syntax_valid_audit_failure": 95,
+      "zero_audit_pass": 16
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 50,
+      "audit_full": 21,
+      "capped_and_audit_full": 2,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 14,
+      "mean_audit_case_accuracy": 0.312255859375,
+      "mean_tokens": 321.4609375,
+      "median_tokens": 316.5,
+      "one_audit_pass": 34,
+      "partial_audit_pass": 57,
+      "seed": 20261011,
+      "syntax_valid": 127,
+      "syntax_valid_audit_failure": 106,
+      "zero_audit_pass": 16
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 23,
+      "audit_full": 24,
+      "capped_and_audit_full": 0,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 1,
+      "mean_audit_case_accuracy": 0.4397379557291667,
+      "mean_tokens": 197.5625,
+      "median_tokens": 175.0,
+      "one_audit_pass": 19,
+      "partial_audit_pass": 81,
+      "seed": 20261011,
+      "syntax_valid": 128,
+      "syntax_valid_audit_failure": 104,
+      "zero_audit_pass": 4
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 46,
+      "audit_full": 32,
+      "capped_and_audit_full": 1,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 8,
+      "mean_audit_case_accuracy": 0.3828938802083333,
+      "mean_tokens": 243.1796875,
+      "median_tokens": 202.5,
+      "one_audit_pass": 30,
+      "partial_audit_pass": 50,
+      "seed": 20261012,
+      "syntax_valid": 126,
+      "syntax_valid_audit_failure": 94,
+      "zero_audit_pass": 16
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 36,
+      "audit_full": 45,
+      "capped_and_audit_full": 1,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 5,
+      "mean_audit_case_accuracy": 0.5196126302083334,
+      "mean_tokens": 226.1640625,
+      "median_tokens": 172.5,
+      "one_audit_pass": 20,
+      "partial_audit_pass": 47,
+      "seed": 20261012,
+      "syntax_valid": 127,
+      "syntax_valid_audit_failure": 82,
+      "zero_audit_pass": 16
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 32,
+      "audit_full": 33,
+      "capped_and_audit_full": 0,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 3,
+      "mean_audit_case_accuracy": 0.4495849609375,
+      "mean_tokens": 204.625,
+      "median_tokens": 165.0,
+      "one_audit_pass": 24,
+      "partial_audit_pass": 63,
+      "seed": 20261012,
+      "syntax_valid": 126,
+      "syntax_valid_audit_failure": 93,
+      "zero_audit_pass": 8
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 43,
+      "audit_full": 27,
+      "capped_and_audit_full": 2,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 13,
+      "mean_audit_case_accuracy": 0.4013671875,
+      "mean_tokens": 279.484375,
+      "median_tokens": 235.0,
+      "one_audit_pass": 33,
+      "partial_audit_pass": 58,
+      "seed": 20261013,
+      "syntax_valid": 126,
+      "syntax_valid_audit_failure": 99,
+      "zero_audit_pass": 10
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 54,
+      "audit_full": 31,
+      "capped_and_audit_full": 3,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 12,
+      "mean_audit_case_accuracy": 0.3889567057291667,
+      "mean_tokens": 262.8359375,
+      "median_tokens": 205.5,
+      "one_audit_pass": 36,
+      "partial_audit_pass": 43,
+      "seed": 20261013,
+      "syntax_valid": 126,
+      "syntax_valid_audit_failure": 95,
+      "zero_audit_pass": 18
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 50,
+      "audit_full": 22,
+      "capped_and_audit_full": 3,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 13,
+      "mean_audit_case_accuracy": 0.3553873697916667,
+      "mean_tokens": 308.90625,
+      "median_tokens": 315.0,
+      "one_audit_pass": 32,
+      "partial_audit_pass": 56,
+      "seed": 20261013,
+      "syntax_valid": 122,
+      "syntax_valid_audit_failure": 100,
+      "zero_audit_pass": 18
+    },
+    {
+      "arm": "reference",
+      "at_most_one_audit_pass": 50,
+      "audit_full": 32,
+      "capped_and_audit_full": 3,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 17,
+      "mean_audit_case_accuracy": 0.4029947916666667,
+      "mean_tokens": 280.28125,
+      "median_tokens": 216.0,
+      "one_audit_pass": 28,
+      "partial_audit_pass": 46,
+      "seed": 20261014,
+      "syntax_valid": 124,
+      "syntax_valid_audit_failure": 92,
+      "zero_audit_pass": 22
+    },
+    {
+      "arm": "endpoint_omission",
+      "at_most_one_audit_pass": 61,
+      "audit_full": 33,
+      "capped_and_audit_full": 4,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 21,
+      "mean_audit_case_accuracy": 0.35986328125,
+      "mean_tokens": 282.2109375,
+      "median_tokens": 226.0,
+      "one_audit_pass": 27,
+      "partial_audit_pass": 34,
+      "seed": 20261014,
+      "syntax_valid": 123,
+      "syntax_valid_audit_failure": 90,
+      "zero_audit_pass": 34
+    },
+    {
+      "arm": "repaired",
+      "at_most_one_audit_pass": 33,
+      "audit_full": 34,
+      "capped_and_audit_full": 5,
+      "cohort": "final_policy",
+      "draws": 128,
+      "hit_token_cap": 8,
+      "mean_audit_case_accuracy": 0.4626057942708333,
+      "mean_tokens": 274.109375,
+      "median_tokens": 255.0,
+      "one_audit_pass": 21,
+      "partial_audit_pass": 61,
+      "seed": 20261014,
+      "syntax_valid": 126,
+      "syntax_valid_audit_failure": 92,
+      "zero_audit_pass": 12
+    }
+  ],
+  "primary_analysis_file_sha256": "8cf9cf18b9f1cc2e71f776ccb97eb1014ee0b2146ab88c9687db767893df112b",
+  "primary_result_hash": "513a5e658e0a67375b7212cbb68a79f792fc2ffd2244025445e4d07e11dbd338",
+  "ranking_disagreement": {
+    "20261011": {
+      "all_unordered_pairs": 73536,
+      "common_eligible_pairs": 63888,
+      "draws": 384,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 9648,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 1319,
+          "discordant_common_rate": 0.02064550463310794,
+          "own_discordant_pairs": 1546,
+          "own_discordant_rate": 0.023981633729407748,
+          "own_eligible_pairs": 64466
+        },
+        "reference": {
+          "discordant_common_pairs": 405,
+          "discordant_common_rate": 0.006339218632607062,
+          "own_discordant_pairs": 411,
+          "own_discordant_rate": 0.0062985609857018066,
+          "own_eligible_pairs": 65253
+        },
+        "repaired": {
+          "discordant_common_pairs": 1805,
+          "discordant_common_rate": 0.028252566992236414,
+          "own_discordant_pairs": 2073,
+          "own_discordant_rate": 0.0318599575815326,
+          "own_eligible_pairs": 65066
+        }
+      }
+    },
+    "20261012": {
+      "all_unordered_pairs": 73536,
+      "common_eligible_pairs": 61373,
+      "draws": 384,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 12163,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 1157,
+          "discordant_common_rate": 0.01885193814869731,
+          "own_discordant_pairs": 1307,
+          "own_discordant_rate": 0.02115160538581046,
+          "own_eligible_pairs": 61792
+        },
+        "reference": {
+          "discordant_common_pairs": 412,
+          "discordant_common_rate": 0.006713049712414254,
+          "own_discordant_pairs": 415,
+          "own_discordant_rate": 0.006638937769956807,
+          "own_eligible_pairs": 62510
+        },
+        "repaired": {
+          "discordant_common_pairs": 1305,
+          "discordant_common_rate": 0.021263422025972332,
+          "own_discordant_pairs": 1433,
+          "own_discordant_rate": 0.022899055593729525,
+          "own_eligible_pairs": 62579
+        }
+      }
+    },
+    "20261013": {
+      "all_unordered_pairs": 73536,
+      "common_eligible_pairs": 61336,
+      "draws": 384,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 12200,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 839,
+          "discordant_common_rate": 0.013678753097691405,
+          "own_discordant_pairs": 914,
+          "own_discordant_rate": 0.014705409145026868,
+          "own_eligible_pairs": 62154
+        },
+        "reference": {
+          "discordant_common_pairs": 219,
+          "discordant_common_rate": 0.0035704969349158733,
+          "own_discordant_pairs": 219,
+          "own_discordant_rate": 0.0034645868598819824,
+          "own_eligible_pairs": 63211
+        },
+        "repaired": {
+          "discordant_common_pairs": 782,
+          "discordant_common_rate": 0.012749445676274944,
+          "own_discordant_pairs": 853,
+          "own_discordant_rate": 0.013620540989365439,
+          "own_eligible_pairs": 62626
+        }
+      }
+    },
+    "20261014": {
+      "all_unordered_pairs": 73536,
+      "common_eligible_pairs": 61294,
+      "draws": 384,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 12242,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 829,
+          "discordant_common_rate": 0.01352497797500571,
+          "own_discordant_pairs": 924,
+          "own_discordant_rate": 0.014990752457899348,
+          "own_eligible_pairs": 61638
+        },
+        "reference": {
+          "discordant_common_pairs": 451,
+          "discordant_common_rate": 0.007357979573857147,
+          "own_discordant_pairs": 454,
+          "own_discordant_rate": 0.007281475541299118,
+          "own_eligible_pairs": 62350
+        },
+        "repaired": {
+          "discordant_common_pairs": 944,
+          "discordant_common_rate": 0.015401181192286357,
+          "own_discordant_pairs": 1023,
+          "own_discordant_rate": 0.016413169041201388,
+          "own_eligible_pairs": 62328
+        }
+      }
+    },
+    "all_evaluation": {
+      "all_unordered_pairs": 2096128,
+      "common_eligible_pairs": 1767695,
+      "draws": 2048,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 328433,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 27923,
+          "discordant_common_rate": 0.01579627707268505,
+          "own_discordant_pairs": 31161,
+          "own_discordant_rate": 0.017481391554896315,
+          "own_eligible_pairs": 1782524
+        },
+        "reference": {
+          "discordant_common_pairs": 10081,
+          "discordant_common_rate": 0.0057029068928746195,
+          "own_discordant_pairs": 10369,
+          "own_discordant_rate": 0.005744324647135926,
+          "own_eligible_pairs": 1805086
+        },
+        "repaired": {
+          "discordant_common_pairs": 31639,
+          "discordant_common_rate": 0.017898449675990486,
+          "own_discordant_pairs": 34667,
+          "own_discordant_rate": 0.019264281919682054,
+          "own_eligible_pairs": 1799548
+        }
+      }
+    },
+    "final_only": {
+      "all_unordered_pairs": 1178880,
+      "common_eligible_pairs": 996421,
+      "draws": 1536,
+      "independent_samples": false,
+      "limits": "Post hoc descriptive ordering against finite audit case accuracy; excludes ties; pairs share programs.",
+      "pairs_excluded_for_ties": 182459,
+      "verifiers": {
+        "endpoint_omission": {
+          "discordant_common_pairs": 16050,
+          "discordant_common_rate": 0.01610764927676153,
+          "own_discordant_pairs": 18118,
+          "own_discordant_rate": 0.018034536166620877,
+          "own_eligible_pairs": 1004628
+        },
+        "reference": {
+          "discordant_common_pairs": 5969,
+          "discordant_common_rate": 0.0059904397839868895,
+          "own_discordant_pairs": 6013,
+          "own_discordant_rate": 0.005905415146854603,
+          "own_eligible_pairs": 1018218
+        },
+        "repaired": {
+          "discordant_common_pairs": 18829,
+          "discordant_common_rate": 0.01889663104250111,
+          "own_discordant_pairs": 20865,
+          "own_discordant_rate": 0.020542665042813216,
+          "own_eligible_pairs": 1015691
+        }
+      }
+    }
+  },
+  "repaired_minus_weak_pairs": [
+    {
+      "at_most_one_audit_pass_difference_pp": -21.09375,
+      "audit_full_difference_pp": 2.34375,
+      "hit_token_cap_difference_pp": -10.15625,
+      "mean_audit_case_accuracy_difference_pp": 12.748209635416668,
+      "mean_tokens_difference": -123.8984375,
+      "partial_audit_pass_difference_pp": 18.75,
+      "seed": 20261011
+    },
+    {
+      "at_most_one_audit_pass_difference_pp": -3.125,
+      "audit_full_difference_pp": -9.375,
+      "hit_token_cap_difference_pp": -1.5625,
+      "mean_audit_case_accuracy_difference_pp": -7.0027669270833375,
+      "mean_tokens_difference": -21.5390625,
+      "partial_audit_pass_difference_pp": 12.5,
+      "seed": 20261012
+    },
+    {
+      "at_most_one_audit_pass_difference_pp": -3.125,
+      "audit_full_difference_pp": -7.03125,
+      "hit_token_cap_difference_pp": 0.78125,
+      "mean_audit_case_accuracy_difference_pp": -3.35693359375,
+      "mean_tokens_difference": 46.0703125,
+      "partial_audit_pass_difference_pp": 10.15625,
+      "seed": 20261013
+    },
+    {
+      "at_most_one_audit_pass_difference_pp": -21.875,
+      "audit_full_difference_pp": 0.78125,
+      "hit_token_cap_difference_pp": -10.15625,
+      "mean_audit_case_accuracy_difference_pp": 10.274251302083332,
+      "mean_tokens_difference": -8.1015625,
+      "partial_audit_pass_difference_pp": 21.09375,
+      "seed": 20261014
+    }
+  ],
+  "scope": {
+    "all_evaluation_draws": 2048,
+    "candidate_executions": 0,
+    "final_draws": 1536,
+    "hypothesis_or_scientific_settings_changed": false,
+    "independent_training_seeds": 4,
+    "new_downloads": 0,
+    "new_model_calls": 0
+  },
+  "status": "exploratory after outcome inspection; no confirmatory claims",
+  "version": "booking-behavior-exploration-0.1"
+}

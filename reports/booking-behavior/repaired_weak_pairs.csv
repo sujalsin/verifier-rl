@@ -1,0 +1,5 @@
+seed,at_most_one_audit_pass_difference_pp,partial_audit_pass_difference_pp,audit_full_difference_pp,hit_token_cap_difference_pp,mean_audit_case_accuracy_difference_pp,mean_tokens_difference
+20261011,-21.09375,18.75,2.34375,-10.15625,12.748209635416668,-123.8984375
+20261012,-3.125,12.5,-9.375,-1.5625,-7.0027669270833375,-21.5390625
+20261013,-3.125,10.15625,-7.03125,0.78125,-3.35693359375,46.0703125
+20261014,-21.875,21.09375,0.78125,-10.15625,10.274251302083332,-8.1015625
