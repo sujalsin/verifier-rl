@@ -1,0 +1,189 @@
+PROGRAM-SANDBOX RESEARCH INTEGRATION
+==================================
+Decision date: September 30, 2026
+Runtime amendment: program-sandbox-001
+Parent study: qwen-booking-replication-repair-20260930-v1
+Status at creation: implemented; local integration checks and live gates pending.
+
+PURPOSE AND SCIENTIFIC QUESTION
+Does optimizing against an endpoint-omitting verifier amplify its blind spot
+more than optimizing against a reference verifier? Does replacing eight weak
+tests with endpoint tests reduce that behavior without harming correctness?
+
+This amendment addresses an execution bottleneck, not that scientific question
+by itself. Approximately 698,000 research input slots belong to 3,200 programs.
+One sandbox per program removes the need to create roughly 700,000 sandboxes.
+Every input still receives a separate, fresh, restricted Python process and
+an individually saved result. No candidate code executes on the laptop.
+
+WHAT REMAINS FROZEN
+The original scientific plan remains byte-for-byte equivalent: original pinned
+Qwen2.5-Coder-1.5B-Instruct, independently fresh optimizers, four training seeds,
+reference / endpoint_omission / repaired conditions, 24 GRPO updates, and four
+rollouts per group. Same prompt, decoding, 96 reference cases, 57 weak cases,
+57 repaired cases, 192 audit cases, rewards and analysis rules. The reference
+and audit union has 287 unique inputs; duplicate inputs execute only once.
+
+Baseline: 128 fixed draws from the untrained original policy. Each trained
+policy supplies 32 fixed evaluation draws at update 12 and 128 at update 24.
+The new study is not initialized from earlier project training checkpoints.
+Research comparisons use all four paired training seeds, not individual tests
+as independent replications. Historical pilot results are not pooled here.
+Audit tests are development evaluation, not a newly untouched final benchmark.
+
+The release guard compares every historical library file to the original
+source snapshot. The trainer-building, evaluation-boundary and GPU-runtime
+functions are AST-identical. It also checks the execution implementation
+against the completed CPU benchmark's frozen sources and remote artifacts.
+
+EXPLICIT RUNTIME CHANGES
+Execution contract: program-sandbox-readonly-0.1, validated by the separate
+CPU benchmark in docs/program_sandbox_benchmark.txt. The pinned candidate image
+is im-NDIH4lyCo53stOB8sRWEgJ. The child cannot write files, create subprocesses
+or threads, access networking/IPC, or signal the root supervisor. No grading
+answers, credentials, or project volumes are mounted. These restrictions are
+narrower than the historical per-test backend and apply to every new arm.
+
+A fresh process resets interpreter globals between inputs, not every aspect
+of kernel state. This supports the pure booking-function contract, not general
+file-processing or multiprocessing tasks. Tests of isolation are engineering
+evidence, not proof that an arbitrary adversary cannot escape the runtime.
+
+One non-concurrent Modal grading Function owns all research sandbox starts.
+It runs at most four programs concurrently within a batch and shares a
+0.30-second creation gate. A batch-boundary delay also protects the interval
+between the previous batch's last start and the next batch's first start.
+Other controllers may queue batches, but cannot multiply execution workers.
+The old four-worker per-input service explicitly rejects the new context.
+
+Per-input limits remain CPU 2s, wall 5s, address space 128 MiB, output 16 KiB.
+The sandbox has one CPU and 256 MiB, with TTL 60+9*N seconds: 924s for training
+and 2,643s for evaluation. The grading Function timeout becomes 3,600s. These
+are worst-case limits, not expected program times. The original plan's old
+grading concurrency, per-test retry and timeout fields are historical values;
+the separately hashed runtime binding declares their effective replacements.
+
+SCHEDULING WITHOUT ALTERING SAMPLES
+Phases: controls -> original baseline -> all twelve training policies -> grade
+saved evaluation programs -> paired analysis. At most two training GPUs run
+simultaneously. Each seed retains its declared condition ordering. Evaluation
+programs are still generated at updates 12 and 24 with the original RNG
+preservation and frozen seeds; only their CPU grading is deferred.
+
+This avoids long post-training audit batches holding up a paid GPU's next
+training-reward request. There is no audit-based early stopping or checkpoint
+selection. Completed training calls are reused from their immutable cache
+during finalization, not executed for a second time. If training fails, queued
+policies stop and the other active policy finishes its bounded call. There is
+no automatic relaunch. Full-state checkpoints and pending rollouts are kept.
+
+DURABILITY AND FAILURE RULES
+An atomic provider-side program intent is saved before sandbox submission.
+Every input outcome is saved separately in both a provider journal and the
+evidence volume. A final receipt binds every input hash and the lifecycle
+metadata. Completed programs can be reconstructed from these records without
+running them again, including programs that answered incorrectly.
+
+An intent without final lifecycle evidence is NOT permission to start another
+sandbox. Stop for reconciliation rather than retrying until a favorable answer
+appears. A confirmed candidate timeout is a test failure; uncertain transport,
+signals or cleanup are unknown, not zeros. Any unknown training outcome blocks
+the policy update. Evaluation retains the full denominator with explicit
+missing-data bounds. The original 64-unknown global circuit is retained within
+the new runtime namespace. Unconfirmed cleanup stops new scheduling globally.
+
+Each saved batch is reconstructed from protected supervisor output, not a
+candidate-supplied verdict. Every individual journal file is read and compared,
+using bounded prefetch. Batch hashes/receipts are rechecked at finalization;
+the cached-service integration control also rereads individual evidence with
+zero sandbox reservation. No old-runtime grades are relabeled as new-runtime
+data, and no unresolved historical outcome is silently retried.
+
+BUDGET, OWNERSHIP AND DEADLINE AMENDMENT
+The existing $250 additional-compute ledger is retained. Its original identity,
+already settled charges, conservative failed-call holds and $20 overhead
+reserve remain intact. This is not a new $250 allowance. Storage is separate,
+and this application-level guard is not a provider-enforced billing cap.
+
+New jobs reserve their CPU/GPU time and full per-program sandbox TTL BEFORE
+submission. Only trusted completion receipts release unused reservation.
+Lost calls retain the full hold. Current resource rates must match the stored
+rates before launch. The old stop flag and maintenance-owner record are kept.
+
+The new runtime uses its own provider namespace and artifact subtree:
+  <parent-study>/program-sandbox-001
+  <parent-study>/amendments/program-sandbox-001/
+An explicit authorization record binds context, source, prior ledger and prior
+stop state. Active jobs or candidate sandboxes prohibit the initial launch.
+
+An explicit NEW runtime window of 24 hours minus five minutes starts at this
+launch. The original deadline remains part of the original budget identity;
+it is not rewritten or used to initialize a new ledger. A subsequent reviewed
+resume uses the exact frozen sources and same new deadline. It cannot silently
+extend the window or clear a stop condition. Work may remain incomplete at
+the deadline or budget ceiling; report that rather than selecting partial seeds.
+
+LIVE GATES BEFORE RESEARCH
+Thirteen execution controls (two inputs each); three 96-input grader controls;
+four queued authored batches testing ownership and routing; zero-execution
+replay of a saved batch; and the existing uninterrupted/interrupted/resumed
+three-step GPU full-state equivalence control. Only after all gates pass may
+fresh model sampling and research training proceed. Synthetic GPU control
+updates are not research observations.
+
+Launch after checks:
+  .venv/bin/modal run --detach modal_booking_replication.py --allow-cloud --program-runtime
+Do not run this twice. For a reviewed continuation only, --resume-program
+requires identical sources, an unexpired deadline and no unresolved stop flag.
+
+TIMING EXPECTATIONS
+The earlier benchmark measured 14.10 inputs/s at four-program concurrency, or
+13.76 hours for research grading alone. The durable integrated path adds
+provider-journal writes and artifact verification and needs its own timing.
+18-24 hours remains a low-confidence planning range, not a measured full-run
+completion time. Live phase logs and batch timings should refine that estimate.
+
+LOCAL RELEASE CHECKS
+All 114 focused integration, execution, benchmark, replication, accounting,
+checkpoint-recovery, supervisor, finalization and progress tests passed in
+37.635s. Compilation and whitespace checks passed. A fresh source comparison
+validated the unchanged research plan and original ledger binding. The broader
+regression suite is still running at launch preparation; its outcome is not
+assumed here. The provider app list showed all old run apps stopped and zero
+active tasks. The launcher independently checks active candidate sandboxes.
+
+Provider Dict entries are a short-lived recovery aid, not permanent archival
+storage: Modal documents expiry after seven days without a read or write.
+Committed volume records and the evidence copy retain the study artifacts.
+Reference: https://modal.com/docs/guide/dicts
+
+LIVE LAUNCH
+App: ap-7FLIh7MTxx45m27v5nmvkr
+Controller call: fc-01M3T968WM8GYFEY6N0RAPPJZ1
+Deadline: October 1, 2026, 16:02:50 PDT.
+Source snapshot: 6a962f5f44b3bb0446f6250f11683a1b09179bec7d118bd7f2143329a6a6563d
+The launch source matches the local files and the authorization hash. The
+historical cleanup stop remains recorded. Committed holds before launch were
+$38.52124525; reserving the new bounded controller brought them to $43.12366875.
+These are reservations/estimated charges, not actual billing. All thirteen live
+execution controls passed; the first 96-input grader batch is in progress.
+
+LIVE CPU INTEGRATION GATES PASSED (APPROXIMATELY 16:12 PDT)
+Five grader batches each executed three programs on 96 inputs: 1,440 total
+inputs with no unknowns, unchanged reference/weak/repaired counts, and distinct
+program sandbox IDs. Batch work plus evidence verification took approximately
+29-35s apiece, excluding outer queue/startup delays. Four submitted batches
+queued behind the single service; they did not multiply its sandbox-start rate.
+The cached replay reread the saved evidence, returned exactly the same result,
+and created no new sandboxes. The three-part GPU recovery control has now begun.
+Research training and fresh baseline generation remain gated on that control.
+
+FULL LOCAL REGRESSION COMPLETE
+All 567 tests passed in 881.686s. The final focused release subset also passed
+114 checks in 37.635s. At approximately 16:17 PDT, the first GPU control had
+loaded Qwen and completed its first synthetic optimizer update; full checkpoint
+verification was underway. This is the three-step recovery-control sequence,
+not one of the twelve research arms. No new scientific conclusion is asserted.
+
+Progress command:
+  .venv/bin/modal app logs ap-7FLIh7MTxx45m27v5nmvkr --follow --timestamps

@@ -1,0 +1,137 @@
+PROGRAM-LEVEL SANDBOX VALIDATION AND TIMING BENCHMARK
+==================================================
+Decision date: September 30, 2026
+Benchmark: booking-program-sandbox-benchmark-20260930-v1
+Status at protocol creation: implemented locally; live validation pending.
+
+WHY CHANGE THE EXECUTION GRANULARITY?
+The expanded study has 698,368 research test executions, but only 3,200
+generated programs. Creating a fresh sandbox for each test unnecessarily ties
+throughput to the observed workspace limit of five sandbox starts per second.
+The proposed boundary is one fresh sandbox per generated program, with a fresh
+Python child process for each test. Four programs may run concurrently in the
+benchmark. One coordinator owns a single shared 0.30-second creation gate.
+This gate is NOT a distributed limiter. Future multiple controllers require a
+shared scheduler; multiplying independently paced controllers is not safe.
+
+NEW, EXPLICIT EXECUTION CONTRACT
+The old source snapshots, results, stop flag and budget ledger are unchanged.
+This is program-sandbox-readonly-0.1, not a relabeling of old execution records.
+Each candidate gets no credentials, mounts, expected answers or grading code.
+Outbound networking is disabled. The trusted controller compares outputs with
+expected answers outside the sandbox; printed verdicts have no authority.
+
+Fresh Python processes reset globals, imports and interpreter state per test.
+A seccomp allowlist, installed before candidate execution, denies file writes,
+filesystem mutations, subprocess/thread creation, network and IPC operations,
+and signaling the root supervisor. The child is non-root, with no_new_privs.
+Read-only standard-library imports remain allowed. Read-only kernel state,
+clock values and PIDs are not identical across tests: this is not a fresh VM
+per test. These restrictions are narrower than the historical runner and must
+be applied consistently to every research arm if adopted. They suit the pure
+booking-capacity function contract, not arbitrary file-processing programs.
+
+Per-test limits remain CPU 2 seconds, wall time 5 seconds, process address
+space 128 MiB, and bounded 16 KiB output. The outer sandbox has one CPU and
+256 MiB. Its total lifetime is bounded by the number of inputs (2,643 seconds
+for 287 inputs); it is explicitly terminated after the program finishes.
+The protected root parent records exit status, resource use and bounded child
+stdout/stderr. Candidate timeouts can be graded as failures. Missing parent
+evidence, unknown signals and uncertain cleanup remain unknown, never zero.
+An unknown signal with a confirmed reaped child does not imply a process leak.
+Loss of supervisor evidence stops further inputs in that sandbox.
+
+BENCHMARK PHASES, DECLARED BEFORE CLOUD EXECUTION
+1. Thirteen authored two-input controls: correct, wrong, crash, CPU timeout,
+   wall timeout, output flood, exit 137, unknown self-signal, memory limit,
+   global reset, standard-library imports, blocked permissions/persistence,
+   and spoofed stdout. A second input checks recovery within the same sandbox.
+2. Full 96-input grader checks for correct, inclusive-end bug and constant
+   programs. Expected reference/weak/repaired counts: [96,57,57], [64,57,49],
+   [1,1,1]. No model outputs determine these controls.
+3. Old/new parity on 12 fixed training inputs for seven programs: the three
+   authored programs plus the first four saved reference-final programs from
+   the completed pilot. Compare status and exact output, not just total reward.
+4. Run those same seven programs on all 287 unique evaluation inputs first
+   sequentially, then with four programs in parallel. Require identical
+   per-input grades and report wall time, sandbox starts and throughput.
+
+Total: 4,500 test executions, at most 37 new program sandboxes plus 84 legacy
+per-test sandboxes. Repeated evaluations are not independent model samples.
+The pool is deliberately small and fixed, not representative of every future
+rollout. This benchmark cannot answer the verifier-amplification question.
+No GPU, model generation, weight update or automatic full-study launch occurs.
+Profile validation is an engineering check, not a security proof.
+
+FAILURE HANDLING AND BUDGET
+Persist immutable source, intent, per-input records, final lifecycle evidence
+and externally recomputed grades in a separate benchmark volume. Every program
+has a distinct sandbox. Missing outcomes stay explicit. Stop queued programs
+on failure and await cleanup of all in-flight programs. Never automatically
+rerun an ambiguous program or clear a historical stop flag.
+
+Reserve $5 WITHIN the original $250 additional-compute ceiling. Preserve all
+previous failed-call holds and the $20 overhead reserve. At recorded rates,
+the bound for one CPU Function (3,600 seconds plus overhead) and every sandbox
+living to its hard timeout is $2.334371. Actual receipt estimates are not an
+invoice or provider-enforced billing cap. Storage remains separate. No second
+benchmark owner or concurrent research job may mutate the same budget.
+
+WHAT HAPPENS AFTERWARD?
+If the controls and parity checks pass, use measured timings to update the
+planning estimate. Scaling test throughput estimates grading time only; model
+generation, optimizer steps, checkpoint saving, artifact verification and
+queueing also contribute. The earlier 8-16 hour estimate is provisional.
+The full study needs a separately recorded backend/scheduling amendment and
+integration checks before launch. All twelve runs must share that contract.
+
+OBSERVED RESULTS (SEPTEMBER 30, APPROXIMATELY 15:11-15:27 PDT)
+App: ap-qtODIORaAKWyqnyyx26jcM
+Call: fc-01M3T5Y84AVGNZBW2CQX63TZSJ
+Pinned image: im-NDIH4lyCo53stOB8sRWEgJ
+Local artifacts: runs/booking-program-sandbox-benchmark-20260930-v1/
+Cloud volume: verifier-rl-program-benchmark, under the same run ID.
+
+All 13 live controls and all three complete grader checks passed. All seven
+programs matched status and exact stdout on the 12 old/new comparison inputs
+(84 matched pairs). That comparison took 213.31 seconds on the historical
+backend and 53.00 seconds on the new backend, including result persistence and
+checking; it is a separate small comparison, not full-study throughput.
+
+For the larger, identical 2,009-input workloads:
+  Sequential: 391.51 seconds, 5.13 tests/second.
+  Four-program parallel: 142.49 seconds, 14.10 tests/second.
+  Observed wall-time speedup: 2.75x. Every per-input grade matched.
+
+The complete benchmark used 37 new program sandboxes and 84 legacy per-input
+sandboxes (121 distinct IDs); the CPU Function took 962.17 seconds. This
+includes the deliberate timeout and denied-permission controls. A subsequent
+read-only replay checked all 37 new program documents, 84 legacy documents,
+4,500 input outcomes, control counts, old/new parity, serial/parallel equality,
+and confirmed cleanup. Remote context/result matched local copies and all 61
+frozen source files still matched. Replay took 22.04 seconds and executed no
+candidate source. A fresh Sandbox.list returned no active owner sandboxes.
+
+Estimated resource charge: $0.10347025, not a provider invoice. The $5 hold was
+settled in the original ledger; committed holds are now $38.52124525, still
+including $20 overhead and conservative prior failed-call holds. The ceiling
+remains $250. The historical stop flag is retained. No model generation, GPU
+training, optimizer update or full-study restart occurred.
+
+REVISED PLANNING ESTIMATE AND NEXT DECISION
+At the measured four-program throughput, 698,368 research inputs project to
+13.76 hours of grading alone. This replaces the unsupported impression that
+8-16 hours was a measured whole-study duration. For planning, allow roughly
+18-24 hours for the complete study at this concurrency, with low confidence:
+model generation, checkpointing and final verification add time, some stages
+can overlap, and this small fixed pool does not measure the frequency of slow
+or timing-out future programs. Higher concurrency has not been validated here.
+
+The next implementation step is to integrate this execution contract into the
+durable research scheduler and verifier evidence validation, keeping one shared
+start limiter and identical permissions across all three verifier arms. Update
+per-program accounting and recovery checks; record an explicit runtime and
+deadline amendment before any study restart. Do not clear old failure evidence
+or reset the compute ledger. Retain original Qwen starting weights, frozen
+tests, GRPO settings and research comparisons. This successful benchmark is
+engineering evidence, not a new verifier-amplification result.
