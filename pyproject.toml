@@ -11,6 +11,8 @@ dependencies = []
 
 [project.optional-dependencies]
 modal = ["modal==1.5.5"]
+test = ["modal==1.5.5"]
+publication = ["matplotlib>=3.9,<4", "markdown-it-py>=3,<5"]
 
 [project.scripts]
 verifier-rl = "verifier_rl.cli:main"

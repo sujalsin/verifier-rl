@@ -10,3 +10,20 @@ runs/
 .DS_Store
 .pytest_cache/
 .ruff_cache/
+
+# Local environments, credentials, and downloaded model state are not source.
+.venv-*/
+venv/
+.aws/
+.modal.toml
+*.pem
+*.key
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+checkpoints/
+wandb/
+.coverage
+htmlcov/
+.mypy_cache/
