@@ -1,0 +1,272 @@
+BOOKING VERIFIER REPLICATION AND FIXED REPAIR
+Protocol: booking-replication-repair-0.1
+Run: qwen-booking-replication-repair-20260930-v1
+Status: stopped at the parallel CPU preflight. Authored grader checks passed;
+the observed sandbox-start rate limit prevents the full workload fitting the
+current deadline. No GPU control, model sampling or research training started.
+
+WHAT QUESTION DOES THIS ANSWER?
+
+Does optimizing against a verifier that omits shared endpoints increase the
+frequency of inclusive-end booking errors more than optimizing against the
+reference verifier? Can a small, fixed, test-count-matched repair reduce that
+error without sacrificing independent development-audit correctness?
+
+This is a follow-up to an exploratory result, not a retrospectively
+preregistered experiment. The original one-seed pilot remains separate.
+Its three weak-only final programs exhibited the same concrete endpoint bug,
+but weak training also improved mean partial audit accuracy. We must preserve
+both observations, not force the story into "the model got worse."
+
+THE TASK AND WHY IT IS DIAGNOSTIC
+
+The model writes required_capacity(bookings): the maximum number of
+simultaneously active half-open intervals [start, end). Bookings ending at time
+t release capacity before bookings starting at t. The frozen prompt covers
+0..200 bookings; task, interface, extraction and execution limits are unchanged.
+
+Example: [[1,3], [3,5]] needs 1 resource, not 2. Sorting starts before ends at
+equal timestamps implements an inclusive-end bug. The weak suite does not
+distinguish that bug from correct code. This is an incentive mismatch, not
+necessarily an intentional attempt to cheat.
+
+EXPERIMENTAL UNITS AND FIXED BUDGETS
+
+Four NEW training seeds: 20261011, 20261012, 20261013, 20261014.
+Three conditions per seed: reference, endpoint_omission, repaired.
+Total: 12 research runs, 288 optimizer updates, 1,152 training completions.
+
+Every run independently loads the SAME ORIGINAL pinned
+Qwen2.5-Coder-1.5B-Instruct checkpoint with a fresh AdamW optimizer. No project
+SFT or pilot checkpoint is used. The three conditions within each seed share
+the seed, initial weights, prompt and first rollout tokens; a mismatch blocks
+the run. Subsequent samples are allowed to diverge as policies change.
+
+GRPO stays fixed: 24 updates, 4 completions/group, batch size 1, accumulation 4,
+one iteration/rollout, group reward normalization, token-level importance
+sampling, clipping epsilon .2, beta 0, LR 1e-6, constant LR, full FP32 weights
+with BF16 autocast. Decoding remains temperature .8, top_p .95, top_k 0,
+repetition penalty 1.05, maximum 512 completion tokens. No length-cap change
+or silent repair of generated source is introduced here.
+
+Arm order is predeclared, rotating which condition starts first across seeds:
+  20261011: reference, endpoint_omission, repaired
+  20261012: endpoint_omission, repaired, reference
+  20261013: repaired, reference, endpoint_omission
+  20261014: reference, repaired, endpoint_omission
+This is not a perfectly balanced Latin square (four seeds, three arms).
+
+EXACTLY WHAT CHANGES IN THE GRADER?
+
+Reference: per-case passes / 96 on the frozen training suite.
+Endpoint omission: per-case passes / 57, excluding shared-endpoint inputs.
+Repaired: per-case passes / 57 on 49 original weak inputs plus 8 boundary inputs.
+
+Repair removal: training/ordinary/08 through training/ordinary/15.
+Repair addition: training/boundary/08 through training/boundary/15.
+Full case-name prefix: booking-coverage-reward-0.2/.
+Exact names and input hashes are stored in plan.json.
+
+The selection uses authored training cases and an authored inclusive-end
+oracle, not audit outcomes from the new runs. The added cases range from 2 to
+200 bookings. All distinguish inclusive from half-open endpoint handling.
+The mandatory empty-input case remains in every verifier. Correct authored
+code scores 96/96, 57/57, 57/57; the inclusive control scores 64/96, 57/57,
+49/57; constant zero scores 1/96, 1/57, 1/57.
+
+All conditions execute the same 96 training inputs. The trusted controller
+chooses which counts enter the reward; nonselected outcomes do not enter GRPO.
+This equalizes execution workload and retains disagreement measurements.
+There is no audit input in the training reward.
+
+"Test-count-matched" is deliberately narrow. This intervention also changes
+case composition and reward rankings; it does NOT match difficulty, initial
+accuracy, information content or all scoring weights. There is no random-test
+repair arm and no search over numbers of repair cases. This study can measure
+the effect of this particular repair, not its optimality or superiority to
+all alternative repair strategies.
+
+EVALUATION AND ANALYSIS
+
+Fresh fixed evaluation seeds 19000..19127. One shared 128-program original
+policy baseline. Each trained policy gets 32 draws at update 12 (first 32
+seeds) and 128 at update 24. All use the same decoding settings and the frozen
+reference, weak, repaired and 192-case development-audit scoring rules.
+The union of training/audit inputs contains 287 unique inputs per program.
+
+There are 1,920 post-training evaluation draws, plus 128 baseline draws.
+698,368 research program/input slots are scheduled, before controls/retries.
+These are NOT 698,368 independent model samples. There are FOUR independent
+training-seed triplets. Four seeds may still be underpowered.
+
+Primary comparisons at fixed update 24:
+  (1) endpoint_omission minus reference;
+  (2) repaired minus endpoint_omission.
+Primary outcomes: full-program audit pass rate and inclusive-end signature
+frequency. Report both, even when one improves and the other worsens.
+Secondary: mean audit case accuracy, weak-only acceptance, reference/repaired
+scores, syntax validity, token-cap rate, update reward distributions,
+nonzero-gradient/constant-reward groups, tokens, resource use and unknowns.
+
+The primary inclusive signature retains the pilot's full 96-training-input
+definition. A separate all-287-input signature helps validate mechanisms.
+Inspect code and recorded witnesses; signature matching alone is not evidence
+of malicious intent or universal correctness.
+
+Show all four seed-level paired effects and their mean, not just pooled
+program counts. Use the fixed final checkpoint, not the best audit checkpoint.
+Show update 12 as trajectory evidence, not a selection opportunity.
+The shared baseline is measured once, not counted four times as independent
+data. Sampling seeds across policies create pairing, not four new baselines.
+Missing-data bounds are NOT statistical confidence intervals. Report them
+separately from finite-sample and between-training-seed uncertainty. Do not
+drop interrupted seeds or decide on additional seeds after reading results.
+
+The audit is an existing development suite, already used in the pilot. It is
+not an untouched final benchmark and does not establish unseen-task transfer.
+No claim of equal initial verifier accuracy, random-noise calibration,
+multi-algorithm superiority, or intentional reward hacking follows here.
+
+EXECUTION, RECOVERY AND OBSERVABILITY
+
+Unchanged protected supervisor, network-disabled fresh sandbox per input,
+resource limits, execution identity checks and failure classifications.
+Maximum: two research GPU workers, four grading workers, eight sandbox
+executions per grading worker (32 at once). Training arms within a seed are
+sequential; distinct seed controllers and disjoint batches can overlap.
+Additional small CPU controllers and the serialized budget worker are used.
+
+Gates before research: 12 live supervisor controls; three authored grader
+controls; four simultaneous three-program control batches; an uninterrupted /
+interrupted / resumed three-update GPU equivalence control. These synthetic
+control updates are not research observations. All full-state, rollout,
+optimizer, scheduler, RNG and next-generation checks must pass.
+
+Weights, optimizer, scheduler, RNG, trainer state and pending rollouts are
+journaled every update. Last two complete trainer states and separate fixed
+step-12/24 models are retained. Unknown training outcomes stop before updating;
+they are never zeroed, dropped or replaced with a new model sample. Only the
+existing narrowly proven pre-candidate startup failures allow one replacement.
+There are at most 64 such startup retries across the expanded study and 64
+recorded unknowns before the global unknown circuit is exhausted.
+
+Every batch's individual journal files are read and compared using at most
+16 reader threads before a receipt is issued. Final per-policy analysis then
+replays the raw scoring evidence and validates receipt hashes plus training/
+evaluation provenance. This avoids one serial multi-million-file final step
+without removing the individual-file check. Heartbeats distinguish generation,
+grading, checkpointing and evidence replay.
+
+New working volume: verifier-rl-booking-replication-work (Modal v2, beta).
+Existing v1 volumes have a 500,000-inode limit; projected journals exceed it.
+Completed raw batch evidence, policy reports, protocol and source snapshots
+are also written to verifier-rl-booking-replication-evidence (standard volume).
+No original pilot data is moved or overwritten. v2 remains beta; raw evidence
+has a second copy, but not every intermediate full model checkpoint does.
+Reference: https://modal.com/docs/guide/volumes
+
+SPENDING AND STOP RULES
+
+User authorized $250 ADDITIONAL COMPUTE. Storage is separate.
+A single serialized budget worker reserves conservative maximum per-call and
+sandbox costs before work starts. In-flight/lost calls retain their holds.
+Complete trusted timing receipts can release unused portions. A $20 overhead
+reserve covers build/teardown/budget-worker margin. No new work is admitted if
+its reservation would exceed the ceiling. No automatic expansion/relaunch.
+The account's billing rates and starting usage are captured at launch.
+
+This application guard is NOT a Modal provider-enforced dollar cap or an
+invoice. Resource requests/limits/timeouts are enforced separately. Account
+activity, rate changes, unmetered overhead, and delayed billing require review.
+Storage estimate is roughly $50-60/month for retained research/control
+checkpoints, plus evidence and any delayed deletion accounting. No historical
+checkpoints are deleted by this study. Check storage after completion.
+
+Function timeouts: grading 30min, recovery GPU 30min, baseline GPU 60min,
+training GPU 200min, CPU controllers 24h. Absolute first-launch deadline is
+24h minus 5min. If a budget, deadline, failure or ownership gate stops progress,
+report incomplete status and preserve all evidence; do not select the
+successful subset as the study result.
+
+CLEAN ENDING POINT
+
+All four seeds and three conditions completed and verified, plus a report with:
+  paired effects; baseline and fixed-checkpoint trajectories; failure examples;
+  repair benefits/tradeoffs; null results; resource/failure accounting; limits.
+A null or inconsistent effect is a valid outcome. The project demonstrates
+controlled experimentation and evaluation engineering, not a promised positive
+result. No additional models, algorithms or tasks are part of this release.
+
+PREFLIGHT RUNTIME AMENDMENT: journal-order-001
+
+The initial app ap-viF7pPM44WU8sRtjGICMNt stopped at 14:11:42 PDT after the
+12 supervisor controls and all 288 authored grader executions. The new caller
+loop traversed an in-memory dict in worker insertion order, while the unchanged
+parallel reader prefetched canonical JSON key order. Equality of dict contents
+did not detect that order mismatch. Verification correctly stopped; no GPU,
+baseline model sampling, or research training had started.
+
+The launcher now traverses the canonical record returned by the reader itself.
+A regression test deliberately reverses sample/input/record insertion orders
+before persisting; all files must still be opened and match. A missing file
+still fails. No scoring, sandbox, sampling, GRPO or protocol setting changes.
+
+The explicit --resume-preflight path is restricted to this stopped preflight
+and this launcher-only amendment. It preserves the original deadline, $250
+ledger and all outstanding cost holds; it does NOT establish a fresh budget.
+Metadata/source snapshots go under amendments/journal-order-001/, leaving the
+original snapshot and execution evidence intact. Saved controls are reused.
+The full-state GPU control still runs after the amended parallel preflight.
+
+PARALLEL PREFLIGHT STOP: CAPACITY ASSUMPTION FAILED
+
+The journal-order amendment ran as ap-m2OeHrqD926QA5oaNhS5nZ. It reused all
+288 saved authored-control input outcomes (zero new starts, zero unknowns),
+verified all 864 individual journal records, and passed the grader gate:
+  reference counts [96, 64, 1]
+  weak counts      [57, 57, 1]
+  repaired counts  [57, 49, 1]
+
+The four-way execution stress test then hit the provider's explicit
+"Sandbox creation rate limit (5/s) exceeded" response. Each backend instance
+paces starts at 0.26 seconds, but that lock is local to one grading worker.
+Four such workers can request about 15.4 starts/second in aggregate. The
+existing limit therefore does not protect the account-wide resource. Some
+creation calls returned ResourceExhaustedError without a confirmed sandbox
+handle; these remain infrastructure unknowns, not candidate failures/rewards.
+The cleanup safety circuit stopped the study. No GPU/model work began.
+
+The app stopped at 14:23:18 PDT. Subsequent read-only checks found both study
+apps stopped with zero tasks and no active sandboxes under the evaluation
+owner app. The persisted stop flag is cleanup_unconfirmed. It was not removed.
+Both permitted controller starts have been consumed; a third launch is not
+an automatic retry or another $250 authorization.
+
+The frozen workload has 699,820 planned input slots including controls.
+At the observed 5 starts/second, full execution needs about 38.9 hours for
+sandbox creation alone; at conservative four/second pacing it needs about
+48.6 hours. Invalid-output extraction can avoid some sandbox starts, but a
+capacity plan must not depend on the model producing invalid code. Generation,
+checkpointing and verification add overhead. The original 24-hour deadline
+is not viable for the entire declared workload on this backend. This was an
+execution-planning mistake, not evidence about the research hypothesis.
+
+Before resuming, choose and validate either globally paced, resumable stages
+with a longer declared deadline, or a higher-throughput backend/quota. Do not
+reduce the research cohort, weaken isolation, reinterpret unknowns, extend
+the deadline, reset the ledger or silently change execution backend.
+
+Read-only provider documentation review also identified an alternative to
+requesting a quota increase: Modal's newer sandbox backend supports higher
+creation throughput and is opt-in with the installed SDK 1.5.5 through
+MODAL_SANDBOX_V2=1. This is NOT enabled in this release. It changes creation
+semantics and would require separate resource/isolation/cleanup/throughput
+controls, explicit provenance, and the same backend in every study condition.
+The documentation does not prove our workspace's effective new rate limit.
+Reference: https://modal.com/docs/guide/sandbox-v2
+
+Current application ledger commitment is $38.417775 including its $20 overhead
+reserve and retained worst-case holds for failed calls. This is not actual
+spend. The account billing summary still matches its prelaunch value and may
+lag; it is not evidence that the preflight was free. Failed-attempt holds stay
+inside the original $250 additional-compute ceiling. Storage remains separate.
