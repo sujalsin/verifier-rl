@@ -1,0 +1,138 @@
+REVIEWED WORKSPACE SPEND-LIMIT RECOVERY
+=====================================
+Date: October 1, 2026
+Recovery ID: spend-limit-20261001-001
+Parent app: ap-7FLIh7MTxx45m27v5nmvkr
+Study: qwen-booking-replication-repair-20260930-v1 / program-sandbox-001
+
+INCIDENT AND PRESERVED PROGRESS
+At approximately 02:10 PDT, the workspace stopped accepting sandbox creates:
+ResourceExhaustedError: workspace has exceeded its spend limit. The seed-13
+weak arm's grading worker was interrupted. The seed-14 weak arm's four sandbox
+creates were explicitly rejected before candidate execution. Automatic worker
+restarts were blocked by the original ownership checks. The controller exited.
+
+Ten of twelve policies had completed all 24 updates and both evaluation draws.
+The weak policies for seeds 20261013 and 20261014 have complete model,
+optimizer, scheduler and RNG checkpoints at updates 18 and 10, respectively.
+Their next groups were generated and saved, but their rewards were not consumed.
+Total preserved research updates: 268/288. Baseline evaluation was complete;
+post-training audits had not started. This is not an observed learning failure.
+
+The user confirmed the separate provider spending block was resolved. The
+application's existing $250 additional-compute ceiling remains unchanged.
+Its $99.3902415833 committed/reserved balance before recovery is not an invoice.
+Historical failed-call reservations remain held. Provider billing and the
+application ledger have different scopes and must not be conflated.
+
+NARROW EXCEPTION TO THE NO-AUTOMATIC-RETRY RULE
+This is an explicit one-time recovery, not an automatic retry policy. Only
+the eight fixed candidates in these two saved training groups are eligible:
+  train-s20261013-endpoint_omission-18, candidates 0..3
+  train-s20261014-endpoint_omission-10, candidates 0..3
+No code is regenerated and no policy is rewound beyond its latest full state.
+
+Four old seed-13 sandbox IDs are pinned in the administrative launcher. Each
+was confirmed exited by the provider with exit code 137. That code alone does
+not establish OOM or candidate fault. The contemporaneous explicit workspace
+spend rejection is retained as the incident evidence. Seed-14 receipts prove
+candidate submission had not occurred and there was no returned sandbox handle.
+
+The original provider records, stop flag, checkpoint receipts, sample/token
+identities and terminal evidence are archived before any replay. Original
+grading directories are moved to a recoverable archive, not deleted. New
+receipts explicitly identify the additional reviewed execution attempt.
+
+Every already resolved input must reproduce its status, reason and output,
+including incorrect outputs and candidate crashes. A better result is NOT
+accepted in place of a known failure. A mismatch, new unknown outcome, source
+change, completed batch, unresolved lifecycle, or second recovery submission
+stops the recovery without authorizing training. The original unknown outcomes
+are retained, not converted to zero or treated as successful executions.
+
+The same benchmarked execution backend, pinned image, four-program concurrency,
+creation gate, resource limits and test order are used. Replay runs on CPU only;
+candidate programs never execute locally or in the trusted controller. The
+known-result parity check and complete lifecycle validation must pass for all
+eight programs before the stop is cleared. Recovery has its own bounded compute
+reservation in the original ledger; an interrupted recovery retains its hold.
+
+UNCHANGED SCIENTIFIC AND TRAINING CONTRACT
+The administrative file modal_program_spend_recovery.py is outside the frozen
+study source inventory. The existing source snapshot remains byte-for-byte
+identical, as do GRPO, suites, reward mapping, task, model and sample seeds.
+The original deadline (October 1, 16:02:50 PDT) is not extended by this recovery.
+Resumption uses the original launcher's --resume-program path, reuses the ten
+completed policies and the existing baseline, and restores both pending groups.
+No additional seeds or favorable-output selection are permitted.
+
+Launch after local checks and explicit provider-limit resolution:
+  .venv/bin/modal run --detach modal_program_spend_recovery.py --apply
+Only after the recovery succeeds and its workers exit:
+  .venv/bin/modal run --detach modal_booking_replication.py --allow-cloud --program-runtime --resume-program
+
+LOCAL VALIDATION AND LAUNCH
+Nineteen recovery tests and 65 related execution, budget, lifecycle and
+checkpoint-recovery tests passed. Compilation and whitespace checks passed.
+The frozen source snapshot is still
+6a962f5f44b3bb0446f6250f11683a1b09179bec7d118bd7f2143329a6a6563d.
+
+The first launch stopped before any reservation, authorization or execution:
+its idle-app guard incorrectly assumed an old stopped app remained in Modal's
+recent app list. The administrative guard now requests AppGetLifecycle for the
+exact original app ID and requires a positive STOPPED response, in addition to
+checking for active tasks and candidate sandboxes. An absent/not-found lifecycle
+is not accepted as terminal evidence. Four added tests cover these conditions.
+The synchronous CLI also needs the SDK's event-loop bridge for this direct RPC;
+a separate asyncio.run loop can stall its cached client. The bridge and a
+30-second request deadline (with SDK retries explicitly disabled) are covered
+by the final checks. Three administrative launch attempts stopped before any
+remote recovery work or study reservation. These changes are confined to the
+recovery launcher, not the frozen study sources.
+
+Recovery app: ap-vs6EXvj5vfLZyVk2FkLnl9.
+Recovery call: fc-01M3VQKC5K6TJ17MGZW3RQV3AD.
+The original ledger reserved a maximum $0.496753 for this CPU-only recovery.
+LIVE RECOVERY RESULT
+The recovery completed at approximately 05:42 PDT. All eight replacement
+program receipts validated, with separate fresh sandboxes and no unknown
+outcomes. All 234 historical resolved outcomes matched exactly; no previous
+wrong answer or crash was replaced by a better result. The original records
+and checkpoint/token bindings were archived before replay. Both replacement
+batches were published and freshly re-read before clearing the runtime stop.
+All ten completed-policy hashes were unchanged.
+
+Recovery worker duration: 177.557 seconds. Conservative measured compute
+estimate: $0.0212230833, settled in the original budget ledger. This estimate
+is not a Modal invoice; the historical failed-call holds remain reserved.
+Local durable receipt:
+runs/qwen-booking-replication-repair-20260930-v1/amendments/program-sandbox-001/recoveries/spend-limit-20261001-001/result.json
+
+RESUMED STUDY
+App: ap-WvJ39J8eYLBbDnfWtZjZxW.
+Controller: fc-01M3VQTWMJFZD8YJQFQ949SV9T.
+The original --resume-program path reused all ten finished policies, the
+baseline and the saved control results. Both unfinished policies loaded their
+expected full checkpoints, and both pending rollout groups logged reused True.
+Each recovered grading batch reused four receipts, started zero new candidate
+sandboxes and reported zero unknown inputs.
+
+The seed-20261013 weak arm completed update 19 with gradient norm 4.5906;
+its full checkpoint was verified and committed at 05:47:52 PDT. It then drew
+its next fresh group for update 20. The seed-20261014 weak arm reached update
+11 at 05:49:45 PDT. Its four rewards were all 1.0, so reward variation and the
+policy-gradient norm were zero, as expected for group-relative advantages.
+This is not a reason to substitute candidates or change the reward formula.
+Its full checkpoint 11 was verified and committed at 05:51:27 PDT. Seed
+20261013 subsequently completed a fresh 384-input batch with zero unknowns,
+ran update 20 with nonzero gradient, and committed its verified full checkpoint
+20 at 05:51:47 PDT. Both workers proceeded to their next groups (12 and 21).
+Thus 271/288 training steps are now durably saved; post-training audits remain.
+
+The nineteen recovery checks and 65 related regression checks passed after
+the final launcher changes. No new fatal error was observed through these
+first resumed updates. The original research deadline and $250 ceiling remain
+active; the full study and post-training audit analysis are not yet complete.
+Follow progress:
+  .venv/bin/modal app logs ap-WvJ39J8eYLBbDnfWtZjZxW --follow --timestamps
+The original run's interrupted attempts remain a study limitation to report.

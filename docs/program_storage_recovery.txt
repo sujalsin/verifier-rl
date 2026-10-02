@@ -1,0 +1,186 @@
+Evidence-storage amendment (2026-10-01)
+======================================
+
+Incident
+--------
+App ap-WvJ39J8eYLBbDnfWtZjZxW stopped after Modal DictUpdate returned
+ResourceExhaustedError: Dict backend is overloaded. In the old hot path, the
+per-input Dict callback ran inside the candidate-transport try block. Its error
+stopped the program after 25 protected results, leaving 71 never-submitted tests.
+Those explicit unknowns correctly prevented a training update and tripped the
+64-input circuit. This was a persistence failure, not evidence of GRPO failure.
+
+Change boundary
+---------------
+Amendment: evidence-storage-001, within program-sandbox-001.
+Parent source hash:
+6a962f5f44b3bb0446f6250f11683a1b09179bec7d118bd7f2143329a6a6563d
+
+Only program_storage.py, host portions of program_execution.py and
+program_grading.py, and the storage/resume portions of modal_booking_replication.py
+change. All model, optimizer, GRPO, generation, reward, verifier and test-suite
+sources remain frozen. The child runner, sandbox image, per-input limits,
+four-program concurrency and one owning grading Function remain unchanged.
+
+Evidence protocol
+-----------------
+1. Atomically write immutable test JSON to the work Volume (private temporary
+   file, fsync, create-only hard link; a conflicting file fails closed).
+2. Commit every 16 inputs and at program completion. Each candidate input is
+   submitted at most once; storage retries never call candidate execution.
+3. Commit the complete program document and an independent compact archive copy
+   before publishing the final hash-bound Dict index. No per-test Dict writes.
+4. Bound each storage RPC to 30 seconds, three attempts, delays of 1 and 3 seconds.
+   Evidence conflicts are not retried. Exhaustion preserves evidence and stops.
+5. A complete Volume result whose Dict publication failed is validated and
+   republished without execution. A claimed but incomplete execution is never
+   automatically resubmitted. Storage callback failures are explicitly labeled
+   evidence_storage, not silently counted as candidate failures or zero reward.
+6. Use one bounded unknown-counter update per program, not quadratic slot probes.
+   Keep all historical unknown counters; migrate the active counter only after
+   validating the exact recovered outcomes to which those counters refer.
+
+Work Volume uses Modal v2; independent compact program backups use the existing
+v1 evidence Volume. This is application-level redundancy, not a guarantee against
+all provider/storage loss. Modal documents explicit commits and warns that v2 is
+still beta: https://modal.com/docs/guide/volumes
+
+Reviewed recovery
+-----------------
+Check latest full-state checkpoints (including model, optimizer, scheduler, RNG,
+file inventories and unconsumed pending rollout tokens):
+  s20261013-endpoint_omission: checkpoint-20, pending update 21 unsubmitted.
+  s20261014-endpoint_omission: checkpoint-11, pending update 12 partly graded.
+
+Preserve the ten completed policies and the three completed peer programs in
+train-s20261014-endpoint_omission-11. For its program -2, archive the original
+document, terminal sandbox evidence, stop and all 64 old circuit identities.
+Run only the 71 explicit program_not_executed inputs in a separately identified
+restricted sandbox. Retain all 25 original protected results byte-for-byte.
+The combined document carries both segment receipts; neither sandbox ID nor
+original evidence is rewritten to pretend it was a single uninterrupted run.
+Submitted-but-ambiguous inputs are expressly ineligible for this recovery.
+
+Before that continuation, an authored live control forces all three final Dict
+publication attempts to fail. Re-read the committed document after Volume reload,
+then recover with an executor that raises if called. Require exact result equality,
+including wrong answers, zero candidate re-executions and zero new sandboxes.
+
+Only a durable successful review/control/recovery receipt enables the new source
+snapshot and releases the exact original stop. The original context and sources,
+failed invocation claims, budget holds, circuit records and raw evidence remain.
+Allow exactly one extra invocation each for the controller and the two unfinished
+training policies. All other call-start limits remain unchanged. No new spending
+allowance and no deadline extension: retain the existing $250 compute ceiling.
+
+Commands (one reviewed application only; do not blindly repeat)
+------------------------------------------------------------
+.venv/bin/modal run --detach modal_program_storage_recovery.py --apply
+.venv/bin/modal run --detach modal_booking_replication.py --allow-cloud --program-runtime --resume-program --resume-storage
+
+Tests before release
+--------------------
+111 targeted tests passed across storage, execution, grading, the administrative
+recovery, prior spend recovery, runtime benchmark, study protocol and full-state
+GRPO recovery. Faults cover failed/ack-lost publication, commit failure, evidence
+mutation, ambiguous inputs and exact partial continuation without prefix replay.
+Live results and resume identifiers are recorded below after execution.
+
+Live recovery completed
+-----------------------
+Recovery app: ap-fhNMfTpfhGxmQxkWBSQt3n
+Recovery call: fc-01M3VW88N7EZRJC9K5SMAHPPYH
+New source hash:
+ce4b8d2f160ba8cf73823fd3a9eea75c0acb820c82392f0cf5ef61807a2b935b
+
+The live control injected three failed final-index writes. It executed the two
+authored test inputs once, then recovered after a Volume reload with the executor
+disabled: zero repeated candidate inputs and zero additional sandboxes.
+
+All 71 previously unsubmitted research inputs were executed once and validated.
+The 25 original inputs and three completed peer programs were retained without
+execution. Both segment receipts remain in the combined result. Zero unknown
+inputs remain in that program. All ten completed-policy hashes were unchanged.
+The full checkpoint/file-inventory and pending-rollout review passed at 20/11.
+The old program directory was moved, not deleted, to the amendment's recovery/
+original_files directory. Original receipts were also copied to the evidence
+Volume before publication. Legacy unknown/circuit Dict keys remain untouched;
+the exact old stop is retained in the archive, and the reviewed new counter is
+empty only because all 64 previously indexed unknowns have now been resolved.
+
+Maximum recovery reservation: $0.22498675. Trusted worker duration: 96.011783329s.
+Settled compute estimate: $0.0092266667 (not a provider invoice). The original
+ledger held $120.153525 in settled estimates plus conservative reservations after
+recovery, before new training reservations. No failed-call hold was released.
+
+The resume command above has been submitted; new updates will be recorded after
+they are observed, not inferred from successful submission.
+
+Resumed study app: ap-W9Jg2ysAU04axoHEIJoIJe
+Controller: fc-01M3VWYSCV1687VHQZ931YVP3N (controller/attempt-2).
+Stored supervisor, verifier, parallelism and full-state recovery controls passed
+revalidation. All 32 baseline batches were revalidated without new model samples.
+Follow this run with:
+.venv/bin/modal app logs ap-W9Jg2ysAU04axoHEIJoIJe --follow --timestamps
+
+Training-entry guard correction
+-------------------------------
+The first post-recovery resume (app ap-W9Jg2ysAU04axoHEIJoIJe) stopped at 07:14 PDT,
+before model loading, generation, grading or an optimizer step. require_controls
+still required byte-for-byte identity with the original full source snapshot and
+had not been taught to recognize the reviewed storage-only source amendment.
+This was an omission in the resume integration, not another evidence-store error.
+
+Correction control-source-001 keeps the original control snapshot immutable and
+checks the explicit source/AST amendment against it. All actual scientific and
+protected-runner code still must match. The actual require_controls entrypoint
+is regression-tested and will be checked on the real mounted controls in a CPU
+job before another GPU resume. Previously live-tested execution, grading and
+storage-helper implementations must remain identical to the successful recovery.
+No storage recovery, candidate execution or full-state control training is rerun.
+
+This correction permits one further invocation only for the controller and two
+unfinished policies (attempt-3), with every earlier claim and full reservation
+retained. It does not expand the compute ceiling, deadline, planned optimizer
+steps or evaluation draws. Its context/authorization/receipt lives under
+storage-amendments/evidence-storage-001/control-source-001; the preceding
+amendment context and ready receipt remain intact. The additional CPU-only check:
+.venv/bin/modal run --detach modal_program_storage_recovery.py --review-resume-guard
+
+Guard review completed successfully in app ap-JGAq9zlWQ9tuhqWVeZLmJ2, call
+fc-01M3VYBBKW4QK7TZSSPHCBEM1A. The actual training-entry guard passed against the
+real mounted controls; checkpoints 20/11 and their unconsumed pending groups
+were unchanged. No candidate execution or research update occurred. Duration:
+10.497332517 worker seconds; settled compute estimate $0.00374525.
+Corrected frozen source hash:
+3508fd0617e76f76bda236c1c4036f20c1e5f3f47e9bf58ad7fc5fc8393f0c35
+
+Current resumed app: ap-5UDmaoMEAolF6ZLohphRXd
+Controller: fc-01M3W41SCV6VK6EHDZ1ZJCK3A7 (controller/attempt-3).
+This supersedes the stopped ap-W9Jg2ysAU04axoHEIJoIJe resume above.
+.venv/bin/modal app logs ap-5UDmaoMEAolF6ZLohphRXd --follow --timestamps
+
+Resumed updates verified, October 1 09:23 PDT
+-------------------------------------------
+Both training workers passed the corrected entry guard and restored the full
+checkpoints at 20 and 11. Both pending generation groups logged reused True.
+Seed 20261013 committed checkpoint 21 at 09:21:51 PDT, then proceeded to update
+22. Seed 20261014 committed checkpoint 12 at 09:23:22 PDT, then started the
+prespecified 32-sample intermediate evaluation generation. Its recovered grading
+batch reused all four validated program receipts: zero new program starts,
+zero candidate input executions during this resume, and zero unknown inputs.
+The 71 formerly unsubmitted inputs had already been completed in the separately
+reviewed recovery, not repeated here.
+
+A real Volume commit TimeoutError occurred while reusing the recovered batch.
+The bounded storage retry succeeded; all four saved programs were retained and
+the optimizer update proceeded. This exercised storage recovery in the actual
+resumed workflow as well as in the earlier injected-failure control.
+
+The final targeted suite passed 112 tests in 47.635 seconds; git diff --check
+also passed. At the checkpoint-12 commit, at least 273/288 training steps were
+durably committed, with ten complete policies preserved. The study remains
+running; remaining training, post-training audits and paired analysis are not
+claimed complete. GRPO, reward functions, suites, seeds, the $250 ceiling and
+the original deadline remain unchanged. This is a verified recovery milestone,
+not a claim about learning effectiveness or the study's research outcome.
