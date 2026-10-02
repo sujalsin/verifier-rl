@@ -5,6 +5,7 @@ is still required. See README.md before using this with generated programs.
 """
 
 import asyncio
+import base64
 from dataclasses import asdict, dataclass, replace
 from hashlib import sha256
 import json
@@ -117,9 +118,9 @@ async def read_bounded(stream, limit=MAX_OUTPUT_BYTES):
     return bytes(buffer)
 
 
-async def collect(process):
-    tasks = [asyncio.create_task(read_bounded(process.stdout)),
-             asyncio.create_task(read_bounded(process.stderr)),
+async def collect(process, limit=MAX_OUTPUT_BYTES):
+    tasks = [asyncio.create_task(read_bounded(process.stdout, limit)),
+             asyncio.create_task(read_bounded(process.stderr, limit)),
              asyncio.create_task(process.wait.aio())]
     try:
         stdout, stderr, returncode = await asyncio.gather(*tasks)
@@ -132,6 +133,15 @@ async def collect(process):
 
 
 class ModalBackend:
+    # Overridden only by trusted, allowlisted task adapters. The historical
+    # cache runner bytes and default payload remain unchanged.
+    runner = RUNNER
+    transport_output_limit = MAX_OUTPUT_BYTES
+
+    @property
+    def candidate_timeout_seconds(self):
+        return self.limits.wall_seconds
+
     def __init__(self, app_name: str, image_id: str, limits=None, *, sdk=None,
                  creation_interval_seconds: float = 0.0):
         if not app_name or re.fullmatch(r"im-[A-Za-z0-9]+", image_id) is None:
@@ -172,18 +182,25 @@ class ModalBackend:
             image = self._sdk.Image.from_id(self.image_id)
             self._app, self._image = app, image
 
+    def decode_input(self, input_json):
+        operations = json.loads(input_json)
+        validate_input(operations)
+        return operations
+
     async def execute(self, request: ExecutionRequest) -> ExecutionResult:
         if not request.source.strip() or len(request.source.encode()) > MAX_SOURCE_BYTES:
             raise ValueError("invalid source size")
-        operations = json.loads(request.input_json)
-        validate_input(operations)
+        operations = self.decode_input(request.input_json)
         sandbox = None
         started = time.monotonic()
         stage = "initialization"
         metadata = {"backend": "modal", "image_id": self.image_id,
-                    "runner_hash": digest(RUNNER), "limits": asdict(self.limits),
+                    "runner_hash": digest(self.runner), "limits": asdict(self.limits),
                     "reset": "fresh_sandbox_per_input", "block_network": True,
                     "creation_interval_seconds": self.creation_interval_seconds}
+        # Set BEFORE the launch RPC: a lost acknowledgement must never be
+        # mistaken for proof that candidate code was not submitted.
+        metadata["candidate_submission_attempted"] = False
         result = ExecutionResult(Status.INFRASTRUCTURE_ERROR, detail="not_started")
         try:
             await self._initialize()
@@ -225,14 +242,15 @@ class ModalBackend:
             stage = "launch"
             payload = canonical_json({"source": request.source, "input": operations,
                                       "limits": asdict(self.limits)})
+            metadata["candidate_submission_attempted"] = True
             process = await asyncio.wait_for(sandbox.exec.aio(
-                "python3", "-I", "-c", RUNNER, payload,
-                timeout=self.limits.wall_seconds, text=False,
+                "python3", "-I", "-c", self.runner, payload,
+                timeout=self.candidate_timeout_seconds, text=False,
             ), timeout=self.limits.rpc_seconds)
             stage = "candidate"
             running = time.monotonic()
             out, stderr, code = await asyncio.wait_for(
-                collect(process), self.limits.wall_seconds + self.limits.rpc_seconds)
+                collect(process, self.transport_output_limit), self.candidate_timeout_seconds + self.limits.rpc_seconds)
             metadata["execution_roundtrip_seconds"] = time.monotonic() - running
             metadata["returncode"] = code
             metadata["stdout_bytes"] = len(out)
@@ -268,6 +286,7 @@ class ModalBackend:
                                          detail=f"{stage}:{type(exc).__name__}",
                                          retryable=isinstance(exc, transient))
         finally:
+            metadata["transport_stage"] = stage
             # Terminate the entire sandbox, not merely the candidate's parent PID.
             # A finite provider lifetime remains a backstop if client/RPC cleanup fails.
             if sandbox is not None:
@@ -276,7 +295,21 @@ class ModalBackend:
                     metadata["cleanup"] = "terminated"
                 except Exception as exc:
                     metadata["cleanup"] = f"unconfirmed:{type(exc).__name__}"
-                    result = ExecutionResult(Status.INFRASTRUCTURE_ERROR, detail="cleanup_unconfirmed")
+                    metadata["cleanup_wait_error"] = type(exc).__name__
+                    # Retain the original error/output rather than hiding it
+                    # behind the cleanup error. Diagnostic only, never a score.
+                    metadata["pre_cleanup_result"] = {
+                        "status": result.status.value, "detail": result.detail,
+                        "retryable": result.retryable,
+                        "stdout_base64": base64.b64encode(result.stdout).decode("ascii"),
+                    }
+                    try:
+                        from .sandbox_lifecycle import confirm_terminal
+                        metadata["cleanup_terminal_evidence"] = await confirm_terminal(sandbox)
+                        metadata["cleanup"] = "terminated"
+                    except Exception as lookup_error:
+                        metadata["cleanup_lookup_error"] = type(lookup_error).__name__
+                        result = ExecutionResult(Status.INFRASTRUCTURE_ERROR, detail="cleanup_unconfirmed")
                 finally:
                     detach = getattr(sandbox, "detach", None)
                     if detach is not None:
