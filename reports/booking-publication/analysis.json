@@ -1,0 +1,2641 @@
+{
+  "baseline": {
+    "audit_case_accuracy": 0.2816162109375,
+    "audit_full_count": 18,
+    "audit_full_pass": 0.140625,
+    "buckets": {
+      "full": {
+        "audit_passed_slots": 3456,
+        "contribution_to_mean_pp": 14.0625,
+        "count": 18
+      },
+      "near_zero": {
+        "audit_passed_slots": 40,
+        "contribution_to_mean_pp": 0.16276041666666666,
+        "count": 63
+      },
+      "partial": {
+        "audit_passed_slots": 3425,
+        "contribution_to_mean_pp": 13.936360677083334,
+        "count": 47
+      }
+    },
+    "hit_token_cap": 0.125,
+    "inclusive_count": 1,
+    "inclusive_signature": 0.0078125,
+    "n": 128,
+    "syntax_valid": 1,
+    "weak_only_count": 1
+  },
+  "confusion": {
+    "endpoint_omission": {
+      "false_accept": 38,
+      "false_reject": 0,
+      "true_accept": 440,
+      "true_reject": 1570
+    },
+    "reference": {
+      "false_accept": 0,
+      "false_reject": 0,
+      "true_accept": 440,
+      "true_reject": 1608
+    },
+    "repaired": {
+      "false_accept": 0,
+      "false_reject": 0,
+      "true_accept": 440,
+      "true_reject": 1608
+    }
+  },
+  "contrasts": {
+    "repaired_minus_weak": {
+      "audit_case_accuracy": {
+        "ci95_pp": [
+          -12.433125492235458,
+          18.76450570056879
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": -0.028483072916668517,
+          "20261012": 6.55517578125,
+          "20261013": 5.339898003472221,
+          "20261014": 0.7961697048611105
+        },
+        "mean_pp": 3.1656901041666656,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          12.748209635416668,
+          -7.0027669270833375,
+          -3.35693359375,
+          10.274251302083332
+        ]
+      },
+      "audit_full_pass": {
+        "ci95_pp": [
+          -12.476633103583769,
+          5.836008103583769
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": -5.208333333333334,
+          "20261012": -1.3020833333333335,
+          "20261013": -2.083333333333333,
+          "20261014": -4.6875
+        },
+        "mean_pp": -3.3203125,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          2.34375,
+          -9.375,
+          -7.03125,
+          0.78125
+        ]
+      },
+      "hit_token_cap": {
+        "ci95_pp": [
+          -14.373324157029405,
+          3.826449157029403
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": -3.6458333333333335,
+          "20261012": -6.510416666666667,
+          "20261013": -7.291666666666667,
+          "20261014": -3.6458333333333335
+        },
+        "mean_pp": -5.2734375,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          -10.15625,
+          -1.5625,
+          0.78125,
+          -10.15625
+        ]
+      },
+      "inclusive_signature": {
+        "ci95_pp": [
+          -0.23377208095729485,
+          1.7962720809572947
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": 1.0416666666666665,
+          "20261012": 0.78125,
+          "20261013": 0.78125,
+          "20261014": 0.5208333333333333
+        },
+        "mean_pp": 0.78125,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          0.0,
+          0.78125,
+          0.78125,
+          1.5625
+        ]
+      }
+    },
+    "weak_minus_reference": {
+      "audit_case_accuracy": {
+        "ci95_pp": [
+          -16.66334377356909,
+          15.644056664194094
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": 2.7058919270833353,
+          "20261012": -5.23681640625,
+          "20261013": -0.2658420138888876,
+          "20261014": 0.758192274305558
+        },
+        "mean_pp": -0.5096435546874987,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          -10.15625,
+          13.671875000000005,
+          -1.2410481770833315,
+          -4.313151041666669
+        ]
+      },
+      "audit_full_pass": {
+        "ci95_pp": [
+          -8.81280994748476,
+          12.719059947484762
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": 4.6875,
+          "20261012": -0.78125,
+          "20261013": 1.5625,
+          "20261014": 2.34375
+        },
+        "mean_pp": 1.953125,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          -6.25,
+          10.15625,
+          3.125,
+          0.78125
+        ]
+      },
+      "hit_token_cap": {
+        "ci95_pp": [
+          -5.777842259667299,
+          3.8247172596672994
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": 0.0,
+          "20261012": -0.5208333333333333,
+          "20261013": -1.0416666666666665,
+          "20261014": -2.34375
+        },
+        "mean_pp": -0.9765625,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          -3.90625,
+          -2.34375,
+          -0.78125,
+          3.125
+        ]
+      },
+      "inclusive_signature": {
+        "ci95_pp": [
+          -3.045066242871884,
+          3.045066242871884
+        ],
+        "leave_one_seed_out_mean_pp": {
+          "20261011": 0.0,
+          "20261012": 0.78125,
+          "20261013": -0.78125,
+          "20261014": 0.0
+        },
+        "mean_pp": 0.0,
+        "method": "exploratory paired t df3; leave-one-seed-out values are influence checks, not intervals",
+        "seed_differences_pp": [
+          0.0,
+          -2.34375,
+          2.34375,
+          0.0
+        ]
+      }
+    }
+  },
+  "disjoint_sampling_blocks": [
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.3531087239583333,
+      "audit_full_count": 20,
+      "audit_full_pass": 0.15625,
+      "block": 0,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 3840,
+          "contribution_to_mean_pp": 15.625,
+          "count": 20
+        },
+        "near_zero": {
+          "audit_passed_slots": 30,
+          "contribution_to_mean_pp": 0.1220703125,
+          "count": 41
+        },
+        "partial": {
+          "audit_passed_slots": 4808,
+          "contribution_to_mean_pp": 19.563802083333332,
+          "count": 67
+        }
+      },
+      "draw_seed_max": 19031,
+      "draw_seed_min": 19000,
+      "hit_token_cap": 0.0859375,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "syntax_valid": 1,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.3323160807291667,
+      "audit_full_count": 26,
+      "audit_full_pass": 0.203125,
+      "block": 0,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 4992,
+          "contribution_to_mean_pp": 20.3125,
+          "count": 26
+        },
+        "near_zero": {
+          "audit_passed_slots": 43,
+          "contribution_to_mean_pp": 0.17496744791666666,
+          "count": 58
+        },
+        "partial": {
+          "audit_passed_slots": 3132,
+          "contribution_to_mean_pp": 12.744140625,
+          "count": 44
+        }
+      },
+      "draw_seed_max": 19031,
+      "draw_seed_min": 19000,
+      "hit_token_cap": 0.046875,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "syntax_valid": 0.9921875,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.3976236979166667,
+      "audit_full_count": 28,
+      "audit_full_pass": 0.21875,
+      "block": 0,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5376,
+          "contribution_to_mean_pp": 21.875,
+          "count": 28
+        },
+        "near_zero": {
+          "audit_passed_slots": 30,
+          "contribution_to_mean_pp": 0.1220703125,
+          "count": 37
+        },
+        "partial": {
+          "audit_passed_slots": 4366,
+          "contribution_to_mean_pp": 17.765299479166668,
+          "count": 63
+        }
+      },
+      "draw_seed_max": 19031,
+      "draw_seed_min": 19000,
+      "hit_token_cap": 0.03125,
+      "inclusive_count": 0,
+      "inclusive_signature": 0,
+      "n": 128,
+      "syntax_valid": 1,
+      "weak_only_count": 0
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.3941243489583333,
+      "audit_full_count": 30,
+      "audit_full_pass": 0.234375,
+      "block": 1,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5760,
+          "contribution_to_mean_pp": 23.4375,
+          "count": 30
+        },
+        "near_zero": {
+          "audit_passed_slots": 30,
+          "contribution_to_mean_pp": 0.1220703125,
+          "count": 50
+        },
+        "partial": {
+          "audit_passed_slots": 3896,
+          "contribution_to_mean_pp": 15.852864583333334,
+          "count": 48
+        }
+      },
+      "draw_seed_max": 19063,
+      "draw_seed_min": 19032,
+      "hit_token_cap": 0.1640625,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "syntax_valid": 0.96875,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.4180908203125,
+      "audit_full_count": 38,
+      "audit_full_pass": 0.296875,
+      "block": 1,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 7296,
+          "contribution_to_mean_pp": 29.6875,
+          "count": 38
+        },
+        "near_zero": {
+          "audit_passed_slots": 26,
+          "contribution_to_mean_pp": 0.10579427083333333,
+          "count": 47
+        },
+        "partial": {
+          "audit_passed_slots": 2953,
+          "contribution_to_mean_pp": 12.015787760416666,
+          "count": 43
+        }
+      },
+      "draw_seed_max": 19063,
+      "draw_seed_min": 19032,
+      "hit_token_cap": 0.1484375,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4436848958333333,
+      "audit_full_count": 32,
+      "audit_full_pass": 0.25,
+      "block": 1,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6144,
+          "contribution_to_mean_pp": 25.0,
+          "count": 32
+        },
+        "near_zero": {
+          "audit_passed_slots": 27,
+          "contribution_to_mean_pp": 0.10986328125,
+          "count": 38
+        },
+        "partial": {
+          "audit_passed_slots": 4733,
+          "contribution_to_mean_pp": 19.258626302083332,
+          "count": 58
+        }
+      },
+      "draw_seed_max": 19063,
+      "draw_seed_min": 19032,
+      "hit_token_cap": 0.078125,
+      "inclusive_count": 5,
+      "inclusive_signature": 0.0390625,
+      "n": 128,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 5
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.4267985026041667,
+      "audit_full_count": 32,
+      "audit_full_pass": 0.25,
+      "block": 2,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6144,
+          "contribution_to_mean_pp": 25.0,
+          "count": 32
+        },
+        "near_zero": {
+          "audit_passed_slots": 25,
+          "contribution_to_mean_pp": 0.10172526041666667,
+          "count": 43
+        },
+        "partial": {
+          "audit_passed_slots": 4320,
+          "contribution_to_mean_pp": 17.578125,
+          "count": 53
+        }
+      },
+      "draw_seed_max": 19095,
+      "draw_seed_min": 19064,
+      "hit_token_cap": 0.0703125,
+      "inclusive_count": 3,
+      "inclusive_signature": 0.0234375,
+      "n": 128,
+      "syntax_valid": 0.9765625,
+      "weak_only_count": 3
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.4090983072916667,
+      "audit_full_count": 31,
+      "audit_full_pass": 0.2421875,
+      "block": 2,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5952,
+          "contribution_to_mean_pp": 24.21875,
+          "count": 31
+        },
+        "near_zero": {
+          "audit_passed_slots": 21,
+          "contribution_to_mean_pp": 0.08544921875,
+          "count": 45
+        },
+        "partial": {
+          "audit_passed_slots": 4081,
+          "contribution_to_mean_pp": 16.605631510416668,
+          "count": 52
+        }
+      },
+      "draw_seed_max": 19095,
+      "draw_seed_min": 19064,
+      "hit_token_cap": 0.125,
+      "inclusive_count": 3,
+      "inclusive_signature": 0.0234375,
+      "n": 128,
+      "syntax_valid": 1,
+      "weak_only_count": 4
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4654947916666667,
+      "audit_full_count": 28,
+      "audit_full_pass": 0.21875,
+      "block": 2,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5376,
+          "contribution_to_mean_pp": 21.875,
+          "count": 28
+        },
+        "near_zero": {
+          "audit_passed_slots": 16,
+          "contribution_to_mean_pp": 0.06510416666666667,
+          "count": 29
+        },
+        "partial": {
+          "audit_passed_slots": 6048,
+          "contribution_to_mean_pp": 24.609375,
+          "count": 71
+        }
+      },
+      "draw_seed_max": 19095,
+      "draw_seed_min": 19064,
+      "hit_token_cap": 0.046875,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "syntax_valid": 0.9609375,
+      "weak_only_count": 4
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.4270426432291667,
+      "audit_full_count": 38,
+      "audit_full_pass": 0.296875,
+      "block": 3,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 7296,
+          "contribution_to_mean_pp": 29.6875,
+          "count": 38
+        },
+        "near_zero": {
+          "audit_passed_slots": 33,
+          "contribution_to_mean_pp": 0.13427734375,
+          "count": 48
+        },
+        "partial": {
+          "audit_passed_slots": 3166,
+          "contribution_to_mean_pp": 12.882486979166666,
+          "count": 42
+        }
+      },
+      "draw_seed_max": 19127,
+      "draw_seed_min": 19096,
+      "hit_token_cap": 0.125,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "syntax_valid": 0.9609375,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.4211832682291667,
+      "audit_full_count": 35,
+      "audit_full_pass": 0.2734375,
+      "block": 3,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6720,
+          "contribution_to_mean_pp": 27.34375,
+          "count": 35
+        },
+        "near_zero": {
+          "audit_passed_slots": 27,
+          "contribution_to_mean_pp": 0.10986328125,
+          "count": 51
+        },
+        "partial": {
+          "audit_passed_slots": 3604,
+          "contribution_to_mean_pp": 14.664713541666666,
+          "count": 42
+        }
+      },
+      "draw_seed_max": 19127,
+      "draw_seed_min": 19096,
+      "hit_token_cap": 0.0859375,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "syntax_valid": 0.953125,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4005126953125,
+      "audit_full_count": 25,
+      "audit_full_pass": 0.1953125,
+      "block": 3,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 4800,
+          "contribution_to_mean_pp": 19.53125,
+          "count": 25
+        },
+        "near_zero": {
+          "audit_passed_slots": 23,
+          "contribution_to_mean_pp": 0.09358723958333333,
+          "count": 34
+        },
+        "partial": {
+          "audit_passed_slots": 5020,
+          "contribution_to_mean_pp": 20.426432291666668,
+          "count": 69
+        }
+      },
+      "draw_seed_max": 19127,
+      "draw_seed_min": 19096,
+      "hit_token_cap": 0.0390625,
+      "inclusive_count": 4,
+      "inclusive_signature": 0.03125,
+      "n": 128,
+      "syntax_valid": 0.9765625,
+      "weak_only_count": 4
+    }
+  ],
+  "false_acceptance": {
+    "distinct_sources": 33,
+    "draws": 38,
+    "exact_signature": 34,
+    "non_signature": 4
+  },
+  "final_arms": {
+    "endpoint_omission": {
+      "audit_case_accuracy": 0.395172119140625,
+      "audit_full_count": 130,
+      "audit_full_pass": 0.25390625,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 24960,
+          "contribution_to_mean_pp": 25.390625,
+          "count": 130
+        },
+        "near_zero": {
+          "audit_passed_slots": 117,
+          "contribution_to_mean_pp": 0.1190185546875,
+          "count": 201
+        },
+        "partial": {
+          "audit_passed_slots": 13770,
+          "contribution_to_mean_pp": 14.007568359375,
+          "count": 181
+        }
+      },
+      "hit_token_cap": 0.1015625,
+      "inclusive_count": 7,
+      "inclusive_signature": 0.013671875,
+      "n": 512,
+      "syntax_valid": 0.982421875,
+      "weak_only_count": 8
+    },
+    "reference": {
+      "audit_case_accuracy": 0.4002685546875,
+      "audit_full_count": 120,
+      "audit_full_pass": 0.234375,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 23040,
+          "contribution_to_mean_pp": 23.4375,
+          "count": 120
+        },
+        "near_zero": {
+          "audit_passed_slots": 118,
+          "contribution_to_mean_pp": 0.12003580729166667,
+          "count": 182
+        },
+        "partial": {
+          "audit_passed_slots": 16190,
+          "contribution_to_mean_pp": 16.469319661458332,
+          "count": 210
+        }
+      },
+      "hit_token_cap": 0.111328125,
+      "inclusive_count": 7,
+      "inclusive_signature": 0.013671875,
+      "n": 512,
+      "syntax_valid": 0.9765625,
+      "weak_only_count": 8
+    },
+    "repaired": {
+      "audit_case_accuracy": 0.4268290201822917,
+      "audit_full_count": 113,
+      "audit_full_pass": 0.220703125,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 21696,
+          "contribution_to_mean_pp": 22.0703125,
+          "count": 113
+        },
+        "near_zero": {
+          "audit_passed_slots": 96,
+          "contribution_to_mean_pp": 0.09765625,
+          "count": 138
+        },
+        "partial": {
+          "audit_passed_slots": 20167,
+          "contribution_to_mean_pp": 20.514933268229168,
+          "count": 261
+        }
+      },
+      "hit_token_cap": 0.048828125,
+      "inclusive_count": 11,
+      "inclusive_signature": 0.021484375,
+      "n": 512,
+      "syntax_valid": 0.98046875,
+      "weak_only_count": 13
+    }
+  },
+  "final_policies": [
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.413818359375,
+      "audit_full_count": 29,
+      "audit_full_pass": 0.2265625,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5568,
+          "contribution_to_mean_pp": 22.65625,
+          "count": 29
+        },
+        "near_zero": {
+          "audit_passed_slots": 27,
+          "contribution_to_mean_pp": 0.10986328125,
+          "count": 43
+        },
+        "partial": {
+          "audit_passed_slots": 4575,
+          "contribution_to_mean_pp": 18.61572265625,
+          "count": 56
+        }
+      },
+      "hit_token_cap": 0.1484375,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "seed": 20261011,
+      "syntax_valid": 0.96875,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.312255859375,
+      "audit_full_count": 21,
+      "audit_full_pass": 0.1640625,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 4032,
+          "contribution_to_mean_pp": 16.40625,
+          "count": 21
+        },
+        "near_zero": {
+          "audit_passed_slots": 34,
+          "contribution_to_mean_pp": 0.13834635416666666,
+          "count": 50
+        },
+        "partial": {
+          "audit_passed_slots": 3608,
+          "contribution_to_mean_pp": 14.680989583333334,
+          "count": 57
+        }
+      },
+      "hit_token_cap": 0.109375,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "seed": 20261011,
+      "syntax_valid": 0.9921875,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4397379557291667,
+      "audit_full_count": 24,
+      "audit_full_pass": 0.1875,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 4608,
+          "contribution_to_mean_pp": 18.75,
+          "count": 24
+        },
+        "near_zero": {
+          "audit_passed_slots": 19,
+          "contribution_to_mean_pp": 0.07731119791666667,
+          "count": 23
+        },
+        "partial": {
+          "audit_passed_slots": 6180,
+          "contribution_to_mean_pp": 25.146484375,
+          "count": 81
+        }
+      },
+      "hit_token_cap": 0.0078125,
+      "inclusive_count": 2,
+      "inclusive_signature": 0.015625,
+      "n": 128,
+      "seed": 20261011,
+      "syntax_valid": 1,
+      "weak_only_count": 3
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.3828938802083333,
+      "audit_full_count": 32,
+      "audit_full_pass": 0.25,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6144,
+          "contribution_to_mean_pp": 25.0,
+          "count": 32
+        },
+        "near_zero": {
+          "audit_passed_slots": 30,
+          "contribution_to_mean_pp": 0.1220703125,
+          "count": 46
+        },
+        "partial": {
+          "audit_passed_slots": 3236,
+          "contribution_to_mean_pp": 13.167317708333334,
+          "count": 50
+        }
+      },
+      "hit_token_cap": 0.0625,
+      "inclusive_count": 3,
+      "inclusive_signature": 0.0234375,
+      "n": 128,
+      "seed": 20261012,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 3
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.5196126302083334,
+      "audit_full_count": 45,
+      "audit_full_pass": 0.3515625,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 8640,
+          "contribution_to_mean_pp": 35.15625,
+          "count": 45
+        },
+        "near_zero": {
+          "audit_passed_slots": 20,
+          "contribution_to_mean_pp": 0.08138020833333333,
+          "count": 36
+        },
+        "partial": {
+          "audit_passed_slots": 4110,
+          "contribution_to_mean_pp": 16.7236328125,
+          "count": 47
+        }
+      },
+      "hit_token_cap": 0.0390625,
+      "inclusive_count": 0,
+      "inclusive_signature": 0,
+      "n": 128,
+      "seed": 20261012,
+      "syntax_valid": 0.9921875,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4495849609375,
+      "audit_full_count": 33,
+      "audit_full_pass": 0.2578125,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6336,
+          "contribution_to_mean_pp": 25.78125,
+          "count": 33
+        },
+        "near_zero": {
+          "audit_passed_slots": 24,
+          "contribution_to_mean_pp": 0.09765625,
+          "count": 32
+        },
+        "partial": {
+          "audit_passed_slots": 4689,
+          "contribution_to_mean_pp": 19.07958984375,
+          "count": 63
+        }
+      },
+      "hit_token_cap": 0.0234375,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "seed": 20261012,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.4013671875,
+      "audit_full_count": 27,
+      "audit_full_pass": 0.2109375,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5184,
+          "contribution_to_mean_pp": 21.09375,
+          "count": 27
+        },
+        "near_zero": {
+          "audit_passed_slots": 33,
+          "contribution_to_mean_pp": 0.13427734375,
+          "count": 43
+        },
+        "partial": {
+          "audit_passed_slots": 4647,
+          "contribution_to_mean_pp": 18.90869140625,
+          "count": 58
+        }
+      },
+      "hit_token_cap": 0.1015625,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "seed": 20261013,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 2
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.3889567057291667,
+      "audit_full_count": 31,
+      "audit_full_pass": 0.2421875,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 5952,
+          "contribution_to_mean_pp": 24.21875,
+          "count": 31
+        },
+        "near_zero": {
+          "audit_passed_slots": 36,
+          "contribution_to_mean_pp": 0.146484375,
+          "count": 54
+        },
+        "partial": {
+          "audit_passed_slots": 3571,
+          "contribution_to_mean_pp": 14.530436197916666,
+          "count": 43
+        }
+      },
+      "hit_token_cap": 0.09375,
+      "inclusive_count": 4,
+      "inclusive_signature": 0.03125,
+      "n": 128,
+      "seed": 20261013,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 4
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.3553873697916667,
+      "audit_full_count": 22,
+      "audit_full_pass": 0.171875,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 4224,
+          "contribution_to_mean_pp": 17.1875,
+          "count": 22
+        },
+        "near_zero": {
+          "audit_passed_slots": 32,
+          "contribution_to_mean_pp": 0.13020833333333334,
+          "count": 50
+        },
+        "partial": {
+          "audit_passed_slots": 4478,
+          "contribution_to_mean_pp": 18.221028645833332,
+          "count": 56
+        }
+      },
+      "hit_token_cap": 0.1015625,
+      "inclusive_count": 5,
+      "inclusive_signature": 0.0390625,
+      "n": 128,
+      "seed": 20261013,
+      "syntax_valid": 0.953125,
+      "weak_only_count": 5
+    },
+    {
+      "arm": "reference",
+      "audit_case_accuracy": 0.4029947916666667,
+      "audit_full_count": 32,
+      "audit_full_pass": 0.25,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6144,
+          "contribution_to_mean_pp": 25.0,
+          "count": 32
+        },
+        "near_zero": {
+          "audit_passed_slots": 28,
+          "contribution_to_mean_pp": 0.11393229166666667,
+          "count": 50
+        },
+        "partial": {
+          "audit_passed_slots": 3732,
+          "contribution_to_mean_pp": 15.185546875,
+          "count": 46
+        }
+      },
+      "hit_token_cap": 0.1328125,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "seed": 20261014,
+      "syntax_valid": 0.96875,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "endpoint_omission",
+      "audit_case_accuracy": 0.35986328125,
+      "audit_full_count": 33,
+      "audit_full_pass": 0.2578125,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6336,
+          "contribution_to_mean_pp": 25.78125,
+          "count": 33
+        },
+        "near_zero": {
+          "audit_passed_slots": 27,
+          "contribution_to_mean_pp": 0.10986328125,
+          "count": 61
+        },
+        "partial": {
+          "audit_passed_slots": 2481,
+          "contribution_to_mean_pp": 10.09521484375,
+          "count": 34
+        }
+      },
+      "hit_token_cap": 0.1640625,
+      "inclusive_count": 1,
+      "inclusive_signature": 0.0078125,
+      "n": 128,
+      "seed": 20261014,
+      "syntax_valid": 0.9609375,
+      "weak_only_count": 1
+    },
+    {
+      "arm": "repaired",
+      "audit_case_accuracy": 0.4626057942708333,
+      "audit_full_count": 34,
+      "audit_full_pass": 0.265625,
+      "buckets": {
+        "full": {
+          "audit_passed_slots": 6528,
+          "contribution_to_mean_pp": 26.5625,
+          "count": 34
+        },
+        "near_zero": {
+          "audit_passed_slots": 21,
+          "contribution_to_mean_pp": 0.08544921875,
+          "count": 33
+        },
+        "partial": {
+          "audit_passed_slots": 4820,
+          "contribution_to_mean_pp": 19.612630208333332,
+          "count": 61
+        }
+      },
+      "hit_token_cap": 0.0625,
+      "inclusive_count": 3,
+      "inclusive_signature": 0.0234375,
+      "n": 128,
+      "seed": 20261014,
+      "syntax_valid": 0.984375,
+      "weak_only_count": 4
+    }
+  ],
+  "limits": [
+    "Consistency check of saved evidence, not independent training replication or a full implementation audit.",
+    "Four training seeds; correlated draws and tests are not additional training replications.",
+    "Paired t intervals are model-based, fragile with four seeds, and not multiplicity adjusted.",
+    "Leave-one-out, decomposition, threshold curves and disjoint blocks chosen after inspecting results.",
+    "Buckets describe sampled output populations, not causal transitions of individual programs.",
+    "Disjoint draw blocks share the same trained models and are not independent replications.",
+    "Finite development audit and one deliberately diagnostic task limit generalization."
+  ],
+  "provenance": {
+    "archive_bytes": 39565089,
+    "archive_sha256": "deff92ce68edfb264247c315c092cc7ca32168bec1c9d0669a638fe6968f06c4",
+    "checkpoint_receipts_read": 288,
+    "literal_blocks_read": 6672,
+    "primary_result_hash": "513a5e658e0a67375b7212cbb68a79f792fc2ffd2244025445e4d07e11dbd338",
+    "training_logs_read": 12
+  },
+  "repaired_minus_weak_accuracy_decomposition_pp": {
+    "full": -3.3203125,
+    "near_zero": -0.0213623046875,
+    "partial": 6.507364908854168
+  },
+  "scope": {
+    "draws": 2048,
+    "final_draws": 1536,
+    "new_executions": 0,
+    "training_seed_triplets": 4
+  },
+  "status": "offline publication reanalysis; sensitivity checks are post hoc",
+  "suite_overlap": [
+    {
+      "arguments": {
+        "bookings": []
+      },
+      "audit_case_id": "booking-coverage-reward-0.2/audit/interaction/00",
+      "input_hash": "acae2e7b7d6adf6cd11723f933e7fb5fecf3a909dfe00c688c860c119c57ef68",
+      "training_case_id": "booking-coverage-reward-0.2/training/interaction/00"
+    }
+  ],
+  "survival_curve": [
+    {
+      "endpoint_omission_count": 512,
+      "minimum_accuracy_pct": 0.0,
+      "minimum_audit_cases": 0,
+      "reference_count": 512,
+      "repaired_count": 512,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 428,
+      "minimum_accuracy_pct": 0.5208333333333334,
+      "minimum_audit_cases": 1,
+      "reference_count": 448,
+      "repaired_count": 470,
+      "repaired_minus_weak_pp": 8.203125
+    },
+    {
+      "endpoint_omission_count": 311,
+      "minimum_accuracy_pct": 1.0416666666666667,
+      "minimum_audit_cases": 2,
+      "reference_count": 330,
+      "repaired_count": 374,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 309,
+      "minimum_accuracy_pct": 1.5625,
+      "minimum_audit_cases": 3,
+      "reference_count": 327,
+      "repaired_count": 370,
+      "repaired_minus_weak_pp": 11.9140625
+    },
+    {
+      "endpoint_omission_count": 309,
+      "minimum_accuracy_pct": 2.0833333333333335,
+      "minimum_audit_cases": 4,
+      "reference_count": 326,
+      "repaired_count": 370,
+      "repaired_minus_weak_pp": 11.9140625
+    },
+    {
+      "endpoint_omission_count": 307,
+      "minimum_accuracy_pct": 2.6041666666666665,
+      "minimum_audit_cases": 5,
+      "reference_count": 326,
+      "repaired_count": 367,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 307,
+      "minimum_accuracy_pct": 3.125,
+      "minimum_audit_cases": 6,
+      "reference_count": 326,
+      "repaired_count": 367,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 303,
+      "minimum_accuracy_pct": 3.6458333333333335,
+      "minimum_audit_cases": 7,
+      "reference_count": 324,
+      "repaired_count": 364,
+      "repaired_minus_weak_pp": 11.9140625
+    },
+    {
+      "endpoint_omission_count": 301,
+      "minimum_accuracy_pct": 4.166666666666667,
+      "minimum_audit_cases": 8,
+      "reference_count": 324,
+      "repaired_count": 364,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 300,
+      "minimum_accuracy_pct": 4.6875,
+      "minimum_audit_cases": 9,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 300,
+      "minimum_accuracy_pct": 5.208333333333333,
+      "minimum_audit_cases": 10,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 300,
+      "minimum_accuracy_pct": 5.729166666666667,
+      "minimum_audit_cases": 11,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 300,
+      "minimum_accuracy_pct": 6.25,
+      "minimum_audit_cases": 12,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 299,
+      "minimum_accuracy_pct": 6.770833333333333,
+      "minimum_audit_cases": 13,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.5
+    },
+    {
+      "endpoint_omission_count": 299,
+      "minimum_accuracy_pct": 7.291666666666667,
+      "minimum_audit_cases": 14,
+      "reference_count": 323,
+      "repaired_count": 363,
+      "repaired_minus_weak_pp": 12.5
+    },
+    {
+      "endpoint_omission_count": 297,
+      "minimum_accuracy_pct": 7.8125,
+      "minimum_audit_cases": 15,
+      "reference_count": 323,
+      "repaired_count": 362,
+      "repaired_minus_weak_pp": 12.6953125
+    },
+    {
+      "endpoint_omission_count": 297,
+      "minimum_accuracy_pct": 8.333333333333334,
+      "minimum_audit_cases": 16,
+      "reference_count": 323,
+      "repaired_count": 362,
+      "repaired_minus_weak_pp": 12.6953125
+    },
+    {
+      "endpoint_omission_count": 297,
+      "minimum_accuracy_pct": 8.854166666666666,
+      "minimum_audit_cases": 17,
+      "reference_count": 322,
+      "repaired_count": 362,
+      "repaired_minus_weak_pp": 12.6953125
+    },
+    {
+      "endpoint_omission_count": 297,
+      "minimum_accuracy_pct": 9.375,
+      "minimum_audit_cases": 18,
+      "reference_count": 322,
+      "repaired_count": 362,
+      "repaired_minus_weak_pp": 12.6953125
+    },
+    {
+      "endpoint_omission_count": 297,
+      "minimum_accuracy_pct": 9.895833333333334,
+      "minimum_audit_cases": 19,
+      "reference_count": 321,
+      "repaired_count": 361,
+      "repaired_minus_weak_pp": 12.5
+    },
+    {
+      "endpoint_omission_count": 291,
+      "minimum_accuracy_pct": 10.416666666666666,
+      "minimum_audit_cases": 20,
+      "reference_count": 314,
+      "repaired_count": 353,
+      "repaired_minus_weak_pp": 12.109375
+    },
+    {
+      "endpoint_omission_count": 291,
+      "minimum_accuracy_pct": 10.9375,
+      "minimum_audit_cases": 21,
+      "reference_count": 314,
+      "repaired_count": 353,
+      "repaired_minus_weak_pp": 12.109375
+    },
+    {
+      "endpoint_omission_count": 291,
+      "minimum_accuracy_pct": 11.458333333333334,
+      "minimum_audit_cases": 22,
+      "reference_count": 311,
+      "repaired_count": 350,
+      "repaired_minus_weak_pp": 11.5234375
+    },
+    {
+      "endpoint_omission_count": 290,
+      "minimum_accuracy_pct": 11.979166666666666,
+      "minimum_audit_cases": 23,
+      "reference_count": 310,
+      "repaired_count": 350,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 286,
+      "minimum_accuracy_pct": 12.5,
+      "minimum_audit_cases": 24,
+      "reference_count": 309,
+      "repaired_count": 350,
+      "repaired_minus_weak_pp": 12.5
+    },
+    {
+      "endpoint_omission_count": 285,
+      "minimum_accuracy_pct": 13.020833333333334,
+      "minimum_audit_cases": 25,
+      "reference_count": 305,
+      "repaired_count": 347,
+      "repaired_minus_weak_pp": 12.109375
+    },
+    {
+      "endpoint_omission_count": 284,
+      "minimum_accuracy_pct": 13.541666666666666,
+      "minimum_audit_cases": 26,
+      "reference_count": 302,
+      "repaired_count": 347,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 284,
+      "minimum_accuracy_pct": 14.0625,
+      "minimum_audit_cases": 27,
+      "reference_count": 302,
+      "repaired_count": 347,
+      "repaired_minus_weak_pp": 12.3046875
+    },
+    {
+      "endpoint_omission_count": 284,
+      "minimum_accuracy_pct": 14.583333333333334,
+      "minimum_audit_cases": 28,
+      "reference_count": 302,
+      "repaired_count": 344,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 284,
+      "minimum_accuracy_pct": 15.104166666666666,
+      "minimum_audit_cases": 29,
+      "reference_count": 302,
+      "repaired_count": 342,
+      "repaired_minus_weak_pp": 11.328125
+    },
+    {
+      "endpoint_omission_count": 281,
+      "minimum_accuracy_pct": 15.625,
+      "minimum_audit_cases": 30,
+      "reference_count": 301,
+      "repaired_count": 335,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 280,
+      "minimum_accuracy_pct": 16.145833333333332,
+      "minimum_audit_cases": 31,
+      "reference_count": 301,
+      "repaired_count": 334,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 280,
+      "minimum_accuracy_pct": 16.666666666666668,
+      "minimum_audit_cases": 32,
+      "reference_count": 299,
+      "repaired_count": 334,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 279,
+      "minimum_accuracy_pct": 17.1875,
+      "minimum_audit_cases": 33,
+      "reference_count": 298,
+      "repaired_count": 334,
+      "repaired_minus_weak_pp": 10.7421875
+    },
+    {
+      "endpoint_omission_count": 278,
+      "minimum_accuracy_pct": 17.708333333333332,
+      "minimum_audit_cases": 34,
+      "reference_count": 298,
+      "repaired_count": 334,
+      "repaired_minus_weak_pp": 10.9375
+    },
+    {
+      "endpoint_omission_count": 277,
+      "minimum_accuracy_pct": 18.229166666666668,
+      "minimum_audit_cases": 35,
+      "reference_count": 296,
+      "repaired_count": 334,
+      "repaired_minus_weak_pp": 11.1328125
+    },
+    {
+      "endpoint_omission_count": 276,
+      "minimum_accuracy_pct": 18.75,
+      "minimum_audit_cases": 36,
+      "reference_count": 296,
+      "repaired_count": 333,
+      "repaired_minus_weak_pp": 11.1328125
+    },
+    {
+      "endpoint_omission_count": 274,
+      "minimum_accuracy_pct": 19.270833333333332,
+      "minimum_audit_cases": 37,
+      "reference_count": 295,
+      "repaired_count": 332,
+      "repaired_minus_weak_pp": 11.328125
+    },
+    {
+      "endpoint_omission_count": 272,
+      "minimum_accuracy_pct": 19.791666666666668,
+      "minimum_audit_cases": 38,
+      "reference_count": 295,
+      "repaired_count": 332,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 272,
+      "minimum_accuracy_pct": 20.3125,
+      "minimum_audit_cases": 39,
+      "reference_count": 295,
+      "repaired_count": 332,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 271,
+      "minimum_accuracy_pct": 20.833333333333332,
+      "minimum_audit_cases": 40,
+      "reference_count": 295,
+      "repaired_count": 332,
+      "repaired_minus_weak_pp": 11.9140625
+    },
+    {
+      "endpoint_omission_count": 270,
+      "minimum_accuracy_pct": 21.354166666666668,
+      "minimum_audit_cases": 41,
+      "reference_count": 294,
+      "repaired_count": 330,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 268,
+      "minimum_accuracy_pct": 21.875,
+      "minimum_audit_cases": 42,
+      "reference_count": 294,
+      "repaired_count": 328,
+      "repaired_minus_weak_pp": 11.71875
+    },
+    {
+      "endpoint_omission_count": 268,
+      "minimum_accuracy_pct": 22.395833333333332,
+      "minimum_audit_cases": 43,
+      "reference_count": 288,
+      "repaired_count": 324,
+      "repaired_minus_weak_pp": 10.9375
+    },
+    {
+      "endpoint_omission_count": 268,
+      "minimum_accuracy_pct": 22.916666666666668,
+      "minimum_audit_cases": 44,
+      "reference_count": 288,
+      "repaired_count": 323,
+      "repaired_minus_weak_pp": 10.7421875
+    },
+    {
+      "endpoint_omission_count": 268,
+      "minimum_accuracy_pct": 23.4375,
+      "minimum_audit_cases": 45,
+      "reference_count": 286,
+      "repaired_count": 321,
+      "repaired_minus_weak_pp": 10.3515625
+    },
+    {
+      "endpoint_omission_count": 268,
+      "minimum_accuracy_pct": 23.958333333333332,
+      "minimum_audit_cases": 46,
+      "reference_count": 286,
+      "repaired_count": 321,
+      "repaired_minus_weak_pp": 10.3515625
+    },
+    {
+      "endpoint_omission_count": 267,
+      "minimum_accuracy_pct": 24.479166666666668,
+      "minimum_audit_cases": 47,
+      "reference_count": 286,
+      "repaired_count": 321,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 267,
+      "minimum_accuracy_pct": 25.0,
+      "minimum_audit_cases": 48,
+      "reference_count": 285,
+      "repaired_count": 321,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 267,
+      "minimum_accuracy_pct": 25.520833333333332,
+      "minimum_audit_cases": 49,
+      "reference_count": 285,
+      "repaired_count": 321,
+      "repaired_minus_weak_pp": 10.546875
+    },
+    {
+      "endpoint_omission_count": 266,
+      "minimum_accuracy_pct": 26.041666666666668,
+      "minimum_audit_cases": 50,
+      "reference_count": 285,
+      "repaired_count": 319,
+      "repaired_minus_weak_pp": 10.3515625
+    },
+    {
+      "endpoint_omission_count": 266,
+      "minimum_accuracy_pct": 26.5625,
+      "minimum_audit_cases": 51,
+      "reference_count": 284,
+      "repaired_count": 318,
+      "repaired_minus_weak_pp": 10.15625
+    },
+    {
+      "endpoint_omission_count": 266,
+      "minimum_accuracy_pct": 27.083333333333332,
+      "minimum_audit_cases": 52,
+      "reference_count": 284,
+      "repaired_count": 317,
+      "repaired_minus_weak_pp": 9.9609375
+    },
+    {
+      "endpoint_omission_count": 266,
+      "minimum_accuracy_pct": 27.604166666666668,
+      "minimum_audit_cases": 53,
+      "reference_count": 283,
+      "repaired_count": 316,
+      "repaired_minus_weak_pp": 9.765625
+    },
+    {
+      "endpoint_omission_count": 265,
+      "minimum_accuracy_pct": 28.125,
+      "minimum_audit_cases": 54,
+      "reference_count": 283,
+      "repaired_count": 314,
+      "repaired_minus_weak_pp": 9.5703125
+    },
+    {
+      "endpoint_omission_count": 264,
+      "minimum_accuracy_pct": 28.645833333333332,
+      "minimum_audit_cases": 55,
+      "reference_count": 283,
+      "repaired_count": 314,
+      "repaired_minus_weak_pp": 9.765625
+    },
+    {
+      "endpoint_omission_count": 264,
+      "minimum_accuracy_pct": 29.166666666666668,
+      "minimum_audit_cases": 56,
+      "reference_count": 283,
+      "repaired_count": 314,
+      "repaired_minus_weak_pp": 9.765625
+    },
+    {
+      "endpoint_omission_count": 264,
+      "minimum_accuracy_pct": 29.6875,
+      "minimum_audit_cases": 57,
+      "reference_count": 283,
+      "repaired_count": 313,
+      "repaired_minus_weak_pp": 9.5703125
+    },
+    {
+      "endpoint_omission_count": 263,
+      "minimum_accuracy_pct": 30.208333333333332,
+      "minimum_audit_cases": 58,
+      "reference_count": 282,
+      "repaired_count": 311,
+      "repaired_minus_weak_pp": 9.375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 30.729166666666668,
+      "minimum_audit_cases": 59,
+      "reference_count": 251,
+      "repaired_count": 283,
+      "repaired_minus_weak_pp": 8.984375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 31.25,
+      "minimum_audit_cases": 60,
+      "reference_count": 251,
+      "repaired_count": 283,
+      "repaired_minus_weak_pp": 8.984375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 31.770833333333332,
+      "minimum_audit_cases": 61,
+      "reference_count": 251,
+      "repaired_count": 281,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 32.291666666666664,
+      "minimum_audit_cases": 62,
+      "reference_count": 251,
+      "repaired_count": 281,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 32.8125,
+      "minimum_audit_cases": 63,
+      "reference_count": 251,
+      "repaired_count": 281,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 33.333333333333336,
+      "minimum_audit_cases": 64,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 33.854166666666664,
+      "minimum_audit_cases": 65,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 34.375,
+      "minimum_audit_cases": 66,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 237,
+      "minimum_accuracy_pct": 34.895833333333336,
+      "minimum_audit_cases": 67,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 35.416666666666664,
+      "minimum_audit_cases": 68,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 35.9375,
+      "minimum_audit_cases": 69,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 36.458333333333336,
+      "minimum_audit_cases": 70,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 36.979166666666664,
+      "minimum_audit_cases": 71,
+      "reference_count": 250,
+      "repaired_count": 280,
+      "repaired_minus_weak_pp": 8.59375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 37.5,
+      "minimum_audit_cases": 72,
+      "reference_count": 250,
+      "repaired_count": 279,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 236,
+      "minimum_accuracy_pct": 38.020833333333336,
+      "minimum_audit_cases": 73,
+      "reference_count": 250,
+      "repaired_count": 279,
+      "repaired_minus_weak_pp": 8.3984375
+    },
+    {
+      "endpoint_omission_count": 235,
+      "minimum_accuracy_pct": 38.541666666666664,
+      "minimum_audit_cases": 74,
+      "reference_count": 248,
+      "repaired_count": 273,
+      "repaired_minus_weak_pp": 7.421875
+    },
+    {
+      "endpoint_omission_count": 202,
+      "minimum_accuracy_pct": 39.0625,
+      "minimum_audit_cases": 75,
+      "reference_count": 197,
+      "repaired_count": 202,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 202,
+      "minimum_accuracy_pct": 39.583333333333336,
+      "minimum_audit_cases": 76,
+      "reference_count": 197,
+      "repaired_count": 202,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 202,
+      "minimum_accuracy_pct": 40.104166666666664,
+      "minimum_audit_cases": 77,
+      "reference_count": 197,
+      "repaired_count": 201,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 202,
+      "minimum_accuracy_pct": 40.625,
+      "minimum_audit_cases": 78,
+      "reference_count": 197,
+      "repaired_count": 201,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 202,
+      "minimum_accuracy_pct": 41.145833333333336,
+      "minimum_audit_cases": 79,
+      "reference_count": 197,
+      "repaired_count": 201,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 190,
+      "minimum_accuracy_pct": 41.666666666666664,
+      "minimum_audit_cases": 80,
+      "reference_count": 183,
+      "repaired_count": 196,
+      "repaired_minus_weak_pp": 1.171875
+    },
+    {
+      "endpoint_omission_count": 190,
+      "minimum_accuracy_pct": 42.1875,
+      "minimum_audit_cases": 81,
+      "reference_count": 182,
+      "repaired_count": 196,
+      "repaired_minus_weak_pp": 1.171875
+    },
+    {
+      "endpoint_omission_count": 188,
+      "minimum_accuracy_pct": 42.708333333333336,
+      "minimum_audit_cases": 82,
+      "reference_count": 182,
+      "repaired_count": 195,
+      "repaired_minus_weak_pp": 1.3671875
+    },
+    {
+      "endpoint_omission_count": 186,
+      "minimum_accuracy_pct": 43.229166666666664,
+      "minimum_audit_cases": 83,
+      "reference_count": 179,
+      "repaired_count": 194,
+      "repaired_minus_weak_pp": 1.5625
+    },
+    {
+      "endpoint_omission_count": 177,
+      "minimum_accuracy_pct": 43.75,
+      "minimum_audit_cases": 84,
+      "reference_count": 175,
+      "repaired_count": 188,
+      "repaired_minus_weak_pp": 2.1484375
+    },
+    {
+      "endpoint_omission_count": 177,
+      "minimum_accuracy_pct": 44.270833333333336,
+      "minimum_audit_cases": 85,
+      "reference_count": 175,
+      "repaired_count": 188,
+      "repaired_minus_weak_pp": 2.1484375
+    },
+    {
+      "endpoint_omission_count": 177,
+      "minimum_accuracy_pct": 44.791666666666664,
+      "minimum_audit_cases": 86,
+      "reference_count": 175,
+      "repaired_count": 188,
+      "repaired_minus_weak_pp": 2.1484375
+    },
+    {
+      "endpoint_omission_count": 177,
+      "minimum_accuracy_pct": 45.3125,
+      "minimum_audit_cases": 87,
+      "reference_count": 175,
+      "repaired_count": 186,
+      "repaired_minus_weak_pp": 1.7578125
+    },
+    {
+      "endpoint_omission_count": 177,
+      "minimum_accuracy_pct": 45.833333333333336,
+      "minimum_audit_cases": 88,
+      "reference_count": 175,
+      "repaired_count": 186,
+      "repaired_minus_weak_pp": 1.7578125
+    },
+    {
+      "endpoint_omission_count": 176,
+      "minimum_accuracy_pct": 46.354166666666664,
+      "minimum_audit_cases": 89,
+      "reference_count": 173,
+      "repaired_count": 185,
+      "repaired_minus_weak_pp": 1.7578125
+    },
+    {
+      "endpoint_omission_count": 175,
+      "minimum_accuracy_pct": 46.875,
+      "minimum_audit_cases": 90,
+      "reference_count": 172,
+      "repaired_count": 184,
+      "repaired_minus_weak_pp": 1.7578125
+    },
+    {
+      "endpoint_omission_count": 175,
+      "minimum_accuracy_pct": 47.395833333333336,
+      "minimum_audit_cases": 91,
+      "reference_count": 172,
+      "repaired_count": 183,
+      "repaired_minus_weak_pp": 1.5625
+    },
+    {
+      "endpoint_omission_count": 174,
+      "minimum_accuracy_pct": 47.916666666666664,
+      "minimum_audit_cases": 92,
+      "reference_count": 172,
+      "repaired_count": 182,
+      "repaired_minus_weak_pp": 1.5625
+    },
+    {
+      "endpoint_omission_count": 174,
+      "minimum_accuracy_pct": 48.4375,
+      "minimum_audit_cases": 93,
+      "reference_count": 172,
+      "repaired_count": 180,
+      "repaired_minus_weak_pp": 1.171875
+    },
+    {
+      "endpoint_omission_count": 173,
+      "minimum_accuracy_pct": 48.958333333333336,
+      "minimum_audit_cases": 94,
+      "reference_count": 172,
+      "repaired_count": 180,
+      "repaired_minus_weak_pp": 1.3671875
+    },
+    {
+      "endpoint_omission_count": 173,
+      "minimum_accuracy_pct": 49.479166666666664,
+      "minimum_audit_cases": 95,
+      "reference_count": 172,
+      "repaired_count": 180,
+      "repaired_minus_weak_pp": 1.3671875
+    },
+    {
+      "endpoint_omission_count": 172,
+      "minimum_accuracy_pct": 50.0,
+      "minimum_audit_cases": 96,
+      "reference_count": 172,
+      "repaired_count": 180,
+      "repaired_minus_weak_pp": 1.5625
+    },
+    {
+      "endpoint_omission_count": 171,
+      "minimum_accuracy_pct": 50.520833333333336,
+      "minimum_audit_cases": 97,
+      "reference_count": 169,
+      "repaired_count": 172,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 171,
+      "minimum_accuracy_pct": 51.041666666666664,
+      "minimum_audit_cases": 98,
+      "reference_count": 169,
+      "repaired_count": 172,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 171,
+      "minimum_accuracy_pct": 51.5625,
+      "minimum_audit_cases": 99,
+      "reference_count": 169,
+      "repaired_count": 172,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 171,
+      "minimum_accuracy_pct": 52.083333333333336,
+      "minimum_audit_cases": 100,
+      "reference_count": 169,
+      "repaired_count": 171,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 171,
+      "minimum_accuracy_pct": 52.604166666666664,
+      "minimum_audit_cases": 101,
+      "reference_count": 169,
+      "repaired_count": 171,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 169,
+      "minimum_accuracy_pct": 53.125,
+      "minimum_audit_cases": 102,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 169,
+      "minimum_accuracy_pct": 53.645833333333336,
+      "minimum_audit_cases": 103,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 169,
+      "minimum_accuracy_pct": 54.166666666666664,
+      "minimum_audit_cases": 104,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.1953125
+    },
+    {
+      "endpoint_omission_count": 167,
+      "minimum_accuracy_pct": 54.6875,
+      "minimum_audit_cases": 105,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 167,
+      "minimum_accuracy_pct": 55.208333333333336,
+      "minimum_audit_cases": 106,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 167,
+      "minimum_accuracy_pct": 55.729166666666664,
+      "minimum_audit_cases": 107,
+      "reference_count": 169,
+      "repaired_count": 170,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 167,
+      "minimum_accuracy_pct": 56.25,
+      "minimum_audit_cases": 108,
+      "reference_count": 169,
+      "repaired_count": 169,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 166,
+      "minimum_accuracy_pct": 56.770833333333336,
+      "minimum_audit_cases": 109,
+      "reference_count": 167,
+      "repaired_count": 169,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 165,
+      "minimum_accuracy_pct": 57.291666666666664,
+      "minimum_audit_cases": 110,
+      "reference_count": 164,
+      "repaired_count": 167,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 165,
+      "minimum_accuracy_pct": 57.8125,
+      "minimum_audit_cases": 111,
+      "reference_count": 164,
+      "repaired_count": 167,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 58.333333333333336,
+      "minimum_audit_cases": 112,
+      "reference_count": 164,
+      "repaired_count": 167,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 58.854166666666664,
+      "minimum_audit_cases": 113,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 59.375,
+      "minimum_audit_cases": 114,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 59.895833333333336,
+      "minimum_audit_cases": 115,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 60.416666666666664,
+      "minimum_audit_cases": 116,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 60.9375,
+      "minimum_audit_cases": 117,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 164,
+      "minimum_accuracy_pct": 61.458333333333336,
+      "minimum_audit_cases": 118,
+      "reference_count": 164,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.390625
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 61.979166666666664,
+      "minimum_audit_cases": 119,
+      "reference_count": 163,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 62.5,
+      "minimum_audit_cases": 120,
+      "reference_count": 163,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 63.020833333333336,
+      "minimum_audit_cases": 121,
+      "reference_count": 163,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 63.541666666666664,
+      "minimum_audit_cases": 122,
+      "reference_count": 163,
+      "repaired_count": 166,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 64.0625,
+      "minimum_audit_cases": 123,
+      "reference_count": 163,
+      "repaired_count": 165,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 162,
+      "minimum_accuracy_pct": 64.58333333333333,
+      "minimum_audit_cases": 124,
+      "reference_count": 163,
+      "repaired_count": 165,
+      "repaired_minus_weak_pp": 0.5859375
+    },
+    {
+      "endpoint_omission_count": 161,
+      "minimum_accuracy_pct": 65.10416666666667,
+      "minimum_audit_cases": 125,
+      "reference_count": 161,
+      "repaired_count": 165,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 161,
+      "minimum_accuracy_pct": 65.625,
+      "minimum_audit_cases": 126,
+      "reference_count": 161,
+      "repaired_count": 165,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 161,
+      "minimum_accuracy_pct": 66.14583333333333,
+      "minimum_audit_cases": 127,
+      "reference_count": 161,
+      "repaired_count": 165,
+      "repaired_minus_weak_pp": 0.78125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 66.66666666666667,
+      "minimum_audit_cases": 128,
+      "reference_count": 154,
+      "repaired_count": 154,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 67.1875,
+      "minimum_audit_cases": 129,
+      "reference_count": 154,
+      "repaired_count": 154,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 67.70833333333333,
+      "minimum_audit_cases": 130,
+      "reference_count": 154,
+      "repaired_count": 154,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 68.22916666666667,
+      "minimum_audit_cases": 131,
+      "reference_count": 154,
+      "repaired_count": 154,
+      "repaired_minus_weak_pp": 0.0
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 68.75,
+      "minimum_audit_cases": 132,
+      "reference_count": 154,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 69.27083333333333,
+      "minimum_audit_cases": 133,
+      "reference_count": 153,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 69.79166666666667,
+      "minimum_audit_cases": 134,
+      "reference_count": 153,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 70.3125,
+      "minimum_audit_cases": 135,
+      "reference_count": 153,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 70.83333333333333,
+      "minimum_audit_cases": 136,
+      "reference_count": 153,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 71.35416666666667,
+      "minimum_audit_cases": 137,
+      "reference_count": 153,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 71.875,
+      "minimum_audit_cases": 138,
+      "reference_count": 152,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 154,
+      "minimum_accuracy_pct": 72.39583333333333,
+      "minimum_audit_cases": 139,
+      "reference_count": 152,
+      "repaired_count": 153,
+      "repaired_minus_weak_pp": -0.1953125
+    },
+    {
+      "endpoint_omission_count": 153,
+      "minimum_accuracy_pct": 72.91666666666667,
+      "minimum_audit_cases": 140,
+      "reference_count": 150,
+      "repaired_count": 151,
+      "repaired_minus_weak_pp": -0.390625
+    },
+    {
+      "endpoint_omission_count": 153,
+      "minimum_accuracy_pct": 73.4375,
+      "minimum_audit_cases": 141,
+      "reference_count": 150,
+      "repaired_count": 151,
+      "repaired_minus_weak_pp": -0.390625
+    },
+    {
+      "endpoint_omission_count": 150,
+      "minimum_accuracy_pct": 73.95833333333333,
+      "minimum_audit_cases": 142,
+      "reference_count": 138,
+      "repaired_count": 140,
+      "repaired_minus_weak_pp": -1.953125
+    },
+    {
+      "endpoint_omission_count": 150,
+      "minimum_accuracy_pct": 74.47916666666667,
+      "minimum_audit_cases": 143,
+      "reference_count": 138,
+      "repaired_count": 140,
+      "repaired_minus_weak_pp": -1.953125
+    },
+    {
+      "endpoint_omission_count": 148,
+      "minimum_accuracy_pct": 75.0,
+      "minimum_audit_cases": 144,
+      "reference_count": 137,
+      "repaired_count": 132,
+      "repaired_minus_weak_pp": -3.125
+    },
+    {
+      "endpoint_omission_count": 148,
+      "minimum_accuracy_pct": 75.52083333333333,
+      "minimum_audit_cases": 145,
+      "reference_count": 137,
+      "repaired_count": 131,
+      "repaired_minus_weak_pp": -3.3203125
+    },
+    {
+      "endpoint_omission_count": 147,
+      "minimum_accuracy_pct": 76.04166666666667,
+      "minimum_audit_cases": 146,
+      "reference_count": 136,
+      "repaired_count": 129,
+      "repaired_minus_weak_pp": -3.515625
+    },
+    {
+      "endpoint_omission_count": 144,
+      "minimum_accuracy_pct": 76.5625,
+      "minimum_audit_cases": 147,
+      "reference_count": 130,
+      "repaired_count": 123,
+      "repaired_minus_weak_pp": -4.1015625
+    },
+    {
+      "endpoint_omission_count": 144,
+      "minimum_accuracy_pct": 77.08333333333333,
+      "minimum_audit_cases": 148,
+      "reference_count": 130,
+      "repaired_count": 123,
+      "repaired_minus_weak_pp": -4.1015625
+    },
+    {
+      "endpoint_omission_count": 144,
+      "minimum_accuracy_pct": 77.60416666666667,
+      "minimum_audit_cases": 149,
+      "reference_count": 130,
+      "repaired_count": 123,
+      "repaired_minus_weak_pp": -4.1015625
+    },
+    {
+      "endpoint_omission_count": 144,
+      "minimum_accuracy_pct": 78.125,
+      "minimum_audit_cases": 150,
+      "reference_count": 130,
+      "repaired_count": 123,
+      "repaired_minus_weak_pp": -4.1015625
+    },
+    {
+      "endpoint_omission_count": 144,
+      "minimum_accuracy_pct": 78.64583333333333,
+      "minimum_audit_cases": 151,
+      "reference_count": 130,
+      "repaired_count": 122,
+      "repaired_minus_weak_pp": -4.296875
+    },
+    {
+      "endpoint_omission_count": 143,
+      "minimum_accuracy_pct": 79.16666666666667,
+      "minimum_audit_cases": 152,
+      "reference_count": 125,
+      "repaired_count": 119,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 141,
+      "minimum_accuracy_pct": 79.6875,
+      "minimum_audit_cases": 153,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.8828125
+    },
+    {
+      "endpoint_omission_count": 141,
+      "minimum_accuracy_pct": 80.20833333333333,
+      "minimum_audit_cases": 154,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.8828125
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 80.72916666666667,
+      "minimum_audit_cases": 155,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 81.25,
+      "minimum_audit_cases": 156,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 81.77083333333333,
+      "minimum_audit_cases": 157,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 82.29166666666667,
+      "minimum_audit_cases": 158,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 82.8125,
+      "minimum_audit_cases": 159,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 83.33333333333333,
+      "minimum_audit_cases": 160,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 83.85416666666667,
+      "minimum_audit_cases": 161,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 84.375,
+      "minimum_audit_cases": 162,
+      "reference_count": 123,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 84.89583333333333,
+      "minimum_audit_cases": 163,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 85.41666666666667,
+      "minimum_audit_cases": 164,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 85.9375,
+      "minimum_audit_cases": 165,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 86.45833333333333,
+      "minimum_audit_cases": 166,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 86.97916666666667,
+      "minimum_audit_cases": 167,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 87.5,
+      "minimum_audit_cases": 168,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 88.02083333333333,
+      "minimum_audit_cases": 169,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 88.54166666666667,
+      "minimum_audit_cases": 170,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 89.0625,
+      "minimum_audit_cases": 171,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 140,
+      "minimum_accuracy_pct": 89.58333333333333,
+      "minimum_audit_cases": 172,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 90.10416666666667,
+      "minimum_audit_cases": 173,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 90.625,
+      "minimum_audit_cases": 174,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 91.14583333333333,
+      "minimum_audit_cases": 175,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 91.66666666666667,
+      "minimum_audit_cases": 176,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 92.1875,
+      "minimum_audit_cases": 177,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 92.70833333333333,
+      "minimum_audit_cases": 178,
+      "reference_count": 122,
+      "repaired_count": 116,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 93.22916666666667,
+      "minimum_audit_cases": 179,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 93.75,
+      "minimum_audit_cases": 180,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 94.27083333333333,
+      "minimum_audit_cases": 181,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 94.79166666666667,
+      "minimum_audit_cases": 182,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 95.3125,
+      "minimum_audit_cases": 183,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 95.83333333333333,
+      "minimum_audit_cases": 184,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 96.35416666666667,
+      "minimum_audit_cases": 185,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 96.875,
+      "minimum_audit_cases": 186,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 97.39583333333333,
+      "minimum_audit_cases": 187,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 139,
+      "minimum_accuracy_pct": 97.91666666666667,
+      "minimum_audit_cases": 188,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.6875
+    },
+    {
+      "endpoint_omission_count": 138,
+      "minimum_accuracy_pct": 98.4375,
+      "minimum_audit_cases": 189,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 138,
+      "minimum_accuracy_pct": 98.95833333333333,
+      "minimum_audit_cases": 190,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 138,
+      "minimum_accuracy_pct": 99.47916666666667,
+      "minimum_audit_cases": 191,
+      "reference_count": 122,
+      "repaired_count": 115,
+      "repaired_minus_weak_pp": -4.4921875
+    },
+    {
+      "endpoint_omission_count": 130,
+      "minimum_accuracy_pct": 100.0,
+      "minimum_audit_cases": 192,
+      "reference_count": 120,
+      "repaired_count": 113,
+      "repaired_minus_weak_pp": -3.3203125
+    }
+  ]
+}

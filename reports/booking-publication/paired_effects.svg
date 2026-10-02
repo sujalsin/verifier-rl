@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 580" role="img" aria-labelledby="title desc">
+<title id="title">Grading improved but training effects remain uncertain</title><desc id="desc">Four paired training-seed differences plus exploratory mean and 95 percent paired t interval.</desc>
+<rect width="860" height="580" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#17202a">
+<text x="32" y="34" font-size="22" font-weight="700">Grading improved but training effects remain uncertain</text>
+<text x="32" y="62" >Dots are seed differences; black diamonds and bars show the mean and exploratory 95% interval.</text>
+<path d="M 397.1428571428571 96 V 471" stroke="#e3e7ed"/>
+<text x="397.1428571428571" y="493" text-anchor="middle">-10</text>
+<path d="M 481.07142857142856 96 V 471" stroke="#e3e7ed"/>
+<text x="481.07142857142856" y="493" text-anchor="middle">-5</text>
+<path d="M 565.0 96 V 471" stroke="#e3e7ed"/>
+<text x="565.0" y="493" text-anchor="middle">0</text>
+<path d="M 648.9285714285714 96 V 471" stroke="#e3e7ed"/>
+<text x="648.9285714285714" y="493" text-anchor="middle">+5</text>
+<path d="M 732.8571428571429 96 V 471" stroke="#e3e7ed"/>
+<text x="732.8571428571429" y="493" text-anchor="middle">+10</text>
+<path d="M 565.0 96 V 471" stroke="#5b6471" stroke-dasharray="4 4"/>
+<text x="32" y="130" font-weight="700">Weak minus reference</text>
+<text x="32" y="152" >Full audit pass rate</text>
+<path d="M 417.0706901672201 135 H 778.4985062613514" stroke="#17202a" stroke-width="2"/>
+<circle cx="460.0892857142857" cy="120" r="4" fill="#64748b"/>
+<circle cx="735.4799107142858" cy="130" r="4" fill="#64748b"/>
+<circle cx="617.4553571428571" cy="140" r="4" fill="#64748b"/>
+<circle cx="578.1138392857142" cy="150" r="4" fill="#64748b"/>
+<path d="M 597.7845982142858 128 l 7 7 l -7 7 l -7 -7 Z" fill="#17202a"/>
+<text x="565.0" y="174" text-anchor="middle" font-size="13">+1.95 pp [-8.81, +12.72]</text>
+<text x="32" y="229" font-weight="700">Weak minus reference</text>
+<text x="32" y="251" >Exact target bug rate</text>
+<path d="M 513.886388066079 234 H 616.1136119339209" stroke="#17202a" stroke-width="2"/>
+<circle cx="565.0" cy="219" r="4" fill="#64748b"/>
+<circle cx="525.6584821428571" cy="229" r="4" fill="#64748b"/>
+<circle cx="604.3415178571429" cy="239" r="4" fill="#64748b"/>
+<circle cx="565.0" cy="249" r="4" fill="#64748b"/>
+<path d="M 565.0 227 l 7 7 l -7 7 l -7 -7 Z" fill="#17202a"/>
+<text x="565.0" y="273" text-anchor="middle" font-size="13">+0.00 pp [-3.05, +3.05]</text>
+<text x="32" y="328" font-weight="700">Repaired minus weak</text>
+<text x="32" y="350" >Full audit pass rate</text>
+<path d="M 355.57080147555814 333 H 662.9615645958704" stroke="#17202a" stroke-width="2"/>
+<circle cx="604.3415178571429" cy="318" r="4" fill="#64748b"/>
+<circle cx="407.63392857142856" cy="328" r="4" fill="#64748b"/>
+<circle cx="446.97544642857144" cy="338" r="4" fill="#64748b"/>
+<circle cx="578.1138392857142" cy="348" r="4" fill="#64748b"/>
+<path d="M 509.2661830357143 326 l 7 7 l -7 7 l -7 -7 Z" fill="#17202a"/>
+<text x="565.0" y="372" text-anchor="middle" font-size="13">-3.32 pp [-12.48, +5.84]</text>
+<text x="32" y="427" font-weight="700">Repaired minus weak</text>
+<text x="32" y="449" >Exact target bug rate</text>
+<path d="M 561.075968641074 432 H 595.1517099303546" stroke="#17202a" stroke-width="2"/>
+<circle cx="565.0" cy="417" r="4" fill="#64748b"/>
+<circle cx="578.1138392857142" cy="427" r="4" fill="#64748b"/>
+<circle cx="578.1138392857142" cy="437" r="4" fill="#64748b"/>
+<circle cx="591.2276785714286" cy="447" r="4" fill="#64748b"/>
+<path d="M 578.1138392857142 425 l 7 7 l -7 7 l -7 -7 Z" fill="#17202a"/>
+<text x="565.0" y="471" text-anchor="middle" font-size="13">+0.78 pp [-0.23, +1.80]</text>
+<text x="565" y="525" text-anchor="middle">Difference in percentage points</text>
+<text x="32" y="557" font-size="13">4 seed pairs · 128 final draws per policy · one task · intervals chosen during analysis</text>
+</g></svg>

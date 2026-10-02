@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 430" role="img" aria-labelledby="title desc">
+<title id="title">Partial accuracy and full correctness give different rankings</title><desc id="desc">512 final draws per condition, split into zero or one audit pass, partial success, and full success.</desc>
+<rect width="860" height="430" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#17202a">
+<text x="32" y="34" font-size="22" font-weight="700">Partial accuracy and full correctness give different rankings</text>
+<text x="32" y="64" >All 512 final draws per condition are retained. Category counts appear inside each bar.</text>
+<text x="32" y="153" font-weight="700">Reference</text>
+<rect x="160" y="125" width="149.296875" height="42" fill="#cbd5e1"/>
+<text x="234.6484375" y="152" text-anchor="middle">182</text>
+<rect x="309.296875" y="125" width="172.265625" height="42" fill="#f2c57c"/>
+<text x="395.4296875" y="152" text-anchor="middle">210</text>
+<rect x="481.5625" y="125" width="98.4375" height="42" fill="#93c5aa"/>
+<text x="530.78125" y="152" text-anchor="middle">120</text>
+<text x="610" y="142" >Mean case accuracy 40.03%</text>
+<text x="610" y="165" >Full audit pass 23.44%</text>
+<text x="32" y="241" font-weight="700">Weak</text>
+<rect x="160" y="213" width="164.8828125" height="42" fill="#cbd5e1"/>
+<text x="242.44140625" y="240" text-anchor="middle">201</text>
+<rect x="324.8828125" y="213" width="148.4765625" height="42" fill="#f2c57c"/>
+<text x="399.12109375" y="240" text-anchor="middle">181</text>
+<rect x="473.359375" y="213" width="106.640625" height="42" fill="#93c5aa"/>
+<text x="526.6796875" y="240" text-anchor="middle">130</text>
+<text x="610" y="230" >Mean case accuracy 39.52%</text>
+<text x="610" y="253" >Full audit pass 25.39%</text>
+<text x="32" y="329" font-weight="700">Repaired</text>
+<rect x="160" y="301" width="113.203125" height="42" fill="#cbd5e1"/>
+<text x="216.6015625" y="328" text-anchor="middle">138</text>
+<rect x="273.203125" y="301" width="214.1015625" height="42" fill="#f2c57c"/>
+<text x="380.25390625" y="328" text-anchor="middle">261</text>
+<rect x="487.3046875" y="301" width="92.6953125" height="42" fill="#93c5aa"/>
+<text x="533.65234375" y="328" text-anchor="middle">113</text>
+<text x="610" y="318" >Mean case accuracy 42.68%</text>
+<text x="610" y="341" >Full audit pass 22.07%</text>
+<rect x="32" y="362" width="16" height="16" fill="#cbd5e1"/>
+<text x="57" y="376" >0 or 1 of 192 cases</text>
+<rect x="297" y="362" width="16" height="16" fill="#f2c57c"/>
+<text x="322" y="376" >2 to 191 cases</text>
+<rect x="554" y="362" width="16" height="16" fill="#93c5aa"/>
+<text x="579" y="376" >All 192 cases</text>
+<text x="32" y="409" font-size="13">Post hoc categories · sampled populations, not transitions of individual programs</text>
+</g></svg>

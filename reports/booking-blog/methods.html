@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Methods and publication notes for the booking verifier study</title><style>*{box-sizing:border-box}body{margin:0;background:#fafbfc;color:#172536;font:18px/1.75 Georgia,serif}main{max-width:850px;margin:64px auto;padding:0 28px 70px}h1,h2,h3{font-family:system-ui,sans-serif;line-height:1.2;letter-spacing:-.025em}h1{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:28px}h2{font-size:1.55rem;margin-top:48px}a{color:#185b91;text-underline-offset:3px}img{width:100%;height:auto;margin:12px 0}table{border-collapse:collapse;width:100%;font:14px/1.5 system-ui,sans-serif;display:block;overflow-x:auto;margin:26px 0}th,td{padding:11px 12px;border-bottom:1px solid #d9e1e8;text-align:left}th{background:#edf2f5}pre{padding:20px;background:#eaf0f4;border-radius:6px;overflow:auto;font:14px/1.6 monospace}code{font-size:.85em}blockquote{margin:24px 0;padding:4px 24px;border-left:3px solid #00796b;color:#34485a}li{margin:.6em 0}p{margin:1.1em 0}strong{font-weight:700}@media(max-width:600px){main{margin:30px auto;padding:0 18px 40px}body{font-size:17px}}</style></head><body><main><h1>Methods and publication notes for the booking verifier study</h1>
+<p>This companion to <a href="index.html">the blog post</a> records exact results, the scope of the evidence checks, and publication-stage sensitivity analyses. The original primary outcomes remain full audit pass rate and inclusive-endpoint signature frequency at update 24. The new checks do not convert the inconclusive training result into a positive or negative causal finding.</p>
+<h2>Corrections alongside the preserved historical protocol</h2>
+<p>The <a href="../../docs/booking_replication_repair_protocol.txt">historical replication protocol</a> says, “There is no audit input in the training reward.” That wording is too broad. Comparing the actual input hashes finds exactly one overlap between the 96 training and 192 audit cases: <code>{&quot;bookings&quot;: []}</code>.</p>
+<p>The precise statement is:</p>
+<blockquote>
+<p>The audit suite was not used to compute training rewards; the training and audit suites share the mandatory empty-input case.</p>
+</blockquote>
+<p>Its training name is <code>booking-coverage-reward-0.2/training/interaction/00</code>; its audit name is <code>booking-coverage-reward-0.2/audit/interaction/00</code>. Their shared input hash is <code>acae2e7b7d6adf6cd11723f933e7fb5fecf3a909dfe00c688c860c119c57ef68</code>. This accounts for the 287 unique inputs in the combined 288 suite entries. The audit is also an existing development suite used in the pilot, independently of this overlap.</p>
+<p>The repair matched the <strong>number of tests scored</strong>: 57 for weak and repaired rewards. All three arms executed the same 96 training inputs for each extracted training program. Nonselected outcomes did not contribute to GRPO reward. There is no measured compute saving attributable to using the repaired reward subset.</p>
+<p>The original protocol and complete archive remain unchanged. Their hashes at the time of this analysis are retained in the <a href="source_manifest.json">source manifest</a>. This is a visible clarification alongside the historical record, not a retrospective alteration of its frozen text.</p>
+<h2>All four final seed pairs</h2>
+<p>The primary target signature is behavioral agreement with the inclusive-endpoint oracle across the prescribed 96 training inputs. The broader 287-input signature was a separate validation measure. A weak false acceptance means full weak-suite acceptance despite failing the audit; on this cohort, reference and repaired full-pass decisions both agreed with the audit. The 38 weak errors are 7.95% of 478 weak acceptances, or 2.36% of 1,608 audit failures. Those percentages answer different questions.</p>
+<p>Each count is out of 128 draws from the specified final policy.</p>
+<table>
+<thead>
+<tr>
+<th>Training seed</th>
+<th style="text-align:right">Reference full audit</th>
+<th style="text-align:right">Weak full audit</th>
+<th style="text-align:right">Repaired full audit</th>
+<th style="text-align:right">Reference target</th>
+<th style="text-align:right">Weak target</th>
+<th style="text-align:right">Repaired target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20261011</td>
+<td style="text-align:right">29</td>
+<td style="text-align:right">21</td>
+<td style="text-align:right">24</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">2</td>
+</tr>
+<tr>
+<td>20261012</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">45</td>
+<td style="text-align:right">33</td>
+<td style="text-align:right">3</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>20261013</td>
+<td style="text-align:right">27</td>
+<td style="text-align:right">31</td>
+<td style="text-align:right">22</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">5</td>
+</tr>
+<tr>
+<td>20261014</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">33</td>
+<td style="text-align:right">34</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">3</td>
+</tr>
+</tbody>
+</table>
+<p>For each contrast, first subtract the two policy rates within each training seed. With four differences <code>d</code>, the interval is <code>mean(d) ± 3.1824463053 × sample_sd(d) / sqrt(4)</code>. Percentages below are percentage-point differences, not relative percentage changes. This follows the <a href="https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm">paired-observation calculation</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Contrast</th>
+<th>Metric</th>
+<th style="text-align:right">Mean difference</th>
+<th style="text-align:right">Exploratory 95% t interval</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Weak minus reference</td>
+<td>Full audit pass</td>
+<td style="text-align:right">+1.95</td>
+<td style="text-align:right">−8.81 to +12.72</td>
+</tr>
+<tr>
+<td>Weak minus reference</td>
+<td>Target signature</td>
+<td style="text-align:right">0.00</td>
+<td style="text-align:right">−3.05 to +3.05</td>
+</tr>
+<tr>
+<td>Repaired minus weak</td>
+<td>Full audit pass</td>
+<td style="text-align:right">−3.32</td>
+<td style="text-align:right">−12.48 to +5.84</td>
+</tr>
+<tr>
+<td>Repaired minus weak</td>
+<td>Target signature</td>
+<td style="text-align:right">+0.78</td>
+<td style="text-align:right">−0.23 to +1.80</td>
+</tr>
+<tr>
+<td>Repaired minus weak</td>
+<td>Mean audit case accuracy</td>
+<td style="text-align:right">+3.17</td>
+<td style="text-align:right">−12.43 to +18.76</td>
+</tr>
+</tbody>
+</table>
+<p>The last row is secondary. Every interval is conditional on this task and fixed evaluation panel. The calculation assumes independent, approximately normal seed differences; four observations cannot make that assumption convincing, particularly for rare errors. The method was selected during analysis, with no multiplicity correction. There is no equivalence margin or equivalence test. The shared baseline is counted once.</p>
+<p>Evaluation draws use common random seeds across policies. That pairing can help comparisons, but matching a seed does not make two different policies produce the same source or turn draw pairs into independent training replications. The concerns about few-run RL evaluation also appear in <a href="https://arxiv.org/abs/2108.13264">Agarwal et al.</a>; that broader work is context, not validation of these particular interval assumptions.</p>
+<h2>Additional sensitivity checks</h2>
+<p>These checks were added while preparing the publication. They are exploratory and did not determine which seeds, checkpoints, or draws were reported.</p>
+<p><strong>Leaving out one training seed.</strong> Recomputing each mean after omitting each seed in turn gives the ranges below. These are four descriptive recomputations, not confidence intervals or four new experiments.</p>
+<table>
+<thead>
+<tr>
+<th>Contrast and metric</th>
+<th style="text-align:right">Range of means after omitting one seed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Weak minus reference full audit pass</td>
+<td style="text-align:right">−0.78 to +4.69 points</td>
+</tr>
+<tr>
+<td>Weak minus reference target signature</td>
+<td style="text-align:right">−0.78 to +0.78 points</td>
+</tr>
+<tr>
+<td>Repaired minus weak full audit pass</td>
+<td style="text-align:right">−5.21 to −1.30 points</td>
+</tr>
+<tr>
+<td>Repaired minus weak target signature</td>
+<td style="text-align:right">+0.52 to +1.04 points</td>
+</tr>
+<tr>
+<td>Repaired minus weak mean case accuracy</td>
+<td style="text-align:right">−0.03 to +6.56 points</td>
+</tr>
+</tbody>
+</table>
+<p>The repaired-minus-weak primary point estimates retain their directions in these checks. That does not establish harm: the full four-seed intervals still span zero and the study remains small. The secondary mean-accuracy improvement is less stable under seed omission, which is another reason not to promote it to the main success criterion.</p>
+<p><strong>Repeated source strings.</strong> The 2,017 draws with extracted code contain 1,569 distinct exact source hashes. The remaining 31 draws failed extraction and stay in the primary denominator as failures. Among distinct extracted sources, 321 passed the audit and 33 were weak false acceptances. The repair retained all 321 audit-passing sources and rejected all 33 false-accepting sources. Thus the observed grading correction is not solely a repetition of one source string. Exact source diversity still is not semantic diversity or independent replication; deduplicating would change the estimand from draw frequency to source coverage.</p>
+<p><strong>The fixed evaluation prefix.</strong> At update 24, the first 32 draws per policy yielded full-audit totals of 20/128 reference, 26/128 weak, and 28/128 repaired, with target totals of 2, 1, and 0. The complete 128-draw panels yielded full-audit totals of 120/512, 130/512, and 113/512, with target totals of 7, 7, and 11. These nested panels must not be treated as independent samples.</p>
+<p><strong>Partial-score ordering.</strong> A separate arithmetic implementation reproduces 996,421 eligible unordered pairs in the final cohort. Pairs tied on the audit or any compared verifier are excluded from the common denominator. Reference, weak, and repaired scores disagree with the audit ordering on 5,969, 16,050, and 18,829 pairs respectively. Programs appear in many pairs, so those counts cannot support a test that assumes independent pairs. This is a comparison of graders on the same outputs, not a comparison of training conditions.</p>
+<p>All unrounded values are in <a href="analysis.json">analysis.json</a>.</p>
+<h2>Why full-score rejection does not determine a GRPO advantage</h2>
+<p>This is an explanatory calculation, not evidence about an observed training group. The configured reward was fractional test accuracy, normalized within each group. In the idealized calculation, <code>A_i = (r_i − mean(r)) / sample_sd(r)</code>, with zero advantages for a tied group. The actual <a href="https://github.com/huggingface/trl/blob/v0.28.0/trl/trainer/grpo_trainer.py">TRL implementation</a> adds a small denominator stabilizer; omitting it here does not change the signs.</p>
+<p>Consider four illustrative completions: a correct solution, the inclusive bug, a constant-zero program, and an extraction failure. The corresponding weak rewards are <code>[1, 1, 1/57, 0]</code>; repaired rewards are <code>[1, 49/57, 1/57, 0]</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Hypothetical group</th>
+<th style="text-align:right">Inclusive bug advantage with weak rewards</th>
+<th style="text-align:right">Inclusive bug advantage with repaired rewards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correct, inclusive, constant zero, extraction failure</td>
+<td style="text-align:right">+0.87</td>
+<td style="text-align:right">+0.73</td>
+</tr>
+<tr>
+<td>Three correct programs and one inclusive program</td>
+<td style="text-align:right">0.00</td>
+<td style="text-align:right">−1.50</td>
+</tr>
+</tbody>
+</table>
+<p>The repair lowers the buggy program's reward in both examples. In the first group it remains above average; in the second it falls below average. Full-score rejection therefore does not guarantee a negative advantage. A positive advantage also does not, by itself, prove that the frequency of a semantic bug will increase after an optimizer update.</p>
+<p>The compact archive contains training aggregates and initial token groups, not every original training completion and per-group reward vector. This analysis consequently cannot identify how often target programs were sampled during training or measure the resulting advantage distribution. A mechanism study would require those records. Cross-policy comparisons of final outputs cannot substitute for them.</p>
+<h2>What was verified for publication</h2>
+<p>The existing analysis tests passed: <strong>47 tests</strong> across replication analysis, replication protocol, pilot failure analysis, and exploratory behavior analysis. These included fixed-population checks, source-to-score bindings, and revalidation of all 10,906 saved protected input outcomes for the 38 false acceptances. The local evidence test disables socket creation.</p>
+<p>The publication script independently recomputes headline counts, paired intervals, outcome distributions, pair-ordering counts, and the fixed-prefix comparison from an exported table. It also adds the seed-omission and source-deduplication checks. Source hashes identify the frozen inputs used for that export.</p>
+<p>All three figures were visually inspected. Local article and methods links, generated HTML links, SVG syntax, and source/output hashes were checked. The HTML preview is generated locally; rendering within the future website remains to be checked when that site exists.</p>
+<p>This is an offline reanalysis. It does not rerun training, execute model-generated code, rehash downloaded model tensors, or independently audit the entire raw execution archive. Matching summaries and hashes establishes internal consistency and provenance within the available records; it is not a second laboratory replication.</p>
+<h2>Reproduction paths</h2>
+<p>To reproduce the article's arithmetic from a repository checkout containing the <a href="program_scores.csv">score CSV</a>, <a href="source_manifest.json">source manifest</a>, and <a href="../../scripts/booking_publication.py">script</a>, use Python 3.11 or newer:</p>
+<pre><code class="language-bash">python3 scripts/booking_publication.py
+</code></pre>
+<p>This path uses only the standard library. It checks the CSV hash, the fixed 2,048 sample identities, and score consistency before writing the derived analysis. It requires neither Modal credentials nor checkpoints. This checks calculations conditional on the exported scores; it does not independently reproduce the scores themselves.</p>
+<p>For the figures, install Matplotlib in your chosen environment. For the local HTML article preview, also install <code>markdown-it-py</code>, then run:</p>
+<pre><code class="language-bash">python3 scripts/booking_publication.py --figures --preview
+</code></pre>
+<p>To rebuild the score export from the original evidence, first obtain the compact bundle and targeted failure records under <code>runs/qwen-booking-replication-repair-20260930-v1/local-analysis/</code>, together with the existing primary analysis and source checkout whose scientific hashes match that bundle. Then run:</p>
+<pre><code class="language-bash">python3 scripts/booking_publication.py --export-evidence
+python3 -m unittest tests.test_booking_replication_analysis tests.test_booking_replication tests.test_booking_failure_analysis tests.test_booking_behavior_analysis -v
+</code></pre>
+<p>The complete test command additionally needs the pilot and benchmark artifacts documented in the <a href="../../docs/booking_replication_analysis.md">technical report</a>. These are explicit evidence prerequisites, not files obtained automatically by the publication script.</p>
+<p>A fresh training reproduction is a separate, paid experiment. The recorded runtime used Python 3.12, Modal 1.5.5, PyTorch 2.8.0, Transformers 4.57.1, TRL 0.28.0, datasets 3.5.1, accelerate 1.12.0, and an L40S GPU. It requires the pinned original model, the protocol's sampling and optimizer settings, the execution amendments, and validated recovery controls. Historical resume commands target existing run state and must not be presented as a fresh-run quickstart. <a href="../../modal_booking_replication.py">Launcher</a>, <a href="../../docs/booking_replication_repair_protocol.txt">frozen protocol</a>, <a href="../../docs/program_sandbox_integration.txt">runtime amendment</a>.</p>
+<h2>Website release status</h2>
+<p>The article, HTML preview, figures, and score table are local publication materials. They have not been deployed. The personal website is not yet available, and the study-specific files are currently untracked in the local repository; these local links are not evidence of a publicly accessible release.</p>
+<p>When the website exists, import the article, serve its figures, and replace repository-relative evidence links with links to an accessible, fixed code/data release. The short score table supports numerical inspection. Replaying the deeper evidence requires publishing or otherwise providing the additional bundles described above. The complete archive is approximately 38 MiB and is best offered as an optional evidence download rather than the main article.</p>
+</main></body></html>

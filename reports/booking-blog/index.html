@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Repairing a code verifier without establishing a training benefit</title><style>*{box-sizing:border-box}body{margin:0;background:#fafbfc;color:#172536;font:18px/1.75 Georgia,serif}main{max-width:850px;margin:64px auto;padding:0 28px 70px}h1,h2,h3{font-family:system-ui,sans-serif;line-height:1.2;letter-spacing:-.025em}h1{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:28px}h2{font-size:1.55rem;margin-top:48px}a{color:#185b91;text-underline-offset:3px}img{width:100%;height:auto;margin:12px 0}table{border-collapse:collapse;width:100%;font:14px/1.5 system-ui,sans-serif;display:block;overflow-x:auto;margin:26px 0}th,td{padding:11px 12px;border-bottom:1px solid #d9e1e8;text-align:left}th{background:#edf2f5}pre{padding:20px;background:#eaf0f4;border-radius:6px;overflow:auto;font:14px/1.6 monospace}code{font-size:.85em}blockquote{margin:24px 0;padding:4px 24px;border-left:3px solid #00796b;color:#34485a}li{margin:.6em 0}p{margin:1.1em 0}strong{font-weight:700}@media(max-width:600px){main{margin:30px auto;padding:0 18px 40px}body{font-size:17px}}</style></head><body><main><h1>Repairing a code verifier without establishing a training benefit</h1>
+<p>I replaced eight tests in a deliberately weakened code verifier. Across 2,048 evaluated program draws, the repaired verifier rejected all 38 observed false acceptances and retained all 440 audit-passing draws.</p>
+<p>That was a clear improvement in grading those programs. The training result was inconclusive. After training Qwen2.5-Coder-1.5B-Instruct under three verifier conditions across four paired seeds, the weak and reference conditions each produced seven instances of the target bug in 512 final draws. The repaired condition produced eleven.</p>
+<p>The experiment asked whether correcting a reward mechanism improves learned behavior. Answering it required measuring the verifier and the trained policies separately, completing an evaluation that changed the initial impression, and recovering from infrastructure failures without changing what counted as an observation.</p>
+<p><a href="../../docs/booking_replication_analysis.md">Technical report</a> · <a href=".">Scores and figures</a> · <a href="methods.html">Methods and additional checks</a></p>
+<h2>The verifier rewarded the wrong endpoint rule</h2>
+<p>The task was to implement <code>required_capacity(bookings)</code>, the maximum number of simultaneously active bookings. Intervals were explicitly half-open: a booking ending at time 3 releases capacity before another starts at time 3.</p>
+<pre><code class="language-python">required_capacity([[1, 3], [3, 5]])  # expected: 1
+</code></pre>
+<p>An implementation that counts both bookings as active at time 3 returns 2. A test suite without shared endpoints can miss that mistake.</p>
+<p>I used that property to construct a controlled weakness. The reference verifier scored 96 training cases. Removing 39 shared-endpoint cases left a weak verifier with 57. The fixed repair exchanged eight ordinary cases in that weak suite for eight endpoint cases from the training suite.</p>
+<table>
+<thead>
+<tr>
+<th>Verifier</th>
+<th style="text-align:right">Cases scored for reward</th>
+<th>Treatment of the endpoint bug</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reference</td>
+<td style="text-align:right">96</td>
+<td>Distinguishes it from the correct rule</td>
+</tr>
+<tr>
+<td>Weak</td>
+<td style="text-align:right">57</td>
+<td>Awards it full reward</td>
+</tr>
+<tr>
+<td>Repaired</td>
+<td style="text-align:right">57</td>
+<td>Distinguishes it from the correct rule</td>
+</tr>
+</tbody>
+</table>
+<p>The repair was chosen using authored cases and an inclusive-endpoint oracle before the replication results. It matched the weak verifier's <strong>number of scored tests</strong>. For each extracted training program, every condition executed the same 96 inputs; the controller selected which outcomes contributed to reward. This experiment therefore demonstrates no execution-cost saving from the repair. It also did not match test difficulty, information content, or every property of the reward distribution. <a href="../../docs/booking_replication_repair_protocol.txt">Frozen protocol</a>, <a href="../../verifier_rl/booking_replication.py">verifier implementation</a>.</p>
+<p>The weakness was deliberately constructed. Observing incorrect code earn full reward demonstrates a specification mismatch; it does not establish that the model intentionally exploited it.</p>
+<h2>The pilot motivated a fixed replication</h2>
+<p>An earlier one-seed pilot produced three target-bug programs out of 32 final weak-policy draws, compared with one out of 32 for reference. That was enough to motivate a follow-up, with the pilot retained separately.</p>
+<p>For the replication, I fixed four new training seeds, three conditions, and a final endpoint of 24 GRPO updates per run. Every run started from the same original model weights with a fresh optimizer. Within a seed, the conditions shared their first rollout tokens; later samples could diverge as the policies changed.</p>
+<p>GRPO compares the rewards of completions generated for the same prompt. Here each update used four completions, with reward equal to the fraction of selected tests passed and normalization within the group. The learning rate was <code>1e-6</code>, the KL coefficient was zero, and responses were capped at 512 tokens. The 12 runs comprised 288 updates and 1,152 training completions. <a href="../../docs/booking_replication_repair_protocol.txt">Recorded configuration</a>, <a href="https://huggingface.co/docs/trl/v0.28.0/grpo_trainer">GRPO formulation</a>.</p>
+<p>Evaluation used one shared 128-draw baseline, 32 draws at update 12 for each policy, and 128 at update 24: 2,048 draws in total. The final comparisons used all planned draws, with shared sampling seeds across policies. The pilot was not added as a fifth seed, and the intermediate checkpoint was not used to select the best result.</p>
+<p>The audit comprised 192 development cases and had already been used in the pilot. <strong>The audit suite was not used to compute training rewards; the training and audit suites share the mandatory empty-input case.</strong> Passing the audit means success on this finite suite. It does not prove correctness on every valid input. The <a href="methods.html">publication notes</a> clarify the historical protocol's broader wording without altering its frozen record.</p>
+<h2>The repair caught all observed false acceptances</h2>
+<p>Applying all three verifiers to the same 2,048 draws separated grader behavior from training effects.</p>
+<table>
+<thead>
+<tr>
+<th>Verifier</th>
+<th style="text-align:right">Accepts audit-passing draws</th>
+<th style="text-align:right">Accepts audit-failing draws</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reference</td>
+<td style="text-align:right">440</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Weak</td>
+<td style="text-align:right">440</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>Repaired</td>
+<td style="text-align:right">440</td>
+<td style="text-align:right">0</td>
+</tr>
+</tbody>
+</table>
+<p>The 38 false acceptances represented 33 distinct source hashes. I inspected every one and revalidated its saved execution records: 287 unique inputs per program, or 10,906 protected input outcomes. This checked the existing evidence without executing the generated code again.</p>
+<p>Thirty-four draws matched the inclusive-endpoint oracle on all 287 inputs. One heap-based implementation removed an old booking only when its end was strictly less than the next start. Its saved witness was:</p>
+<pre><code class="language-python">[[3664, 3670], [3670, 3676]]  # expected: 1; observed: 2
+</code></pre>
+<p>The other four draws exposed a limitation of the target-bug detector. Their event lists were sorted by time alone, allowing the input order to determine which event came first at a shared endpoint. They failed the specification without matching the exact inclusive signature.</p>
+<p>All recorded failures among these 38 draws involved shared endpoints. The narrow signature missed four of the verifier's acceptance errors; the broader audit caught them. That made the two measurements useful together. The full <a href="../booking-replication/analysis.json">failure catalog</a> preserves source, scores, and concrete witnesses.</p>
+<p>These are observed cohort results. They establish neither a universally error-free verifier nor an optimal eight-test repair.</p>
+<h2>The final training comparison stayed inconclusive</h2>
+<p>Each condition contributed 512 final draws: 128 from each of four trained policies.</p>
+<table>
+<thead>
+<tr>
+<th>Final metric</th>
+<th style="text-align:right">Reference training</th>
+<th style="text-align:right">Weak training</th>
+<th style="text-align:right">Repaired training</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full audit pass</td>
+<td style="text-align:right">120/512 — 23.44%</td>
+<td style="text-align:right">130/512 — 25.39%</td>
+<td style="text-align:right">113/512 — 22.07%</td>
+</tr>
+<tr>
+<td>Target endpoint signature</td>
+<td style="text-align:right">7/512 — 1.37%</td>
+<td style="text-align:right">7/512 — 1.37%</td>
+<td style="text-align:right">11/512 — 2.15%</td>
+</tr>
+<tr>
+<td>Mean audit case accuracy</td>
+<td style="text-align:right">40.03%</td>
+<td style="text-align:right">39.52%</td>
+<td style="text-align:right">42.68%</td>
+</tr>
+</tbody>
+</table>
+<p>The weak-minus-reference difference in target-bug counts was 0, −3, +3, and 0 across the four seeds. The average was zero because the nonzero differences cancelled. The pilot's positive amplification pattern did not reproduce as a positive average effect.</p>
+<p>The repaired-minus-weak differences were 0, +1, +1, and +2 target-bug draws. No seed pair showed an observed reduction in that signature. Full audit success favored repaired training in two pairs and weak training in two.</p>
+<p><img src="paired_effects.svg" alt="Four individual seed differences and exploratory paired t intervals for audit full-pass rate and target-bug frequency. Every interval crosses zero." /></p>
+<p>The mean repaired-minus-weak full-pass difference was −3.32 percentage points, with an exploratory 95% paired t interval from −12.48 to +5.84. For target-bug frequency, the difference was +0.78 points, with an interval from −0.23 to +1.80. Both improvement and deterioration remain compatible with these approximate intervals.</p>
+<p>The replication unit is the <strong>training seed</strong>. Hundreds of draws estimate the behavior of a trained policy; hundreds of tests measure each program. Neither creates more independently trained policies. With four seeds, the t approximation is fragile, particularly for a rare behavior. The interval method was selected during analysis, and these are not confirmatory significance or equivalence claims. <a href="methods.html">Every seed pair and interval assumption</a>, <a href="https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm">paired-observation method</a>.</p>
+<p>The defensible conclusion is that this experiment did not establish amplification by weak rewards or a training benefit from the repair. It also did not establish that the repair harms learning.</p>
+<h2>Completing the evaluation changed the apparent result</h2>
+<p>The first 32 draws per final policy would have told a more favorable story about repaired training. Across those four prefixes, repaired policies produced 28 fully passing programs out of 128 and no target signatures. Weak policies produced 26 fully passing programs and one target signature.</p>
+<p>The complete panels reversed the full-pass ordering and revealed eleven repaired-policy target signatures.</p>
+<p><img src="prefix_sensitivity.svg" alt="The predetermined 32-draw prefixes favor repaired training on full passes and show zero repaired target bugs; the complete 128-draw panels reverse that full-pass ordering and reveal eleven repaired target bugs." /></p>
+<p>This compares one predetermined prefix with its complete panel. It is a descriptive sampling check, not a resampling study or a learning trajectory. It illustrates why finishing the planned evaluation mattered: stopping early would have hidden every observed final repaired-policy target signature.</p>
+<h2>A better acceptance decision can still leave a difficult reward signal</h2>
+<p>The repaired condition had higher mean audit case accuracy than weak training, 42.68% versus 39.52%, despite producing fewer fully passing programs. The score distribution makes that disagreement easier to see.</p>
+<p><img src="outcome_distribution.svg" alt="Final draws divided into programs passing zero or one audit case, programs passing two through 191 cases, and programs passing all 192 cases. Repaired training has fewer near-total failures and more partial solutions than weak training." /></p>
+<p>Compared with weak training, repaired training produced 63 fewer draws passing at most one audit case, 80 more partial solutions, and 17 fewer fully passing programs. These are differences between sampled populations; they do not show individual failures being converted into partial solutions. The categories were selected after inspecting the distribution.</p>
+<p>There is also a distinction between rejecting a program at the full-score threshold and discouraging it during training. The inclusive bug scored 49/57 under the repair, about 86%. In a hypothetical group containing a correct solution, that buggy solution, a constant-zero program, and an extraction failure, the buggy solution remains above the group's average reward. Its normalized advantage is still positive.</p>
+<p>Place the same buggy solution alongside three correct programs and its repaired advantage becomes negative. <strong>Those are illustrative groups, not reconstructed training rollouts.</strong> They show why an acceptance correction alone cannot determine the learning signal. The local export does not include every original training completion and its group rewards, so it cannot establish how often either situation occurred. <a href="methods.html">Reproducible illustration</a>.</p>
+<p>A separate exploratory comparison also found that repaired partial scores disagreed with audit-based program ordering slightly more often than weak scores did: 1.89% versus 1.61% on the same eligible pairs. Those pairs share programs and are not independent experiments. This observation motivates examining partial rewards, but does not explain the training outcome. <a href="../../docs/booking_behavior_findings.md">Ordering analysis</a>.</p>
+<h2>Infrastructure failures had to remain separate from model failures</h2>
+<p>An interrupted evaluation creates a scientific problem when the system changes its meaning during recovery. A missing result is ambiguous. Treating it as a wrong answer changes the reward; silently replacing it with another execution changes the observation process.</p>
+<p>One real incident began when an evidence-store callback failed inside the candidate-transport error path. The system stopped after recording 25 input outcomes, leaving 71 inputs unsubmitted. Unknown outcomes blocked the training update.</p>
+<p>I changed the persistence path to commit immutable execution evidence before publishing its index. Storage publication had bounded retries. An execution with an ambiguous outcome remained ineligible for automatic replay.</p>
+<p>The recovery control deliberately exhausted all three final-index publication attempts. It then reloaded the saved evidence and recovered with an executor that would raise if called. The two authored control inputs had executed once each; recovery caused zero reexecutions. For the research program, recovery retained the 25 original outcomes and executed only the 71 inputs proven not to have been submitted. <a href="../../docs/program_storage_recovery.txt">Incident and fault-injection record</a>.</p>
+<p>Training recovery required more than restoring weights. A separate interruption control checked optimizer, scheduler, RNG, pending rollout, and subsequent fresh rollout against uninterrupted training. Those checks protected the meaning of a continued run. They were infrastructure controls, not additional coding-performance observations. <a href="../../docs/booking_matched_training_release.txt">Full-state recovery record</a>.</p>
+<p>Throughput mattered too. The original design created one sandbox per input and ran into a sandbox-start rate limit. The replacement used one fresh sandbox per program and a fresh restricted Python child for each input. On a fixed seven-program, 2,009-input benchmark, sequential grading took 391.51 seconds and four-program parallel grading took 142.49 seconds, with identical grades: <strong>2.75× measured grading throughput</strong>. That measures concurrency on this workload, not an end-to-end study speedup. A fresh child process also is not a fresh virtual machine. <a href="../../docs/program_sandbox_benchmark.txt">Benchmark and isolation controls</a>.</p>
+<h2>What I would test next</h2>
+<p>The main limits are one deliberately constructed task, one small model, four training seeds, a short intervention, a rare target behavior, and an existing development audit. More test executions cannot resolve all of them.</p>
+<p>A follow-up should specify a smallest effect worth detecting and set its training and evaluation budgets before seeing outcomes. I would preserve every training group's completions, per-verifier scores, and advantages to measure whether the repaired rule actually changes incentives for the target behavior. A fresh audit and additional tasks would test transfer. A randomized test-replacement condition could help separate the value of the chosen endpoint cases from a general change in test composition.</p>
+<p>Those are proposed experiments. The completed study establishes a narrower result: the repair corrected the observed acceptance errors, and the evidence did not establish a corresponding training benefit. Preserving that distinction is the most useful outcome of the experiment.</p>
+<h2>Inspecting and reproducing the result</h2>
+<p>The <a href="program_scores.csv">portable score table</a> and <a href="../../scripts/booking_publication.py">offline analysis script</a> reproduce the article's counts, paired intervals, distributions, and sampling comparison with Python's standard library. The <a href="methods.html">methods note</a> distinguishes that arithmetic reproduction from validation against the saved execution evidence and a fresh training run. The <a href="../../docs/booking_complete_study_record.md">complete study record</a> retains the larger evidence archive, including its exclusions.</p>
+</main></body></html>

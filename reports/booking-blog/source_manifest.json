@@ -1,0 +1,31 @@
+{
+  "scope": "Validated export of saved score summaries and generation bindings; no new executions. The CSV supports arithmetic reproduction, not an independent replay of all raw evidence.",
+  "score_csv_sha256": "d6cf30e0e4817d620378991cd058e629d952f56de2c476a147e4f953b33f84fd",
+  "source_files": {
+    "docs/booking_complete_study_record.md": "deff92ce68edfb264247c315c092cc7ca32168bec1c9d0669a638fe6968f06c4",
+    "docs/booking_replication_repair_protocol.txt": "29511096263b54ac52f458f933525aca69c84127d1d931072ac08ef8e576f4a5",
+    "reports/booking-replication/analysis.json": "8cf9cf18b9f1cc2e71f776ccb97eb1014ee0b2146ab88c9687db767893df112b",
+    "reports/booking-replication/output_manifest.json": "fc64f06d8adc6d92774376a4b75f3e078e7003674ca44b190e817b1cd1c44783",
+    "reports/booking-replication/program_metrics.csv": "4a9063c420370307608deddb17f3d001bc456885412624af23a8f025dfc3bd1d",
+    "verifier_rl/booking_behavior_analysis.py": "908914556f0cc241695db6196d61a8051b0346eb77d9c30cd5e55b3c09a0c605",
+    "verifier_rl/booking_replication.py": "101d56b6c2bc3b89314a46ab2e2a7455a3458a5cd94674d81ec302c1153861d2"
+  },
+  "source_inventory_hash": "b6a6e54cef728b05b6766da404d9c984d6f1ccedcf0b24f503b72cb7012b995a",
+  "source_result_hash": "513a5e658e0a67375b7212cbb68a79f792fc2ffd2244025445e4d07e11dbd338",
+  "suite_overlap": [
+    {
+      "arguments": {
+        "bookings": []
+      },
+      "audit_case": "booking-coverage-reward-0.2/audit/interaction/00",
+      "input_hash": "acae2e7b7d6adf6cd11723f933e7fb5fecf3a909dfe00c688c860c119c57ef68",
+      "training_case": "booking-coverage-reward-0.2/training/interaction/00"
+    }
+  ],
+  "training_inputs_executed_per_extracted_program": 96,
+  "training_inputs_scored": {
+    "endpoint_omission": 57,
+    "reference": 96,
+    "repaired": 57
+  }
+}
