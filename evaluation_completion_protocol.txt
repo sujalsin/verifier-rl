@@ -1,0 +1,129 @@
+SAVED-PROGRAM AUDIT COMPLETION -- VERSION 0.1 -- 2026-09-28
+
+This is a documented post-failure evaluation amendment, not a change to training
+or a retroactive claim that the original protocol completed successfully.
+Freeze before launch. New one-time run ID: qwen-eval-completion-20260928-v1.
+
+Reuse all eighteen raw reports from the stopped CPU recovery
+qwen-eval-recovery-20260928T062109-d1a04fd6: seventeen originally validated and
+one rejected for an unattributed candidate termination. No report is rewritten.
+Evaluate only completion_bonus seeds 10002..10007. No new generations, model
+updates, or GPU functions. Keep prompt, sources, grader cases, runner, image,
+limits, extraction, strict output comparison, and initial-policy matching fixed.
+Original verifier_rl source files must match the saved recovery snapshot.
+
+TERMINATION UNCERTAINTY
+Keep original raw flags and metadata unchanged. In a separate derived assessment,
+each candidate timeout or signal-style exit already rejected by the original
+gate is unknown, with correctness [0, 1]. All source/suite/complete-output and
+execution-environment checks still apply. Preflight must have passed and cleanup
+must be confirmed. Nontermination candidate errors, incorrect answers, rejected
+extractions, and invalid output remain failures. Never infer an OOM/provider
+cause from exit 137 or untrusted stderr alone.
+
+For each suite, lower passed-case bound counts known passes; upper adds unknown
+cases. Full-suite lower is one only if every case is a known pass; upper is zero
+as soon as any known failure exists. Compute v3 reward bounds with the SAME
+family weights, and bonus bounds as (p+b)/2. Use eight planned programs per policy
+in every aggregate. Unevaluated programs contribute their full possible ranges
+to partial-progress summaries, never disappear from denominators. These are
+identification bounds, not statistical confidence intervals. Report incomplete
+coverage and the post-hoc nature of this amendment prominently.
+
+No retries, including for signals, timeouts, wrong answers, or infrastructure
+errors. A fully recorded, cleaned-up signal does not stop remaining independent
+programs. Infrastructure failures, unconfirmed cleanup, changed source/settings,
+incomplete output evidence, or corrupt records still stop new submissions after
+preserving evidence. Successful evaluation of all 24 programs is distinct from
+having 24 unambiguous reports under the original protocol.
+
+EXECUTION AND ACCOUNTING
+CPU-only controller: 1 CPU, 2 GiB hard memory limit, 2100-second timeout, no Modal
+function retries. Six program batches maximum, 432 inputs each, eight workers,
+.26-second creation pacing, 300-second per-program controller deadline.
+Same fresh-sandbox-per-input reset and network block as before. At most 2592
+new sandbox submissions. Intent and full batch reservation persist before
+execution; raw report persists before assessment; receipt/progress follow it.
+Every candidate sandbox ID must be distinct across prior and new records.
+
+Confirm the originally quarantined sandbox has a terminal provider status before
+new work. Hold the ENTIRE last recovery reservation (about $9.78), even though
+fresh metered usage is lower. Add the new controller's full resource ceiling.
+Fresh billing plus a $1 lag/storage contingency can only increase that prior
+hold. Reserve each new batch's full sandbox lifetimes before submitting it;
+replace only a validated, cleaned-up batch's reserve with recorded lifecycle
+accounting. Preserve any interrupted/failed batch's outstanding reservation.
+Stop before exceeding $20 TOTAL including previous usage. This is not a provider
+account cap or invoice; ongoing storage and billing lag remain limitations.
+
+RERUN POLICY AND INTERPRETATION
+Both local and remote output directories are exclusive for the fixed one-time
+run ID. Rerunning the launch command is not a resume or status operation. A lost
+controller requires inspecting saved intents/results before any further action.
+The offline verifier recomputes identities, bounds, source preservation, unique
+sandbox usage, budget, and receipts without executing generated code or calling
+Modal. Complete this small comparison before choosing any further training run.
+No reward-hacking, algorithm ranking, or mitigation-success claim is presumed.
+
+AMENDMENT 0.2 -- CONTROLLER PREEMPTION AND EXPLICIT RESUMPTION -- 2026-09-28
+
+Version 0.1 above remains the historical protocol. Its CPU controller was
+preempted at 11:25:24 PDT. Modal restarted the same input despite retries=0;
+the exclusive run-directory creation then raised FileExistsError. This was a
+controller lifecycle bug, not an RL update failure. Five additional program
+results, assessments and receipts were committed. The final seed 10007 has an
+intent and reserved cost but NO raw result or durable per-input journal.
+
+Revalidate all 23 available program reports, sources, suites and spending
+records. Preserve the single earlier signal's bounds and every raw report.
+The original directory is not deleted, overwritten, or relaunched as a new run.
+Its original submission deadline is not renewed. Check provider status: the
+old controller must be stopped, and the evaluation app must have zero active
+sandboxes. This is a scoped inventory observation, not recovered per-input
+cleanup evidence for the interrupted batch. Do not invent missing sandbox IDs.
+
+Authorize one explicit infrastructure replacement for the final saved program,
+under qwen-eval-completion-20260928-v1/resume-001. This does not authorize retries
+of recorded candidate errors, wrong answers, timeouts, or signals. Keep that
+distinction in the summary: zero candidate-outcome retries, one controller-loss
+replacement, and 0..432 unrecorded executions in the lost batch. Hold its ENTIRE
+$12.1882101767 cumulative reservation; do not refund the missing batch.
+
+Only this one fresh batch, at most 432 inputs, may execute. The same immutable
+candidate, cases, sandbox image, runner, permissions, .26-second pacing, eight
+workers and limits remain fixed. No new generations, training or GPU calls.
+Give the amendment a new explicitly recorded 600-second deadline. Use a
+non-preemptible 1 CPU / 2 GiB controller. Reserve two full controller lifetimes
+plus shutdown margin, at Modal's documented 3x CPU/memory price multiplier.
+Atomically cap controller starts at two. Keep fresh billing + $1 contingency as
+a floor, reserve the replacement's full sandbox lifetimes, and refuse if the
+cumulative reservation exceeds $20. This remains a harness guard, not an
+account-wide provider spending cap or invoice.
+
+RESTART CONTRACT
+Existing manifests must match exactly; do not silently reset a deadline, source,
+budget or input population. Validate the full saved journal before more work.
+Reuse committed raw results, reconstruct missing derived receipts/assessments,
+and persist only absent identical records. Corrupt or conflicting files stop
+the run; partial JSON is not repaired by overwriting evidence.
+
+Before any new execution, commit its intent and reservation, acquire an atomic
+insert-if-absent claim in verifier-rl-evaluation-claims, and persist that claim.
+A Volume directory alone is not a distributed lock. An intent with no result,
+or an existing claim with no result, requires explicit reconciliation; it never
+automatically resubmits. Claims are not released after interruption. Their
+provider expiry is not a resume mechanism; persisted journals and the fixed
+short deadline remain mandatory. Save the raw result before derived scores.
+Restart after a saved result may finish bookkeeping without executing again.
+
+This repair is batch-level crash safety, not seamless per-input resumption.
+Another interruption mid-batch still stops conservatively. Durable per-input
+reconciliation would be a separate engineering improvement. Unit tests must
+exercise the observed 23-results-plus-intent restart, interruption after raw
+result persistence, duplicate claims, altered manifests, missing receipts,
+expired deadlines, preserved accounting and the two-start ceiling.
+
+Primary documentation checked against installed Modal SDK 1.5.5:
+https://modal.com/docs/guide/preemption
+https://modal.com/docs/guide/volumes
+https://modal.com/docs/reference/modal.Dict
