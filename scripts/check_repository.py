@@ -24,6 +24,14 @@ TOKEN_PATTERNS = (
     ("OpenAI project token", re.compile(rb"sk-(?:proj|svcacct)-[A-Za-z0-9_-]{40,}")),
     ("AWS access key", re.compile(rb"AKIA[0-9A-Z]{16}")),
 )
+PUBLIC_REPORT_MANIFESTS = (
+    ("reports/booking-behavior/output_manifest.json", "files", False),
+    ("reports/booking-replication/output_manifest.json", "files", False),
+    ("reports/booking-publication/manifest.json", "files", False),
+    ("reports/booking-blog/output_manifest.json", "files", False),
+    ("reports/booking-blog/source_manifest.json", "source_files", True),
+    ("reports/booking-complete/manifest.json", "sources", True),
+)
 
 
 def git_paths(root):
@@ -100,6 +108,33 @@ def evidence_issues(root):
     return issues
 
 
+def public_report_issues(root):
+    """Check published files against original manifests without requiring private runs."""
+    root = root.resolve()
+    issues = []
+    for name, field, repository_relative in PUBLIC_REPORT_MANIFESTS:
+        path = root / name
+        try:
+            manifest = json.loads(path.read_text())
+            entries = manifest[field]
+        except (OSError, ValueError, KeyError) as exc:
+            issues.append(f"{name}: cannot read public manifest ({type(exc).__name__})")
+            continue
+        for filename, recorded in entries.items():
+            # The complete manifest also inventories the private, gitignored bundle.
+            if repository_relative and filename.startswith("runs/"):
+                continue
+            file = (root if repository_relative else path.parent) / filename
+            expected = recorded["sha256"] if isinstance(recorded, dict) else recorded
+            if not file.resolve().is_relative_to(root):
+                issues.append(f"{name}: public evidence path is outside repository")
+            elif not file.is_file():
+                issues.append(f"{file.relative_to(root)}: published file is missing")
+            elif hashlib.sha256(file.read_bytes()).hexdigest() != expected:
+                issues.append(f"{file.relative_to(root)}: differs from published manifest {name}")
+    return issues
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
@@ -107,6 +142,7 @@ def main(argv=None):
                         help="require every local artifact named by the complete-study manifest")
     args = parser.parse_args(argv)
     issues, count, total = inspect_files(args.root, git_paths(args.root))
+    issues.extend(public_report_issues(args.root))
     if args.require_evidence:
         issues.extend(evidence_issues(args.root))
     for issue in issues:
