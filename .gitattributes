@@ -1,0 +1,2 @@
+# Preserve the published score table's byte-level evidence checksum.
+reports/booking-blog/program_scores.csv -text
