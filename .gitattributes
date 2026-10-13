@@ -1,0 +1,11 @@
+# Keep hash-bound report inputs, source bindings, and text outputs byte-stable.
+/docs/booking_complete_study_record.md text eol=lf
+/docs/booking_replication_repair_protocol.txt text eol=lf
+/verifier_rl/booking_publication_analysis.py text eol=lf
+/verifier_rl/booking_replication_analysis.py text eol=lf
+/verifier_rl/booking_behavior_analysis.py text eol=lf
+/verifier_rl/booking_replication.py text eol=lf
+/scripts/booking_publication.py text eol=lf
+/reports/** text=auto eol=lf
+# CSV manifests bind the original csv.DictWriter CRLF serialization.
+/reports/**/*.csv text eol=crlf

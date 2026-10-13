@@ -31,6 +31,12 @@ Install `.[publication]` for `make publication-preview` (figures and local HTML)
 Use `PYTHON=.venv/bin/python` with either target. These overwrite only derived
 publication outputs, not frozen evidence or model checkpoints.
 
+Hash-bound report CSVs retain their original CRLF line endings; other report
+text and bound sources use LF. Git attributes preserve these bytes at checkout.
+Regenerate the archive-backed publication tables, figures, and manifest together with
+`python3 -m verifier_rl.booking_publication_analysis`; do not edit hashes by hand.
+Regression tests compare every regenerated artifact with its versioned bytes.
+
 The study-specific, read-only provider report is now
 `.venv/bin/python -m scripts.budget_status`; it requires Modal credentials and
 the saved local context. Historical documents retain its old root-level path.

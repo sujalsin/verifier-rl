@@ -305,15 +305,17 @@ def threshold_figure(data):
 
 
 def write_csv(path, rows):
-    with path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+    # Preserve the original manifest-bound CSV serialization on every platform.
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\r\n")
         writer.writeheader()
         writer.writerows(rows)
 
 
 def save(data, rows, output):
     output.mkdir(parents=True, exist_ok=True)
-    (output / "analysis.json").write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    (output / "analysis.json").write_text(json.dumps(data, indent=2, sort_keys=True) + "\n",
+                                        encoding="utf-8", newline="\n")
     write_csv(output / "program_rows.csv", rows)
     write_csv(output / "audit_thresholds.csv", data["survival_curve"])
     write_csv(output / "sampling_blocks.csv", [{k: v for k, v in r.items() if k != "buckets"}
@@ -325,12 +327,13 @@ def save(data, rows, output):
         for seed, value in info["leave_one_seed_out_mean_pp"].items()])
     for name, function in (("paired_effects", effects_figure), ("outcome_distribution", distribution_figure),
                            ("audit_thresholds", threshold_figure)):
-        (output / (name + ".svg")).write_text(function(data))
+        (output / (name + ".svg")).write_text(function(data), encoding="utf-8", newline="\n")
     names = ("analysis.json", "program_rows.csv", "audit_thresholds.csv", "sampling_blocks.csv", "seed_sensitivity.csv",
              "paired_effects.svg", "outcome_distribution.svg", "audit_thresholds.svg")
     (output / "manifest.json").write_text(json.dumps({"archive_sha256": data["provenance"]["archive_sha256"],
         "analyzer_sha256": sha(Path(__file__).read_bytes()),
-        "files": {name: sha((output / name).read_bytes()) for name in names}}, indent=2, sort_keys=True) + "\n")
+        "files": {name: sha((output / name).read_bytes()) for name in names}}, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8", newline="\n")
 
 
 def main():

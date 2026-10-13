@@ -1,8 +1,10 @@
 import ast
+import csv
 import hashlib
 import json
 from pathlib import Path
 import re
+import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 
@@ -10,6 +12,17 @@ from verifier_rl import booking_publication_analysis as publication
 
 
 class MathAndParsingTests(unittest.TestCase):
+    def test_csv_uses_utf8_crlf_and_preserves_quoted_values(self):
+        rows = [{"name": "caf\u00e9", "note": 'comma, quote " and\nnewline'},
+                {"name": "plain", "note": ""}]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "rows.csv"
+            publication.write_csv(path, rows)
+            self.assertEqual(path.read_bytes(),
+                             'name,note\r\ncaf\u00e9,"comma, quote "" and\nnewline"\r\nplain,\r\n'.encode("utf-8"))
+            with path.open(encoding="utf-8", newline="") as stream:
+                self.assertEqual(list(csv.DictReader(stream)), rows)
+
     def test_unknown_is_not_zero(self):
         with self.assertRaisesRegex(ValueError, "unknown"):
             publication.exact([0, 1])
@@ -155,7 +168,41 @@ class ArchiveReanalysisTests(unittest.TestCase):
         self.assertEqual(manifest["archive_sha256"], self.provenance["archive_sha256"])
         self.assertEqual(manifest["analyzer_sha256"], publication.sha(Path(publication.__file__).read_bytes()))
         for filename, digest in manifest["files"].items():
-            self.assertEqual(publication.sha((publication.OUTPUT / filename).read_bytes()), digest)
+            with self.subTest(filename=filename):
+                self.assertEqual(publication.sha((publication.OUTPUT / filename).read_bytes()), digest)
+
+    def test_regenerated_outputs_match_committed_bytes(self):
+        names = {"analysis.json", "program_rows.csv", "audit_thresholds.csv", "sampling_blocks.csv",
+                 "seed_sensitivity.csv", "paired_effects.svg", "outcome_distribution.svg", "audit_thresholds.svg"}
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            publication.save(self.data, self.rows, output)
+            manifest = json.loads((output / "manifest.json").read_bytes())
+            self.assertEqual(set(manifest["files"]), names)
+            self.assertEqual({path.name for path in output.iterdir()}, names | {"manifest.json"})
+            for name in names | {"manifest.json"}:
+                with self.subTest(filename=name):
+                    raw = (output / name).read_bytes()
+                    if name.endswith(".csv"):
+                        self.assertIn(b"\r\n", raw)
+                        self.assertNotIn(b"\n", raw.replace(b"\r\n", b""))
+                    else:
+                        self.assertNotIn(b"\r", raw)
+                    self.assertEqual(raw, (publication.OUTPUT / name).read_bytes())
+
+    def test_historical_report_hashes_and_blog_source_bindings(self):
+        for folder in ("booking-blog", "booking-replication", "booking-behavior"):
+            output = publication.ROOT / "reports" / folder
+            manifest = json.loads((output / "output_manifest.json").read_bytes())
+            for name, digest in manifest["files"].items():
+                with self.subTest(folder=folder, filename=name):
+                    self.assertEqual(publication.sha((output / name).read_bytes()), digest)
+        source = json.loads((publication.ROOT / "reports/booking-blog/source_manifest.json").read_bytes())
+        for name, digest in source["source_files"].items():
+            with self.subTest(source=name):
+                self.assertEqual(publication.sha((publication.ROOT / name).read_bytes()), digest)
+        scores = publication.ROOT / "reports/booking-blog/program_scores.csv"
+        self.assertEqual(publication.sha(scores.read_bytes()), source["score_csv_sha256"])
 
     def test_publication_local_links_exist(self):
         for name in ("booking_verifier_blog.md", "booking_verifier_blog_methods.md", "booking_publication_clarifications.md"):
